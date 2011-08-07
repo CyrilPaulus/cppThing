@@ -6,6 +6,8 @@
 #include "imageManager.h"
 #include "mouse.h"
 
+#include "entity/entity.h"
+
 class Client {
  public:
   Client(sf::RenderWindow *window, ImageManager *imageManager);
@@ -25,6 +27,9 @@ class Client {
 
   void HandleEvent(sf::Event event);
   void OnClose();
+
+  //TODO remove
+  Entity* ent;
 };
 
 #endif /* _CLIENT_H_ */

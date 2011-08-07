@@ -8,6 +8,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   ui = new sf::RenderImage();
   ui->Create(window->GetWidth(), window->GetHeight());
   mouse = new Mouse(window, imageManager);
+  ent = new Entity(imageManager);
 }
 
 Client::~Client(){
@@ -59,10 +60,11 @@ void Client::Draw() {
   window->Clear(GameConstant::BackgroundColor);
   
   //UI DRAWING
-  ui->Clear(GameConstant::BackgroundColor);
+  ui->Clear(sf::Color(0,0,0,0));
   mouse->Draw(ui);
   ui->Display();
   //WORLD DRAWING
+  ent->Draw(window);
   window->Draw(sf::Sprite(ui->GetImage()));  
   window->Display();
 }
