@@ -7,13 +7,13 @@ EXEC:= a.out
 EXPORT := export.tar.gz
 DIST = $(wildcard *)
 
-all: src_all res_all
+all: src_all
 	cp -a $(src_EXEC) $(EXEC)
 
-clean: src_clean res_clean
+clean: src_clean
 	rm -rf $(EXEC)
 
-distclean: clean src_distclean res_distclean
+distclean: clean src_distclean
 	rm -rf $(EXPORT)
 
 dist: distclean
@@ -21,5 +21,3 @@ dist: distclean
 
 DIR:= src
 include src/Rules.mk
-DIR:= res
-include res/Rules.mk

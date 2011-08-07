@@ -1,7 +1,7 @@
 .PHONY: src_all src_clean src_distclean
 
 src_EXEC := $(DIR)/a.out
-src_SRCS := $(wildcard $(DIR)/*.cpp)
+src_SRCS := $(wildcard **/*.cpp)
 src_OBJS := $(src_SRCS:.cpp=.o)
 
 src_all: $(src_EXEC)

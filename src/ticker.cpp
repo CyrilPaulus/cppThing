@@ -2,7 +2,8 @@
 #include "ticker.h"
 
 Ticker::Ticker() {
-  tickTime = 20;  
+  tickTime = 20;
+  elapsedTime = 0;
 }
 
 Ticker::Ticker(float tickTime) {
@@ -10,10 +11,15 @@ Ticker::Ticker(float tickTime) {
 }
 
 bool Ticker::Tick() {
-  if(clock.GetElapsedTime() > tickTime){
+  elapsedTime = clock.GetElapsedTime();
+  if(elapsedTime > tickTime){
     clock.Reset();
     return true;
   }
 
   return false;
+}
+
+float Ticker::GetElapsedSeconds(){
+  return (float) elapsedTime / 1000.0;
 }

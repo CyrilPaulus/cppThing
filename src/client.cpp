@@ -4,12 +4,14 @@
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   this->window = window;
   this->imageManager = imageManager;
+  ticker = new Ticker();
   ui = new sf::RenderImage();
   ui->Create(window->GetWidth(), window->GetHeight());
   mouse = new Mouse(window, imageManager);
 }
 
 Client::~Client(){
+  delete ticker;
   delete mouse;
   delete ui;
 }
@@ -22,8 +24,10 @@ int Client::Run(){
       HandleEvent(event);
     }
 
+    if(ticker->Tick()){
+      Update(ticker->GetElapsedSeconds());
+    }
 
-    Update();
     mouse->Update();
     
     Draw();
@@ -47,7 +51,8 @@ void Client::OnClose() {
   running = false;
 } 
 
-void Client::Update() {
+void Client::Update(float frametime) {
+  
 }
 
 void Client::Draw() {

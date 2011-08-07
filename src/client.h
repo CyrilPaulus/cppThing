@@ -13,14 +13,14 @@ class Client {
   int Run();
  private:
 
-  void Update();
+  void Update(float);
   void Draw();
 
   sf::RenderWindow *window;
   sf::RenderImage *ui;
   Mouse *mouse;
   ImageManager *imageManager;
-  Ticker ticker;
+  Ticker *ticker;
   bool running;
 
   void HandleEvent(sf::Event event);
