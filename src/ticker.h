@@ -9,11 +9,11 @@ class Ticker{
   Ticker(float tickTime);
   bool Tick();
   float GetElapsedSeconds();
-  
+
  private:
   sf::Clock clock;
   float tickTime;
-  uint elapsedTime;
+  unsigned int elapsedTime;
 };
 
 #endif /* _TICKER_H_ */

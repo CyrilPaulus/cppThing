@@ -4,7 +4,7 @@
 
 Cube::Cube(int type, ImageManager* imageManager) : Entity(imageManager) {
   this->imageManager = imageManager;
-  sprite->SetImage(*(imageManager->get("tileset")), true);
+  sprite->SetTexture(*(imageManager->get("tileset")), true);
   SetType(type);
 }
 

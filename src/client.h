@@ -20,7 +20,7 @@ class Client {
   void Draw();
 
   sf::RenderWindow *window;
-  sf::RenderImage *worldDisplay;
+  sf::RenderTexture *worldDisplay;
   Mouse *mouse;
   ImageManager *imageManager;
   Ticker *ticker;

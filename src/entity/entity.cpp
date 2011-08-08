@@ -2,8 +2,7 @@
 #include "entity.h"
 
 Entity::Entity(ImageManager *imageManager) {
-  sf::Image *image = imageManager->get("cube");
-  sprite = new sf::Sprite(*(image));
+  sprite = new sf::Sprite(*(imageManager->get("cube")));
   offset = sf::Vector2f(0, 0);
   position = sf::Vector2f(0, 0);
   bbox = sprite->GetSize();

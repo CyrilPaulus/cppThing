@@ -5,7 +5,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   this->window = window;
   this->imageManager = imageManager;
   ticker = new Ticker();
-  worldDisplay = new sf::RenderImage();
+  worldDisplay = new sf::RenderTexture();
   worldDisplay->Create(window->GetWidth(), window->GetHeight());
   mouse = new Mouse(window, worldDisplay, imageManager);
   world = new World(imageManager);
@@ -36,9 +36,9 @@ int Client::Run(){
     }
 
     mouse->Update();
-    
+
     Draw();
-    
+
   }
   return 1;
 }
@@ -60,7 +60,7 @@ void Client::HandleEvent(sf::Event event) {
 
 void Client::OnClose() {
   running = false;
-} 
+}
 
 void Client::OnMouseButtonPressed(sf::Event event){
   switch(event.MouseButton.Button){
@@ -92,7 +92,7 @@ void Client::OnMouseButtonReleased(sf::Event event){
 void Client::Update(float frametime) {
   if (addCube)
     world->AddCube(mouse->GetWorldPosition(), 1);
-  
+
   if (removeCube)
     world->RemoveCube(mouse->GetWorldPosition());
 
@@ -108,14 +108,14 @@ void Client::Update(float frametime) {
 void Client::Draw() {
   UpdateView();
   window->Clear(GameConstant::BackgroundColor);
- 
+
   worldDisplay->Clear(sf::Color(0,0,0,0));
   world->Draw(worldDisplay);
-  player->Draw(worldDisplay);  
+  player->Draw(worldDisplay);
   worldDisplay->Display();
-  
-  window->Draw(sf::Sprite(worldDisplay->GetImage()));
-  mouse->Draw(window);   
+
+  window->Draw(sf::Sprite(worldDisplay->GetTexture()));
+  mouse->Draw(window);
   window->Display();
 }
 
@@ -135,7 +135,7 @@ void Client::UpdateView() {
     newView.Move(sf::Vector2f(0, player->GetBbox().Top - 100 * zoom - top));
   else
     newView.Move(sf::Vector2f(0, player->GetBbox().Top + player->GetBbox().Height + 100 * zoom - bottom));
-  
+
   worldDisplay->SetView(newView);
 }
 

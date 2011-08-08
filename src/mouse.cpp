@@ -5,8 +5,7 @@ Mouse::Mouse(sf::RenderWindow *window, sf::RenderTarget *world, ImageManager *im
   this->window = window;
   this->world = world;
   this->imageManager = imageManager;
-  sf::Image *image = imageManager->get("mouse");
-  this->sprite = new sf::Sprite(*(image));
+  this->sprite = new sf::Sprite(*(imageManager->get("mouse")));
 }
 
 Mouse::~Mouse() {
@@ -18,7 +17,7 @@ sf::Vector2f Mouse::GetPosition() {
 }
 
 sf::Vector2f Mouse::GetWorldPosition() {
-  return world->ConvertCoords((uint) sprite->GetPosition().x, (uint) sprite->GetPosition().y);
+  return world->ConvertCoords((unsigned int) sprite->GetPosition().x, (unsigned int) sprite->GetPosition().y);
 }
 
 void Mouse::Update() {

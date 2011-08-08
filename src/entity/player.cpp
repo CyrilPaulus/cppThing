@@ -5,20 +5,20 @@
 
 Player::Player(World *world, ImageManager *imageManager) : Entity(imageManager) {
   this->world = world;
-  sprite->SetImage(*(imageManager->get("player")), true);
+  sprite->SetTexture(*(imageManager->get("player")), true);
   bbox = sf::Vector2f(sprite->GetSize().x - 2, sprite->GetSize().y - 2);
   offset = sf::Vector2f(-1 , 0);
   pupil = new sf::Sprite(*(imageManager->get("pupil")));
   colorMask = new sf::Sprite(*(imageManager->get("colorMask")));
-  
+
   //TODO Random color generation
   colorMask->SetColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
-  
+
   lpOrigin = sf::Vector2f(5, 9);
   rpOrigin = sf::Vector2f(20, 9);
-  
+
   lpPosition = lpOrigin;
-  rpPosition = rpOrigin; 
+  rpPosition = rpOrigin;
 
   noclip = false;
 
@@ -77,7 +77,7 @@ void Player::Update(float frametime, Input input) {
   //Update position x and check for collision
   if(speed.x != 0){
     position.x += speed.x * frametime;
-    
+
     Cube *c = world->GetCollidingCube(GetBbox());
     if( c != NULL){
       if(speed.x < 0)
@@ -107,7 +107,7 @@ void Player::Update(float frametime, Input input) {
       speed.y -= jumpForce;
     speed.y += (acceleration.y * frametime);
   }
-  
+
   //Update position with speed and check for collision
   if(speed.y != 0){
     position.y += speed.y * frametime;
