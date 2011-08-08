@@ -11,9 +11,11 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   world = new World(imageManager);
   addCube = false;
   removeCube = false;
+  player = new Player(world, imageManager);
 }
 
 Client::~Client(){
+  delete player;
   delete ticker;
   delete mouse;
   delete ui;
@@ -92,6 +94,8 @@ void Client::Update(float frametime) {
   
   if(removeCube)
     world->RemoveCube(mouse->GetWorldPosition());
+
+  player->SetEyesPosition(mouse->GetWorldPosition());
 }
 
 void Client::Draw() {
@@ -103,6 +107,7 @@ void Client::Draw() {
   ui->Display();
   //WORLD DRAWING
   world->Draw(window);
+  player->Draw(window);
   window->Draw(sf::Sprite(ui->GetImage()));  
   window->Display();
 }

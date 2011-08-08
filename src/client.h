@@ -7,6 +7,7 @@
 #include "mouse.h"
 
 #include "entity/world.h"
+#include "entity/player.h"
 
 class Client {
  public:
@@ -34,6 +35,7 @@ class Client {
 
   bool addCube;
   bool removeCube;
+  Player *player;
 };
 
 #endif /* _CLIENT_H_ */
