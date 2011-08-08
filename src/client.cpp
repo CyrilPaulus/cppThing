@@ -13,9 +13,14 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   removeCube = false;
   player = new Player(world, imageManager);
   zoom = 1;
+  cubeType = 0;
+  displayCube = new Cube(cubeType, imageManager);
+  displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
+					window->GetHeight() - 10 - Cube::HEIGHT));
 }
 
 Client::~Client(){
+  delete displayCube;
   delete player;
   delete ticker;
   delete mouse;
@@ -53,6 +58,10 @@ void Client::HandleEvent(sf::Event event) {
     break;
   case sf::Event::MouseButtonReleased:
     OnMouseButtonReleased(event);
+    break;
+  case sf::Event::MouseWheelMoved:
+    OnMouseWheelMoved(event);
+    break;
   default:
     break;
   }
@@ -88,10 +97,18 @@ void Client::OnMouseButtonReleased(sf::Event event){
   }
 }
 
+void Client::OnMouseWheelMoved(sf::Event event) {
+  if(event.MouseWheel.Delta < 0)
+    cubeType = (cubeType - 1 + Cube::BLOCKTYPECOUNT) % Cube::BLOCKTYPECOUNT;
+  else
+    cubeType = (cubeType + 1) % Cube::BLOCKTYPECOUNT;
+  displayCube->SetType(cubeType);
+}
+
 
 void Client::Update(float frametime) {
   if (addCube)
-    world->AddCube(mouse->GetWorldPosition(), 1);
+    world->AddCube(mouse->GetWorldPosition(), cubeType);
 
   if (removeCube)
     world->RemoveCube(mouse->GetWorldPosition());
@@ -115,6 +132,7 @@ void Client::Draw() {
   worldDisplay->Display();
 
   window->Draw(sf::Sprite(worldDisplay->GetTexture()));
+  displayCube->Draw(window);
   mouse->Draw(window);
   window->Display();
 }

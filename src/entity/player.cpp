@@ -11,7 +11,6 @@ Player::Player(World *world, ImageManager *imageManager) : Entity(imageManager) 
   pupil = new sf::Sprite(*(imageManager->get("pupil")));
   colorMask = new sf::Sprite(*(imageManager->get("colorMask")));
 
-  //TODO Random color generation
   colorMask->SetColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
 
   lpOrigin = sf::Vector2f(5, 9);

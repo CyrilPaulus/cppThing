@@ -30,9 +30,11 @@ class Client {
   void OnClose();
   void OnMouseButtonPressed(sf::Event event);
   void OnMouseButtonReleased(sf::Event event);
-
+  void OnMouseWheelMoved(sf::Event event);
   void UpdateView();
   float zoom;
+  int cubeType;
+  Cube* displayCube;
 
   World *world;
 
