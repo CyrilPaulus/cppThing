@@ -8,13 +8,16 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   ui = new sf::RenderImage();
   ui->Create(window->GetWidth(), window->GetHeight());
   mouse = new Mouse(window, imageManager);
-  ent = new Entity(imageManager);
+  world = new World(imageManager);
+  addCube = false;
+  removeCube = false;
 }
 
 Client::~Client(){
   delete ticker;
   delete mouse;
   delete ui;
+  delete world;
 }
 
 int Client::Run(){
@@ -42,7 +45,11 @@ void Client::HandleEvent(sf::Event event) {
   case sf::Event::Closed:
     OnClose();
     break;
-
+  case sf::Event::MouseButtonPressed:
+    OnMouseButtonPressed(event);
+    break;
+  case sf::Event::MouseButtonReleased:
+    OnMouseButtonReleased(event);
   default:
     break;
   }
@@ -52,8 +59,39 @@ void Client::OnClose() {
   running = false;
 } 
 
+void Client::OnMouseButtonPressed(sf::Event event){
+  switch(event.MouseButton.Button){
+  case sf::Mouse::Left:
+    addCube = true;
+    break;
+  case sf::Mouse::Right:
+    removeCube = true;
+    break;
+  default:
+    break;
+  }
+}
+
+void Client::OnMouseButtonReleased(sf::Event event){
+  switch(event.MouseButton.Button){
+  case sf::Mouse::Left:
+    addCube = false;
+    break;
+  case sf::Mouse::Right:
+    removeCube = false;
+    break;
+  default:
+    break;
+  }
+}
+
+
 void Client::Update(float frametime) {
+  if(addCube)
+    world->AddCube(mouse->GetWorldPosition(), 1);
   
+  if(removeCube)
+    world->RemoveCube(mouse->GetWorldPosition());
 }
 
 void Client::Draw() {
@@ -64,7 +102,7 @@ void Client::Draw() {
   mouse->Draw(ui);
   ui->Display();
   //WORLD DRAWING
-  ent->Draw(window);
+  world->Draw(window);
   window->Draw(sf::Sprite(ui->GetImage()));  
   window->Display();
 }

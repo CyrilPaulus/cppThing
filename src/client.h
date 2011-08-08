@@ -6,7 +6,7 @@
 #include "imageManager.h"
 #include "mouse.h"
 
-#include "entity/entity.h"
+#include "entity/world.h"
 
 class Client {
  public:
@@ -27,9 +27,13 @@ class Client {
 
   void HandleEvent(sf::Event event);
   void OnClose();
+  void OnMouseButtonPressed(sf::Event event);
+  void OnMouseButtonReleased(sf::Event event);
 
-  //TODO remove
-  Entity* ent;
+  World *world;
+
+  bool addCube;
+  bool removeCube;
 };
 
 #endif /* _CLIENT_H_ */

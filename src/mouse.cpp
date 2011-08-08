@@ -12,11 +12,11 @@ Mouse::~Mouse() {
   delete sprite;
 }
 
-sf::Vector2f Mouse::getPosition() {
+sf::Vector2f Mouse::GetPosition() {
   return sprite->GetPosition();
 }
 
-sf::Vector2f Mouse::getWorldPosition() {
+sf::Vector2f Mouse::GetWorldPosition() {
   return window->ConvertCoords((uint) sprite->GetPosition().x, (uint) sprite->GetPosition().y);
 }
 

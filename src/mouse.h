@@ -10,8 +10,8 @@ class Mouse{
   ~Mouse();
   void Draw(sf::RenderTarget *);
   void Update();
-  sf::Vector2f getPosition();
-  sf::Vector2f getWorldPosition();
+  sf::Vector2f GetPosition();
+  sf::Vector2f GetWorldPosition();
 
  private:
   sf::RenderWindow *window;

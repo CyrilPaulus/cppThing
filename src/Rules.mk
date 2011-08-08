@@ -1,5 +1,5 @@
 .PHONY: src_all src_clean src_distclean
-SUBDIRS := $(DIR) $(DIR)/entity
+SUBDIRS := $(DIR) $(DIR)/entity $(DIR)/utils
 src_EXEC := $(DIR)/a.out
 src_SRCS := $(foreach D,$(SUBDIRS),$(wildcard $D/*.cpp))
 src_OBJS := $(src_SRCS:.cpp=.o)
