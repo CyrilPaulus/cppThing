@@ -5,20 +5,21 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   this->window = window;
   this->imageManager = imageManager;
   ticker = new Ticker();
-  ui = new sf::RenderImage();
-  ui->Create(window->GetWidth(), window->GetHeight());
-  mouse = new Mouse(window, imageManager);
+  worldDisplay = new sf::RenderImage();
+  worldDisplay->Create(window->GetWidth(), window->GetHeight());
+  mouse = new Mouse(window, worldDisplay, imageManager);
   world = new World(imageManager);
   addCube = false;
   removeCube = false;
   player = new Player(world, imageManager);
+  zoom = 1;
 }
 
 Client::~Client(){
   delete player;
   delete ticker;
   delete mouse;
-  delete ui;
+  delete worldDisplay;
   delete world;
 }
 
@@ -89,10 +90,10 @@ void Client::OnMouseButtonReleased(sf::Event event){
 
 
 void Client::Update(float frametime) {
-  if(addCube)
+  if (addCube)
     world->AddCube(mouse->GetWorldPosition(), 1);
   
-  if(removeCube)
+  if (removeCube)
     world->RemoveCube(mouse->GetWorldPosition());
 
   Input input;
@@ -105,15 +106,36 @@ void Client::Update(float frametime) {
 }
 
 void Client::Draw() {
+  UpdateView();
   window->Clear(GameConstant::BackgroundColor);
+ 
+  worldDisplay->Clear(sf::Color(0,0,0,0));
+  world->Draw(worldDisplay);
+  player->Draw(worldDisplay);  
+  worldDisplay->Display();
   
-  //UI DRAWING
-  ui->Clear(sf::Color(0,0,0,0));
-  mouse->Draw(ui);
-  ui->Display();
-  //WORLD DRAWING
-  world->Draw(window);
-  player->Draw(window);
-  window->Draw(sf::Sprite(ui->GetImage()));  
+  window->Draw(sf::Sprite(worldDisplay->GetImage()));
+  mouse->Draw(window);   
   window->Display();
 }
+
+
+void Client::UpdateView() {
+  sf::View newView = worldDisplay->GetView();
+  float left = newView.GetCenter().x - newView.GetSize().x / 2;
+  float right = newView.GetCenter().x + newView.GetSize().x / 2;
+  if (player->GetBbox().Left - 100 * zoom < left)
+    newView.Move(sf::Vector2f(player->GetBbox().Left - 100 * zoom - left, 0));
+  else if (player->GetBbox().Left + player->GetBbox().Width +100 * zoom > right)
+    newView.Move(sf::Vector2f(player->GetBbox().Left + player->GetBbox().Width + 100 * zoom - right, 0));
+
+  float top = newView.GetCenter().y - newView.GetSize().y / 2;
+  float bottom = newView.GetCenter().y + newView.GetSize().y / 2;
+  if (player->GetBbox().Top - 100 * zoom < top)
+    newView.Move(sf::Vector2f(0, player->GetBbox().Top - 100 * zoom - top));
+  else
+    newView.Move(sf::Vector2f(0, player->GetBbox().Top + player->GetBbox().Height + 100 * zoom - bottom));
+  
+  worldDisplay->SetView(newView);
+}
+

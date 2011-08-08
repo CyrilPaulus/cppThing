@@ -20,7 +20,7 @@ class Client {
   void Draw();
 
   sf::RenderWindow *window;
-  sf::RenderImage *ui;
+  sf::RenderImage *worldDisplay;
   Mouse *mouse;
   ImageManager *imageManager;
   Ticker *ticker;
@@ -30,6 +30,9 @@ class Client {
   void OnClose();
   void OnMouseButtonPressed(sf::Event event);
   void OnMouseButtonReleased(sf::Event event);
+
+  void UpdateView();
+  float zoom;
 
   World *world;
 

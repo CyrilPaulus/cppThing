@@ -1,8 +1,9 @@
 #include "config.h"
 #include "mouse.h"
 
-Mouse::Mouse(sf::RenderWindow *window, ImageManager *imageManager) {
+Mouse::Mouse(sf::RenderWindow *window, sf::RenderTarget *world, ImageManager *imageManager) {
   this->window = window;
+  this->world = world;
   this->imageManager = imageManager;
   sf::Image *image = imageManager->get("mouse");
   this->sprite = new sf::Sprite(*(image));
@@ -17,7 +18,7 @@ sf::Vector2f Mouse::GetPosition() {
 }
 
 sf::Vector2f Mouse::GetWorldPosition() {
-  return window->ConvertCoords((uint) sprite->GetPosition().x, (uint) sprite->GetPosition().y);
+  return world->ConvertCoords((uint) sprite->GetPosition().x, (uint) sprite->GetPosition().y);
 }
 
 void Mouse::Update() {

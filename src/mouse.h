@@ -6,7 +6,7 @@
 
 class Mouse{
  public:
-  Mouse(sf::RenderWindow*, ImageManager*);
+  Mouse(sf::RenderWindow*, sf::RenderTarget*, ImageManager*);
   ~Mouse();
   void Draw(sf::RenderTarget *);
   void Update();
@@ -15,8 +15,10 @@ class Mouse{
 
  private:
   sf::RenderWindow *window;
+  sf::RenderTarget *world;
   ImageManager *imageManager;
   sf::Sprite *sprite;
+  
   
 };
 
