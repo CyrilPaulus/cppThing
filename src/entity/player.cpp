@@ -27,6 +27,8 @@ Player::Player(World *world, ImageManager *imageManager) : Entity(imageManager) 
 
   speed = sf::Vector2f(0, 0);
   acceleration = sf::Vector2f(350, 350);
+  isFlying = false;
+  jumpForce = 200;
 }
 
 Player::~Player(){
@@ -87,29 +89,37 @@ void Player::Update(float frametime, Input input) {
   }
 
   //Update speed Y
-  if (input.Up && speed.y > -maxFallSpeed) {
-    speed.y -= (acceleration.y * frametime);
-  }
-  else if(input.Down && speed.y < maxFallSpeed) {
+  if(noclip){
+    if (input.Up && speed.y > -maxFallSpeed) {
+      speed.y -= (acceleration.y * frametime);
+    }
+    else if(input.Down && speed.y < maxFallSpeed) {
+      speed.y += (acceleration.y * frametime);
+    }
+    else if(speed.y > 0) {
+      speed.y = std::max(0.F, speed.y - (acceleration.y * frametime));
+    }
+    else if(speed.y < 0){
+      speed.y = std::min(0.F, speed.y + (acceleration.y * frametime));
+    }
+  }else {
+    if(input.Up && !isFlying)
+      speed.y -= jumpForce;
     speed.y += (acceleration.y * frametime);
-  }
-  else if(speed.y > 0) {
-    speed.y = std::max(0.F, speed.y - (acceleration.y * frametime));
-  }
-  else if(speed.y < 0){
-    speed.y = std::min(0.F, speed.y + (acceleration.y * frametime));
   }
   
   //Update position with speed and check for collision
   if(speed.y != 0){
     position.y += speed.y * frametime;
-    
+    isFlying = true;
     Cube *c = world->GetCollidingCube(GetBbox());
     if( c != NULL){
       if(speed.y < 0)
 	position.y = c->GetBbox().Top + c->GetBbox().Height;
-      else
+      else{
 	position.y = c->GetBbox().Top - GetBbox().Height;
+	isFlying = false;
+      }
        speed.y = 0;
     }
   }

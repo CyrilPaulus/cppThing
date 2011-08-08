@@ -18,6 +18,7 @@ class Player : public Entity {
   World* world;
   
   bool noclip;
+  bool isFlying;
   sf::Sprite *pupil;
   sf::Sprite *colorMask;
 
@@ -28,6 +29,7 @@ class Player : public Entity {
 
   float maxWalkSpeed;
   float maxFallSpeed;
+  float jumpForce;
 
   sf::Vector2f speed;
   sf::Vector2f acceleration;
