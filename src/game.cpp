@@ -1,5 +1,6 @@
 #include "config.h"
 #include "game.h"
+#include <time.h>
 
 Game::Game(){
   window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
@@ -14,6 +15,7 @@ Game::~Game(){
 }
 
 void Game::Run(){
+  srand(time(NULL));
   Client c(window, imageManager);
   c.Run();
 }

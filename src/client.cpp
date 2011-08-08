@@ -95,6 +95,12 @@ void Client::Update(float frametime) {
   if(removeCube)
     world->RemoveCube(mouse->GetWorldPosition());
 
+  Input input;
+  input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);
+  input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
+  input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
+  input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
+  player->Update(frametime, input);
   player->SetEyesPosition(mouse->GetWorldPosition());
 }
 

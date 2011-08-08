@@ -1,7 +1,5 @@
 #include "../config.h"
 #include "quadtree.h"
-#include <stdio.h>
-
 
 QuadTree::QuadTree(int capacity, sf::Vector2f minSize) {
   this->capacity = capacity;
@@ -54,7 +52,6 @@ void QuadTreeNode::Add(Cube *b) {
 } 
 
 void QuadTreeNode::Explode() {
-  printf("Explode\n");
   if(range.Width <= minSize.x || range.Height <= minSize.y)
     return;
 
@@ -69,6 +66,7 @@ void QuadTreeNode::Explode() {
   for (i = cubeList.begin(); i != cubeList.end(); i++){
     Add(*i);
   }
+  cubeList.clear();
 }
 
 void QuadTreeNode::Remove(Cube *b) {
@@ -88,8 +86,9 @@ std::list<Cube*> QuadTreeNode::GetList(sf::FloatRect bbox) {
     std::list<QuadTreeNode*>::iterator i;
     for (i = children.begin(); i != children.end(); i++) {
       if((*i)->range.Intersects(bbox)) {
+	std::list<Cube*> candidate = (*i)->GetList(bbox);
 	std::list<Cube*>::iterator c;
-	for (c = (*i)->cubeList.begin(); c != (*i)->cubeList.end(); c++)
+	for (c = candidate.begin(); c != candidate.end(); c++)
 	  rtn.push_back((*c));
       }
     }

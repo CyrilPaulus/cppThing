@@ -53,7 +53,15 @@ void World::RemoveCube(sf::Vector2f pos) {
   }
 }
 
- 
+Cube* World::GetCollidingCube(sf::FloatRect bbox){
+  std::list<Cube*> candidate = quadTree->GetList(bbox);
+  std::list<Cube*>::iterator it;
+  for(it = candidate.begin(); it != candidate.end(); it++){
+    if((*it)->GetBbox().Intersects(bbox))
+      return (*it);
+  }
+  return NULL;
+} 
 
 
  

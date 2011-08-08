@@ -16,6 +16,8 @@ class World {
   
   void AddCube(sf::Vector2f, int);
   void RemoveCube(sf::Vector2f);
+
+  Cube* GetCollidingCube(sf::FloatRect);
  private:
   ImageManager* imageManager;
   std::list<Cube*> cubeList;

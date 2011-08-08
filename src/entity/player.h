@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "entity.h"
 #include "world.h"
+#include "../input/input.h"
 
 class Player : public Entity {
  public:
@@ -11,9 +12,12 @@ class Player : public Entity {
   ~Player();
   void Draw(sf::RenderTarget *);
   void SetEyesPosition(sf::Vector2f);
+  void Update(float, Input);
 
  private:
   World* world;
+  
+  bool noclip;
   sf::Sprite *pupil;
   sf::Sprite *colorMask;
 
@@ -21,6 +25,12 @@ class Player : public Entity {
   sf::Vector2f lpPosition;
   sf::Vector2f rpOrigin;
   sf::Vector2f rpPosition;
+
+  float maxWalkSpeed;
+  float maxFallSpeed;
+
+  sf::Vector2f speed;
+  sf::Vector2f acceleration;
 };
 
 #endif /* _PLAYER_H_ */
