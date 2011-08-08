@@ -28,6 +28,11 @@ sf::Vector2f Entity::GetPosition() {
   return position;
 }
 
+sf::Vector2f Entity::GetCenter() {
+  sf::Vector2f hbbox = sf::Vector2f(bbox.x / 2, bbox.y / 2);
+  return position + hbbox;
+}
+
 void Entity::SetPosition(sf::Vector2f position){
   this->position = position;
 }

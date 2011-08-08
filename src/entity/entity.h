@@ -14,7 +14,7 @@ class Entity {
   sf::FloatRect GetBbox();
   sf::Vector2f GetPosition();
   void SetPosition(sf::Vector2f);
-
+  sf::Vector2f GetCenter();
  protected:
   sf::Sprite *sprite;
   sf::Vector2f position;

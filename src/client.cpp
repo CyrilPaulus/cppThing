@@ -62,6 +62,8 @@ void Client::HandleEvent(sf::Event event) {
   case sf::Event::MouseWheelMoved:
     OnMouseWheelMoved(event);
     break;
+  case sf::Event::Resized:
+    OnResized(event);
   default:
     break;
   }
@@ -95,6 +97,21 @@ void Client::OnMouseButtonReleased(sf::Event event){
   default:
     break;
   }
+}
+
+void Client::OnResized(sf::Event event){
+  sf::View newView = sf::View(sf::FloatRect(0, 0, event.Size.Width, event.Size.Height));
+  window->SetView(newView);
+  
+  worldDisplay->Create(event.Size.Width, event.Size.Height);
+  newView = worldDisplay->GetDefaultView();
+  newView.SetCenter(player->GetCenter());
+  newView.Zoom(zoom);
+  worldDisplay->SetView(newView);
+
+ displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
+					window->GetHeight() - 10 - Cube::HEIGHT));
+
 }
 
 void Client::OnMouseWheelMoved(sf::Event event) {

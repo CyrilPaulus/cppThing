@@ -31,6 +31,8 @@ class Client {
   void OnMouseButtonPressed(sf::Event event);
   void OnMouseButtonReleased(sf::Event event);
   void OnMouseWheelMoved(sf::Event event);
+  void OnResized(sf::Event event);
+
   void UpdateView();
   float zoom;
   int cubeType;
