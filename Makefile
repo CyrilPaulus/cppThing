@@ -1,7 +1,7 @@
 CC := g++
 
 CFLAGS := -g -Wall -I include
-LDFLAGS := -lm -lsfml-graphics -lsfml-system -L lib/linux -lzoidcom
+LDFLAGS := -lm -lsfml-graphics -lsfml-system -L lib/linux -lzoidcomd
 
 EXEC:= a.out
 EXPORT := export.tar.gz

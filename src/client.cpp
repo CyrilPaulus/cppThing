@@ -124,6 +124,7 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 
 
 void Client::Update(float frametime) {
+  this->ZCom_processInput();
   if (addCube)
     world->AddCube(mouse->GetWorldPosition(), cubeType);
 
@@ -137,6 +138,8 @@ void Client::Update(float frametime) {
   input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
   player->Update(frametime, input);
   player->SetEyesPosition(mouse->GetWorldPosition());
+
+  this->ZCom_processOutput();
 }
 
 void Client::Draw() {
@@ -174,3 +177,35 @@ void Client::UpdateView() {
   worldDisplay->SetView(newView);
 }
 
+//Zoidcom handling
+
+void Client::ZCom_cbConnectResult(ZCom_ConnID id, eZCom_ConnectResult result, ZCom_BitStream &reply) {
+  if (result == eZCom_ConnAccepted){
+    printf("Connection established, launching...\n");
+    this->Run();
+  }
+  else
+    printf("Connection failed");
+}
+
+void Client::ZCom_cbConnectionClosed(ZCom_ConnID id, eZCom_CloseReason reason, ZCom_BitStream &reasondada) {
+  printf("Disconnected from server\n");
+  running = false;
+}
+
+void Client::Connect() {
+  this->ZCom_setDebugName("Client");
+  if(!this->ZCom_initSockets(true, 0, 0)) {
+    printf("Can't init client socket\n");
+    exit(255);
+  }
+
+  ZCom_Address server;
+  server.setAddress(eZCom_AddressUDP, 0, "localhost:50645");
+  ZCom_ConnID connectionId = this->ZCom_Connect(server, NULL);
+  if(connectionId == ZCom_Invalid_ID){
+    printf("Invalid id\n");
+    exit(255);
+  }
+  this->Run();
+}

@@ -33,5 +33,30 @@ void Server::Stop() {
 }
 
 void Server::Update(float frametime) {
-  
+  this->ZCom_processInput();
+  this->ZCom_processOutput();
+}
+
+//zoidcom handling
+
+bool Server::ZCom_cbConnectionRequest(ZCom_ConnID id, ZCom_BitStream &request, ZCom_BitStream &reply){
+  printf("A client requested connection, id : [%d].\n", id);
+  return true;
+}
+
+void Server::ZCom_cbConnectionSpawned(ZCom_ConnID id) {
+  printf("Connection with client [%d] established.\n", id);
+}
+
+void Server::ZCom_cbConnectionClosed(ZCom_ConnID id, eZCom_CloseReason reason, ZCom_BitStream &reasondata) {
+  printf("Connection with client [%d] closed.\n", id);
+}
+
+void Server::Init(){
+  this->ZCom_setDebugName("Server");
+  if (!this->ZCom_initSockets(true, 50645, 0)){
+    printf("No sockets\n");
+    exit(255);
+  }
+  printf("Socket created\n");
 }

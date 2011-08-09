@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <stdio.h>
 #include <SFML/Graphics.hpp>
 
 class GameConstant{
