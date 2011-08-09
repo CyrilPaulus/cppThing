@@ -3,7 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include "imageManager.h"
+
 #include "client.h"
+#include "server.h"
 
 class Game {
  public:
@@ -16,7 +18,6 @@ class Game {
   bool isServer;
   sf::RenderWindow *window;
   ImageManager* imageManager;
-
 };
 
 #endif /* _GAME_H_ */
