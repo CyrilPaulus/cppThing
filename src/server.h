@@ -27,7 +27,7 @@ class Server : public ZCom_Control {
                                    eZCom_NodeRole role, ZCom_NodeID net_id ) {}
   void ZCom_cbNodeRequest_Tag( ZCom_ConnID id, ZCom_ClassID requested_class, ZCom_BitStream *announcedata, 
                                eZCom_NodeRole role, zU32 tag ) {}
-  void ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream &data ) {}
+  void ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream &data );
   bool ZCom_cbDiscoverRequest( const ZCom_Address &addr, 
                                ZCom_BitStream &request, ZCom_BitStream &reply ) {return false;}
   void ZCom_cbDiscovered( const ZCom_Address &addr, ZCom_BitStream &reply )  {}

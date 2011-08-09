@@ -1,6 +1,8 @@
 #include "config.h"
 #include "client.h"
 
+#include "network/cubeupdate.h"
+
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   this->window = window;
   this->imageManager = imageManager;
@@ -126,11 +128,21 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 
 void Client::Update(float frametime) {
   this->ZCom_processInput();
-  if (addCube)
+  if (addCube){
     world->AddCube(mouse->GetWorldPosition(), cubeType);
-
-  if (removeCube)
+    ZCom_BitStream *message = new ZCom_BitStream();
+    CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true);
+    cu.Encode(message);
+    ZCom_sendData(clientId, message);
+  }
+  
+  if (removeCube){
     world->RemoveCube(mouse->GetWorldPosition());
+    ZCom_BitStream *message = new ZCom_BitStream();
+    CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false);
+    cu.Encode(message);
+    ZCom_sendData(clientId, message);
+  }
 
   Input input;
   input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);

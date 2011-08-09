@@ -2,6 +2,7 @@
 #include "server.h"
 #include <stdio.h>
 #include <SFML/System.hpp>
+#include "network/cubeupdate.h"
 
 Server::Server(ImageManager* imageManager) {
   this->imageManager = imageManager;
@@ -54,6 +55,26 @@ void Server::ZCom_cbConnectionSpawned(ZCom_ConnID id) {
 
 void Server::ZCom_cbConnectionClosed(ZCom_ConnID id, eZCom_CloseReason reason, ZCom_BitStream &reasondata) {
   printf("Connection with client [%d] closed.\n", id);
+}
+
+void Server::ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream &data ){
+  ZCom_BitStream::BitPos position;
+  data.saveReadState(position);
+  int type = data.getInt(8);
+  data.restoreReadState(position);
+  switch(type){
+  case Packet::CubeUpdate:{
+    CubeUpdate* cu = CubeUpdate::Decode(data);
+    if(cu->GetAdded())
+      world->AddCube(cu->GetPosition(), cu->GetCubeType());
+    else
+      world->RemoveCube(cu->GetPosition());
+    delete cu;
+    break;
+  }
+  default:
+    break;
+  }
 }
 
 void Server::Init(){
