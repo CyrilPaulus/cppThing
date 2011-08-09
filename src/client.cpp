@@ -17,6 +17,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   displayCube = new Cube(cubeType, imageManager);
   displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					window->GetHeight() - 10 - Cube::HEIGHT));
+  pseudo = "Anon";
 }
 
 Client::~Client(){
@@ -182,6 +183,8 @@ void Client::UpdateView() {
 void Client::ZCom_cbConnectResult(ZCom_ConnID id, eZCom_ConnectResult result, ZCom_BitStream &reply) {
   if (result == eZCom_ConnAccepted){
     printf("Connection established, launching...\n");
+    std::string newPseudo(reply.getStringStatic());
+    pseudo = newPseudo;
     this->Run();
   }
   else
@@ -202,8 +205,10 @@ void Client::Connect() {
 
   ZCom_Address server;
   server.setAddress(eZCom_AddressUDP, 0, "localhost:50645");
-  ZCom_ConnID connectionId = this->ZCom_Connect(server, NULL);
-  if(connectionId == ZCom_Invalid_ID){
+  ZCom_BitStream *connectionInfo = new ZCom_BitStream();
+  connectionInfo->addString(pseudo.data());
+  clientId = this->ZCom_Connect(server, NULL);
+  if(clientId == ZCom_Invalid_ID){
     printf("Invalid id\n");
     exit(255);
   }

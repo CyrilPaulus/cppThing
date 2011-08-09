@@ -41,6 +41,10 @@ void Server::Update(float frametime) {
 
 bool Server::ZCom_cbConnectionRequest(ZCom_ConnID id, ZCom_BitStream &request, ZCom_BitStream &reply){
   printf("A client requested connection, id : [%d].\n", id);
+  std::string pseudo(request.getStringStatic());
+  printf("Pseudo : %s", pseudo.data());
+  //TODO Validate pseudo
+  reply.addString(pseudo.data());
   return true;
 }
 

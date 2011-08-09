@@ -36,6 +36,7 @@ class Client : public ZCom_Control{
   void Update(float);
   void Draw();
 
+  std::string pseudo;
   sf::RenderWindow *window;
   sf::RenderTexture *worldDisplay;
   Mouse *mouse;
@@ -43,6 +44,7 @@ class Client : public ZCom_Control{
   Ticker *ticker;
   bool running;
 
+  ZCom_ConnID clientId; 
   void HandleEvent(sf::Event event);
   void OnClose();
   void OnMouseButtonPressed(sf::Event event);
