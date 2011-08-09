@@ -1,0 +1,23 @@
+CC := mingw32-g++
+
+CFLAGS := -Iinclude -g -Wall -DSFML_DYNAMIC  -fexceptions
+LDFLAGS := -Llib/windows -lsfml-graphics -lsfml-window -lsfml-system -lzoidcom_mw 
+
+EXEC:= cppThing.exe
+EXPORT := export.tar.gz
+DIST = $(wildcard *)
+
+all: src_all
+	copy "$(src_EXEC)" $(EXEC)
+
+clean: src_clean
+	del $(EXEC)
+
+distclean: clean src_distclean
+	del $(EXPORT)
+
+dist: distclean
+	tar czf $(EXPORT) $(DIST)
+
+DIR:= src
+include src/Rules.mk.win
