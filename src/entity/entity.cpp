@@ -1,14 +1,22 @@
 #include "../config.h"
 #include "entity.h"
 
-Entity::Entity(ImageManager *imageManager) {
+ZCom_ClassID Entity::netClassServerId = ZCom_Invalid_ID;
+ZCom_ClassID Entity::netClassClientId = ZCom_Invalid_ID;
+
+Entity::Entity(ZCom_Control*, ImageManager *imageManager, bool server) {
   sprite = new sf::Sprite(*(imageManager->get("cube")));
   offset = sf::Vector2f(0, 0);
   position = sf::Vector2f(0, 0);
   bbox = sprite->GetSize();
+  node = new ZCom_Node();  
+  remove = false;
 }
 
 Entity::~Entity() {
+  printf("DELETE\n");
+  if(node)
+    delete node;
   delete sprite;
 }
 
@@ -35,4 +43,35 @@ sf::Vector2f Entity::GetCenter() {
 
 void Entity::SetPosition(sf::Vector2f position){
   this->position = position;
+}
+
+ZCom_ClassID Entity::GetClass(bool server) {
+  if(server)
+    return(netClassServerId);
+  else
+    return(netClassClientId);
+}
+
+void Entity::RegisterClass(ZCom_Control * control, bool server){
+  if(server)
+    netClassServerId = control->ZCom_registerClass("default");
+  else
+    netClassClientId = control->ZCom_registerClass("default");
+}
+
+bool Entity::CanRemove(){
+  return remove;
+}
+
+void Entity::ProcessNodeEvents(){
+  while(node->checkEventWaiting()) {
+    eZCom_Event type;
+    eZCom_NodeRole remoteRole;
+    ZCom_ConnID connId;
+    
+    ZCom_BitStream *data = node->getNextEvent(&type, &remoteRole, &connId);
+    
+    if(remoteRole == eZCom_RoleAuthority && type == eZCom_EventRemoved)
+      remove = true;  
+ } 
 }

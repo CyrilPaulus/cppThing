@@ -9,17 +9,19 @@
 
 class World {
  public:
-  World(ImageManager *);
+  World(ZCom_Control*, ImageManager *, bool);
   ~World();
   
   void Draw(sf::RenderTarget *);
-  
+  void Update();
   void AddCube(sf::Vector2f, int);
   void RemoveCube(sf::Vector2f);
 
   Cube* GetCollidingCube(sf::FloatRect);
  private:
   ImageManager* imageManager;
+  ZCom_Control* control;
+  bool server;
   std::list<Cube*> cubeList;
   QuadTree *quadTree;
 };

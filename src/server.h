@@ -21,7 +21,7 @@ class Server : public ZCom_Control {
   bool ZCom_cbConnectionRequest( ZCom_ConnID  id, ZCom_BitStream &request, ZCom_BitStream &reply );
   void ZCom_cbConnectionSpawned( ZCom_ConnID id );
   void ZCom_cbConnectionClosed( ZCom_ConnID id, eZCom_CloseReason reason, ZCom_BitStream &reasondata );
-  bool ZCom_cbZoidRequest( ZCom_ConnID id, zU8 requested_level, ZCom_BitStream &reason ) {return false;}
+  bool ZCom_cbZoidRequest( ZCom_ConnID id, zU8 requested_level, ZCom_BitStream &reason );
   void ZCom_cbZoidResult( ZCom_ConnID id, eZCom_ZoidResult result, zU8 new_level, ZCom_BitStream &reason ) {}
   void ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_class, ZCom_BitStream *announcedata,
                                    eZCom_NodeRole role, ZCom_NodeID net_id ) {}

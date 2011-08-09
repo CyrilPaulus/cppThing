@@ -10,13 +10,13 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   worldDisplay = new sf::RenderTexture();
   worldDisplay->Create(window->GetWidth(), window->GetHeight());
   mouse = new Mouse(window, worldDisplay, imageManager);
-  world = new World(imageManager);
+  world = new World(this, imageManager, false);
   addCube = false;
   removeCube = false;
-  player = new Player(world, imageManager);
+  player = new Player(this, world, imageManager, false);
   zoom = 1;
   cubeType = 0;
-  displayCube = new Cube(cubeType, imageManager);
+  displayCube = new Cube(this, cubeType, sf::Vector2f(0,0), imageManager, false);
   displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					window->GetHeight() - 10 - Cube::HEIGHT));
   pseudo = "Anon";
@@ -129,7 +129,6 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 void Client::Update(float frametime) {
   this->ZCom_processInput();
   if (addCube){
-    world->AddCube(mouse->GetWorldPosition(), cubeType);
     ZCom_BitStream *message = new ZCom_BitStream();
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true);
     cu.Encode(message);
@@ -137,13 +136,14 @@ void Client::Update(float frametime) {
   }
   
   if (removeCube){
-    world->RemoveCube(mouse->GetWorldPosition());
     ZCom_BitStream *message = new ZCom_BitStream();
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false);
     cu.Encode(message);
     ZCom_sendData(clientId, message);
   }
 
+  world->Update();
+  
   Input input;
   input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);
   input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
@@ -151,7 +151,7 @@ void Client::Update(float frametime) {
   input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
   player->Update(frametime, input);
   player->SetEyesPosition(mouse->GetWorldPosition());
-
+  
   this->ZCom_processOutput();
 }
 
@@ -197,6 +197,7 @@ void Client::ZCom_cbConnectResult(ZCom_ConnID id, eZCom_ConnectResult result, ZC
     printf("Connection established, launching...\n");
     std::string newPseudo(reply.getStringStatic());
     pseudo = newPseudo;
+    ZCom_requestZoidMode(clientId, 1);
     this->Run();
   }
   else
@@ -206,6 +207,24 @@ void Client::ZCom_cbConnectResult(ZCom_ConnID id, eZCom_ConnectResult result, ZC
 void Client::ZCom_cbConnectionClosed(ZCom_ConnID id, eZCom_CloseReason reason, ZCom_BitStream &reasondada) {
   printf("Disconnected from server\n");
   running = false;
+}
+
+void Client::ZCom_cbZoidResult( ZCom_ConnID id, eZCom_ZoidResult result, zU8 new_level, ZCom_BitStream &reason ) {
+  if(result == eZCom_ZoidEnabled)
+    printf("[CLIENT] %d level entered", new_level);
+  else
+    printf("[CLIENT] access refused to %d level", new_level);
+}
+
+void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_class, ZCom_BitStream *announcedata, eZCom_NodeRole role, ZCom_NodeID net_id ) {
+
+  if(requested_class == Cube::GetClass(false)){
+    int type = announcedata->getInt(32);
+    float x = announcedata->getFloat(23);
+    float y = announcedata->getFloat(23);
+    printf("%f, %f\n", x, y);
+    world->AddCube(sf::Vector2f(x,y), type);
+  }
 }
 
 void Client::Connect() {
@@ -226,3 +245,4 @@ void Client::Connect() {
   }
   this->Run();
 }
+

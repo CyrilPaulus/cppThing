@@ -8,9 +8,9 @@ class Cube : public Entity{
   static const int HEIGHT = 32;
   static const int BLOCKTYPECOUNT = 48;
 
-  Cube(int, ImageManager*);
+  Cube(ZCom_Control * ,int,sf::Vector2f, ImageManager*, bool);
   void SetType(int);
-
+  static void RegisterClass(ZCom_Control * control, bool server);
  private:
   int type;
   ImageManager *imageManager;

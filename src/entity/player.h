@@ -8,11 +8,13 @@
 
 class Player : public Entity {
  public:
-  Player(World*, ImageManager*);
+  Player(ZCom_Control* ,World*, ImageManager*, bool);
   ~Player();
   void Draw(sf::RenderTarget *);
   void SetEyesPosition(sf::Vector2f);
   void Update(float, Input);
+
+  static void RegisterClass(ZCom_Control * control, bool server);
 
  private:
   World* world;

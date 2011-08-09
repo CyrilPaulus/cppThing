@@ -3,7 +3,7 @@
 #include "../utils/vectorutils.h"
 #include <algorithm>
 
-Player::Player(World *world, ImageManager *imageManager) : Entity(imageManager) {
+Player::Player(ZCom_Control *control, World *world, ImageManager *imageManager, bool server) : Entity(control, imageManager, server) {
   this->world = world;
   sprite->SetTexture(*(imageManager->get("player")), true);
   bbox = sf::Vector2f(sprite->GetSize().x - 2, sprite->GetSize().y - 2);
@@ -19,7 +19,7 @@ Player::Player(World *world, ImageManager *imageManager) : Entity(imageManager) 
   lpPosition = lpOrigin;
   rpPosition = rpOrigin;
 
-  noclip = false;
+  noclip = true;
 
   maxWalkSpeed = 100;
   maxFallSpeed = 100;
@@ -122,4 +122,11 @@ void Player::Update(float frametime, Input input) {
        speed.y = 0;
     }
   }
+}
+
+void Player::RegisterClass(ZCom_Control * control, bool server){
+  if(server)
+    netClassServerId = control->ZCom_registerClass("player");
+  else
+    netClassClientId = control->ZCom_registerClass("player");
 }

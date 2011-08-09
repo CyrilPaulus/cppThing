@@ -6,7 +6,7 @@
 
 Server::Server(ImageManager* imageManager) {
   this->imageManager = imageManager;
-  this->world = new World(imageManager);
+  this->world = new World(this, imageManager, true);
   this->running = false;
   this->ticker = new Ticker();
 }
@@ -75,6 +75,11 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream &data ){
   default:
     break;
   }
+}
+
+bool Server::ZCom_cbZoidRequest( ZCom_ConnID id, zU8 requested_level, ZCom_BitStream &reason ) {
+
+  return requested_level == 1;
 }
 
 void Server::Init(){

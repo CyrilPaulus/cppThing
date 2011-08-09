@@ -7,6 +7,7 @@
 
 #include "client.h"
 #include "server.h"
+#include "entity/cube.h"
 
 void startServer(void* server);
 void processZoidcomLog(const char *log);
@@ -30,7 +31,9 @@ void Game::Run(){
 
   srand(time(NULL));
   Server* s = new Server(imageManager);
+  Cube::RegisterClass(s, true);
   Client* c = new Client(window, imageManager);
+  Cube::RegisterClass(c, false);
   sf::Thread serverThread(&startServer, s);
   
   s->Init();
