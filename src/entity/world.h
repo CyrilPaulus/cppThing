@@ -23,7 +23,7 @@ class World {
 
   void AddPlayer(Player *);
   void RemovePlayer(Player *);
-
+  void RemovePlayerByID(ZCom_ConnID);
   Cube* GetCollidingCube(sf::FloatRect);
  private:
   ImageManager* imageManager;

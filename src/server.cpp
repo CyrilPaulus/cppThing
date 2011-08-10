@@ -50,7 +50,7 @@ bool Server::ZCom_cbConnectionRequest(ZCom_ConnID id, ZCom_BitStream &request, Z
 }
 
 void Server::ZCom_cbConnectionSpawned(ZCom_ConnID id) {
-  printf("Connection with client [%d] established.\n", id);
+  printf("[SERVER] Connection with client [%d] established.\n", id);
   Player *p = new Player(imageManager, world);
   p->SetID(id);
   p->RegisterZCom(this, true);
@@ -58,7 +58,8 @@ void Server::ZCom_cbConnectionSpawned(ZCom_ConnID id) {
 }
 
 void Server::ZCom_cbConnectionClosed(ZCom_ConnID id, eZCom_CloseReason reason, ZCom_BitStream &reasondata) {
-  printf("Connection with client [%d] closed.\n", id);
+  printf("[SERVER] Connection with client [%d] closed.\n", id);
+  world->RemovePlayerByID(id);
 }
 
 void Server::ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream &data ){

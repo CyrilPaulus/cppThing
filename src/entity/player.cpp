@@ -34,8 +34,10 @@ Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) 
 }
 
 Player::~Player(){
-  delete pupil;
-  delete colorMask;
+  if(pupil)
+    delete pupil;
+  if(colorMask)
+    delete colorMask;
 }
 
 void Player::Draw(sf::RenderTarget * rt) {

@@ -88,6 +88,18 @@ void World::RemovePlayer(Player *p) {
   playerList.remove(p);
   delete(p);
 }
+
+void World::RemovePlayerByID(ZCom_ConnID id){
+  std::list<Player*>::iterator p;
+  for(p = playerList.begin(); p != playerList.end(); p++) {
+    if((*p)->GetID() == id) {
+      delete(*p);
+      playerList.erase(p);
+      break;
+    }
+  }
+}
+
 Cube* World::GetCollidingCube(sf::FloatRect bbox){
   std::list<Cube*> candidate = quadTree->GetList(bbox);
   std::list<Cube*>::iterator it;

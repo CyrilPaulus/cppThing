@@ -9,9 +9,12 @@
 
 class Game {
  public:
+  static const int LOCAL = 0;
+  static const int CLIENT = 1;
+  static const int SERVER = 2;
   Game();
   ~Game();
-  void Run();
+  void Run(int type);
 
  private:
   bool isClient;

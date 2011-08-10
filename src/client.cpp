@@ -49,6 +49,7 @@ int Client::Run(){
     Draw();
 
   }
+  ZCom_Disconnect(clientId, NULL);
   return 1;
 }
 
@@ -253,7 +254,7 @@ void Client::Connect() {
   server.setAddress(eZCom_AddressUDP, 0, "localhost:50645");
   ZCom_BitStream *connectionInfo = new ZCom_BitStream();
   connectionInfo->addString(pseudo.data());
-  clientId = this->ZCom_Connect(server, NULL);
+  clientId = this->ZCom_Connect(server, connectionInfo);
   if(clientId == ZCom_Invalid_ID){
     printf("Invalid id\n");
     exit(255);
