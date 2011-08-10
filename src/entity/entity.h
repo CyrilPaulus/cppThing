@@ -6,7 +6,7 @@
 #include <zoidcom.h>
 class Entity {
  public:
-  Entity(ZCom_Control*, ImageManager *, bool server);
+  Entity(ImageManager *);
   ~Entity();
 
   void Draw(sf::RenderTarget *);
@@ -19,6 +19,7 @@ class Entity {
   static void RegisterClass(ZCom_Control * control, bool server);
   static ZCom_ClassID GetClass(bool server);
 
+  void RegisterZCom(ZCom_Control *, bool);
   void ProcessNodeEvents();
   bool CanRemove();
 

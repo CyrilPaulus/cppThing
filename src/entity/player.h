@@ -8,7 +8,7 @@
 
 class Player : public Entity {
  public:
-  Player(ZCom_Control* ,World*, ImageManager*, bool);
+  Player(ImageManager*, World*);
   ~Player();
   void Draw(sf::RenderTarget *);
   void SetEyesPosition(sf::Vector2f);

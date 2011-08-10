@@ -38,7 +38,9 @@ void World::AddCube(sf::Vector2f pos, int type){
   }
   
   if(!exist) {
-    Cube* cube = new Cube(control, type, gridPos, imageManager, server);
+    Cube* cube = new Cube(imageManager, type);
+    cube->SetPosition(gridPos);
+    cube->RegisterZCom(control, server);    
     cubeList.push_back(cube);
     quadTree->Add(cube);
   } 

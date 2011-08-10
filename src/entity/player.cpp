@@ -3,7 +3,7 @@
 #include "../utils/vectorutils.h"
 #include <algorithm>
 
-Player::Player(ZCom_Control *control, World *world, ImageManager *imageManager, bool server) : Entity(control, imageManager, server) {
+Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) {
   this->world = world;
   sprite->SetTexture(*(imageManager->get("player")), true);
   bbox = sf::Vector2f(sprite->GetSize().x - 2, sprite->GetSize().y - 2);

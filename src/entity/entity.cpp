@@ -4,7 +4,7 @@
 ZCom_ClassID Entity::netClassServerId = ZCom_Invalid_ID;
 ZCom_ClassID Entity::netClassClientId = ZCom_Invalid_ID;
 
-Entity::Entity(ZCom_Control*, ImageManager *imageManager, bool server) {
+Entity::Entity(ImageManager *imageManager) {
   sprite = new sf::Sprite(*(imageManager->get("cube")));
   offset = sf::Vector2f(0, 0);
   position = sf::Vector2f(0, 0);
@@ -14,7 +14,6 @@ Entity::Entity(ZCom_Control*, ImageManager *imageManager, bool server) {
 }
 
 Entity::~Entity() {
-  printf("DELETE\n");
   if(node)
     delete node;
   delete sprite;

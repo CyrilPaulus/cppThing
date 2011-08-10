@@ -2,11 +2,13 @@
 #include "cube.h"
 
 
-Cube::Cube(ZCom_Control *control, int type, sf::Vector2f position, ImageManager* imageManager, bool server) : Entity(control, imageManager, server) {
+Cube::Cube(ImageManager* imageManager, int type) : Entity(imageManager) {
   this->imageManager = imageManager;
-  this->position = position;
   sprite->SetTexture(*(imageManager->get("tileset")), true);
   SetType(type);
+}
+
+void Cube::RegisterZCom(ZCom_Control *control, bool server) {
   node->registerNodeDynamic(GetClass(server), control);
   if(server){
     ZCom_BitStream *adata = new ZCom_BitStream();

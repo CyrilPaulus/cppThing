@@ -13,10 +13,10 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   world = new World(this, imageManager, false);
   addCube = false;
   removeCube = false;
-  player = new Player(this, world, imageManager, false);
+  player = new Player(imageManager, world);
   zoom = 1;
   cubeType = 0;
-  displayCube = new Cube(this, cubeType, sf::Vector2f(0,0), imageManager, false);
+  displayCube = new Cube(imageManager, cubeType);
   displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					window->GetHeight() - 10 - Cube::HEIGHT));
   pseudo = "Anon";
@@ -222,7 +222,6 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     int type = announcedata->getInt(32);
     float x = announcedata->getFloat(23);
     float y = announcedata->getFloat(23);
-    printf("%f, %f\n", x, y);
     world->AddCube(sf::Vector2f(x,y), type);
   }
 }
