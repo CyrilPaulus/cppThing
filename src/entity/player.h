@@ -15,6 +15,7 @@ class Player : public Entity {
   void Draw(sf::RenderTarget *);
   void SetEyesPosition(sf::Vector2f);
   void Update(float, Input);
+  void SetColor(sf::Color);
 
   static void RegisterClass(ZCom_Control * control, bool server);
   void RegisterZCom(ZCom_Control *, bool);

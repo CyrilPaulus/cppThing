@@ -147,6 +147,11 @@ void Player::RegisterZCom(ZCom_Control *control, bool server) {
   if(server){
     ZCom_BitStream *adata = new ZCom_BitStream();
     adata->addInt(id, 32);
+    adata->addFloat(position.x, 23);
+    adata->addFloat(position.y, 23);
+    adata->addInt(colorMask->GetColor().r, 8);
+    adata->addInt(colorMask->GetColor().g, 8);
+    adata->addInt(colorMask->GetColor().b, 8);
     node->setAnnounceData(adata);
   }
 }
@@ -156,4 +161,8 @@ ZCom_ClassID Player::GetClass(bool server) {
     return(Player::netClassServerId);
   else
     return(Player::netClassClientId);
+}
+
+void Player::SetColor(sf::Color c){
+  colorMask->SetColor(c);
 }

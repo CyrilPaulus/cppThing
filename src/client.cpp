@@ -227,7 +227,14 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
   }
   else if (requested_class == Player::GetClass(false)) {
     ZCom_ConnID id = announcedata->getInt(32);
+    float x = announcedata->getFloat(23);
+    float y = announcedata->getFloat(23);
+    int r = announcedata->getInt(8);
+    int g = announcedata->getInt(8);
+    int b = announcedata->getInt(8);
     Player* p = new Player(imageManager, world);
+    p->SetPosition(sf::Vector2f(x, y));
+    p->SetColor(sf::Color(r, g, b));
     p->RegisterZCom(this, false);
     if(id == clientId)
       player = p;
