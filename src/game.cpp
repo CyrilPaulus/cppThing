@@ -32,10 +32,10 @@ void Game::Run(int type){
     window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
     window->SetFramerateLimit(GameConstant::FRAMERATE_LIMIT);
     window->ShowMouseCursor(false);
-    Server* s = new Server(imageManager);
+    Server* s = new Server(imageManager, zcom);
     Cube::RegisterClass(s, true);
     Player::RegisterClass(s, true);
-    Client* c = new Client(window, imageManager);
+    Client* c = new Client(window, imageManager, NULL);
     Cube::RegisterClass(c, false);
     Player::RegisterClass(c, false);
     sf::Thread serverThread(&startServer, s);
@@ -52,14 +52,14 @@ void Game::Run(int type){
     window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
     window->SetFramerateLimit(GameConstant::FRAMERATE_LIMIT);
     window->ShowMouseCursor(false);
-    Client* c = new Client(window, imageManager);
+    Client* c = new Client(window, imageManager, zcom);
     Cube::RegisterClass(c, false);
     Player::RegisterClass(c, false);
     c->Connect();
     delete c;
   }
   else if(type == Game::SERVER) {
-    Server* s = new Server(imageManager);
+    Server* s = new Server(imageManager, zcom);
     Cube::RegisterClass(s, true);
     Player::RegisterClass(s, true);
     s->Init();

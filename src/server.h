@@ -10,7 +10,7 @@
 
 class Server : public ZCom_Control {
  public:
-  Server(ImageManager *);
+  Server(ImageManager *, ZoidCom* zcom);
   ~Server();
   void Run();
   void Stop();
@@ -37,6 +37,7 @@ class Server : public ZCom_Control {
   ImageManager *imageManager;
   Ticker *ticker;
   World *world;
+  ZoidCom* zcom;
   
 };
 
