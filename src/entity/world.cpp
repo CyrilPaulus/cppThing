@@ -30,30 +30,32 @@ void World::Draw(sf::RenderTarget *rt){
     (*p)->Draw(rt);
 }
 
-void World::AddCube(sf::Vector2f pos, int type){
+void World::AddCube(sf::Vector2f pos, int type, bool force){
   sf::Vector2f gridPos = sf::Vector2f(floor(pos.x / Cube::WIDTH) * Cube::WIDTH, floor(pos.y / Cube::HEIGHT) * Cube::HEIGHT);
   sf::FloatRect bbox(gridPos.x, gridPos.y, Cube::WIDTH, Cube::HEIGHT);
   
   bool exist = false;
   
-  std::list<Cube*>::iterator i;
-  std::list<Cube*> chunk = quadTree->GetList(bbox);
-  for(i = chunk.begin(); i != chunk.end(); i++) {
-    if((*i)->GetBbox().Intersects(bbox)) {
-      exist = true;
-      break;
-    }
-  }
-
-  if(!exist) {
-    std::list<Player*>::iterator p;
-    for(p = playerList.begin(); p != playerList.end(); p++)
-      if((*p)->GetBbox().Intersects(bbox)) {
+  if(!force) {
+    std::list<Cube*>::iterator i;
+    std::list<Cube*> chunk = quadTree->GetList(bbox);
+    for(i = chunk.begin(); i != chunk.end(); i++) {
+      if((*i)->GetBbox().Intersects(bbox)) {
 	exist = true;
 	break;
       }
+    }
+    
+    if(!exist) {
+      std::list<Player*>::iterator p;
+      for(p = playerList.begin(); p != playerList.end(); p++)
+	if((*p)->GetBbox().Intersects(bbox)) {
+	  exist = true;
+	  break;
+	}
+    }
   }
-
+  
   if(!exist) {
     Cube* cube = new Cube(imageManager, type);
     cube->SetPosition(gridPos);
@@ -61,6 +63,10 @@ void World::AddCube(sf::Vector2f pos, int type){
     cubeList.push_back(cube);
     quadTree->Add(cube);
   } 
+}
+
+void World::AddCube(sf::Vector2f pos, int type) {
+  AddCube(pos, type, false);
 }
 
 void World::RemoveCube(sf::Vector2f pos) {

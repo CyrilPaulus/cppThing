@@ -225,7 +225,7 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     int type = announcedata->getInt(32);
     float x = announcedata->getFloat(23);
     float y = announcedata->getFloat(23);
-    world->AddCube(sf::Vector2f(x,y), type);
+    world->AddCube(sf::Vector2f(x,y), type, true);
   }
   else if (requested_class == Player::GetClass(false)) {
     ZCom_ConnID id = announcedata->getInt(32);

@@ -18,6 +18,7 @@ class World {
   void Draw(sf::RenderTarget *);
   void Update();
   void AddCube(sf::Vector2f, int);
+  void AddCube(sf::Vector2f, int, bool);
   void RemoveCube(sf::Vector2f);
 
   void AddPlayer(Player *);
