@@ -44,7 +44,8 @@ class Client : public ZCom_Control{
   Ticker *ticker;
   bool running;
 
-  ZCom_ConnID clientId; 
+  ZCom_ConnID clientId;
+  ZCom_ConnID serverId;
   void HandleEvent(sf::Event event);
   void OnClose();
   void OnMouseButtonPressed(sf::Event event);

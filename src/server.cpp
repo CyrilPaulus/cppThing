@@ -45,6 +45,7 @@ bool Server::ZCom_cbConnectionRequest(ZCom_ConnID id, ZCom_BitStream &request, Z
   std::string pseudo(request.getStringStatic());
   printf("Pseudo : %s", pseudo.data());
   //TODO Validate pseudo
+  reply.addInt(id, 32);
   reply.addString(pseudo.data());
   return true;
 }

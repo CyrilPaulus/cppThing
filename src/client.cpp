@@ -22,6 +22,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					window->GetHeight() - 10 - Cube::HEIGHT));
   pseudo = "Anon";
+  
 }
 
 Client::~Client(){
@@ -49,7 +50,7 @@ int Client::Run(){
     Draw();
 
   }
-  ZCom_Disconnect(clientId, NULL);
+  ZCom_Disconnect(serverId, NULL);
   return 1;
 }
 
@@ -134,14 +135,14 @@ void Client::Update(float frametime) {
     ZCom_BitStream *message = new ZCom_BitStream();
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true);
     cu.Encode(message);
-    ZCom_sendData(clientId, message);
+    ZCom_sendData(serverId, message);
   }
   
   if (removeCube){
     ZCom_BitStream *message = new ZCom_BitStream();
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false);
     cu.Encode(message);
-    ZCom_sendData(clientId, message);
+    ZCom_sendData(serverId, message);
   }
 
   world->Update();
@@ -197,9 +198,10 @@ void Client::UpdateView() {
 void Client::ZCom_cbConnectResult(ZCom_ConnID id, eZCom_ConnectResult result, ZCom_BitStream &reply) {
   if (result == eZCom_ConnAccepted){
     printf("Connection established, launching...\n");
+    clientId = reply.getInt(32);
     std::string newPseudo(reply.getStringStatic());
     pseudo = newPseudo;
-    ZCom_requestZoidMode(clientId, 1);
+    ZCom_requestZoidMode(serverId, 1);
     this->Run();
   }
   else
@@ -227,7 +229,7 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     world->AddCube(sf::Vector2f(x,y), type, true);
   }
   else if (requested_class == Player::GetClass(false)) {
-    ZCom_ConnID id = announcedata->getInt(32);
+    ZCom_ConnID idIn = announcedata->getInt(32);
     float x = announcedata->getFloat(23);
     float y = announcedata->getFloat(23);
     int r = announcedata->getInt(8);
@@ -237,7 +239,8 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     p->SetPosition(sf::Vector2f(x, y));
     p->SetColor(sf::Color(r, g, b));
     p->RegisterZCom(this, false);
-    if(id == clientId)
+    
+    if(idIn == clientId)
       player = p;
     world->AddPlayer(p);
   }
@@ -254,8 +257,8 @@ void Client::Connect() {
   server.setAddress(eZCom_AddressUDP, 0, "localhost:50645");
   ZCom_BitStream *connectionInfo = new ZCom_BitStream();
   connectionInfo->addString(pseudo.data());
-  clientId = this->ZCom_Connect(server, connectionInfo);
-  if(clientId == ZCom_Invalid_ID){
+  serverId = this->ZCom_Connect(server, connectionInfo);
+  if(serverId == ZCom_Invalid_ID){
     printf("Invalid id\n");
     exit(255);
   }
