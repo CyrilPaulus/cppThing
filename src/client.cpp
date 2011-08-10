@@ -187,7 +187,7 @@ void Client::UpdateView() {
   float bottom = newView.GetCenter().y + newView.GetSize().y / 2;
   if (player->GetBbox().Top - 100 * zoom < top)
     newView.Move(sf::Vector2f(0, player->GetBbox().Top - 100 * zoom - top));
-  else
+  else if(player->GetBbox().Top + player->GetBbox().Height + 100 * zoom > bottom)
     newView.Move(sf::Vector2f(0, player->GetBbox().Top + player->GetBbox().Height + 100 * zoom - bottom));
 
   worldDisplay->SetView(newView);
