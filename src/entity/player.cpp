@@ -22,7 +22,7 @@ Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) 
   lpPosition = lpOrigin;
   rpPosition = rpOrigin;
 
-  noclip = true;
+  noclip = false;
 
   maxWalkSpeed = 100;
   maxFallSpeed = 100;
@@ -145,6 +145,14 @@ ZCom_ConnID Player::GetID(){
 }
 
 void Player::RegisterZCom(ZCom_Control *control, bool server) {
+  node->beginReplicationSetup(6);
+  node->addReplicationFloat(&position.x, 23, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
+  node->addReplicationFloat(&position.y, 23, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
+  node->addReplicationFloat(&lpPosition.x, 23, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
+  node->addReplicationFloat(&lpPosition.y, 23, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
+  node->addReplicationFloat(&rpPosition.x, 23, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
+  node->addReplicationFloat(&rpPosition.y, 23, ZCOM_REPFLAG_MOSTRECENT, ZCOM_REPRULE_AUTH_2_ALL);
+  node->endReplicationSetup();
   node->registerNodeDynamic(GetClass(server), control);
   if(server){
     ZCom_BitStream *adata = new ZCom_BitStream();

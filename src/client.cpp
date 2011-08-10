@@ -2,7 +2,7 @@
 #include "client.h"
 
 #include "network/cubeupdate.h"
-
+#include "network/usermessage.h"
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   this->window = window;
   //TODO find why we can't use the same imageManager.
@@ -153,8 +153,13 @@ void Client::Update(float frametime) {
     input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
     input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
     input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
-    player->Update(frametime, input);
-    player->SetEyesPosition(mouse->GetWorldPosition());
+    
+    ZCom_BitStream *message = new ZCom_BitStream();
+    UserMessage um(frametime, input, mouse->GetWorldPosition());
+    um.Encode(message);
+    ZCom_sendData(serverId, message);
+    
+    //player->SetEyesPosition(mouse->GetWorldPosition());
     UpdateView();
   }
   this->ZCom_processOutput();

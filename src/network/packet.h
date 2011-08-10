@@ -7,6 +7,7 @@ class Packet{
  public:
   static const int Default = 0;
   static const int CubeUpdate = 1;
+  static const int UserMessage = 2;
  protected:
   int type;
 };

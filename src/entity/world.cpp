@@ -137,4 +137,11 @@ void World::Update() {
   }
 }
 
- 
+Player *World::GetPlayerByID(ZCom_ConnID id){
+  std::list<Player*>::iterator p;
+  for(p = playerList.begin(); p != playerList.end(); p++){
+    if((*p)->GetID() == id)
+      return (*p);
+  }
+  return NULL;
+} 

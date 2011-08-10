@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <SFML/System.hpp>
 #include "network/cubeupdate.h"
+#include "network/usermessage.h"
 
 Server::Server(ImageManager* imageManager) {
   this->imageManager = imageManager;
@@ -19,6 +20,7 @@ Server::~Server() {
 void Server::Run() {
   running = true;
   printf("Server started\n");
+  world->AddCube(sf::Vector2f(0,90), 1);
   while(running) {
     if(ticker->Tick())
       Update(ticker->GetElapsedSeconds());
@@ -76,6 +78,13 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream &data ){
     else
       world->RemoveCube(cu->GetPosition());
     delete cu;
+    break;
+  }
+  case Packet::UserMessage:{
+    UserMessage* um = UserMessage::Decode(data);
+    world->GetPlayerByID(id)->Update(um->GetFrametime(), um->GetInput());
+    world->GetPlayerByID(id)->SetEyesPosition(um->GetLookDir());
+    delete um;
     break;
   }
   default:
