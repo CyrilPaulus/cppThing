@@ -163,8 +163,6 @@ void Client::Draw() {
 
   worldDisplay->Clear(sf::Color(0,0,0,0));
   world->Draw(worldDisplay);
-  if(player)
-    player->Draw(worldDisplay);
   worldDisplay->Display();
 
   window->Draw(sf::Sprite(worldDisplay->GetTexture()));
