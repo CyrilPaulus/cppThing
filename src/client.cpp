@@ -5,7 +5,9 @@
 
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   this->window = window;
-  this->imageManager = imageManager;
+  //TODO find why we can't use the same imageManager.
+  this->imageManager = new ImageManager();
+  
   ticker = new Ticker();
   worldDisplay = new sf::RenderTexture();
   worldDisplay->Create(window->GetWidth(), window->GetHeight());
@@ -13,7 +15,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   world = new World(this, imageManager, false);
   addCube = false;
   removeCube = false;
-  player = new Player(imageManager, world);
+  player = NULL;
   zoom = 1;
   cubeType = 0;
   displayCube = new Cube(imageManager, cubeType);
@@ -24,7 +26,6 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
 
 Client::~Client(){
   delete displayCube;
-  delete player;
   delete ticker;
   delete mouse;
   delete worldDisplay;
@@ -144,24 +145,26 @@ void Client::Update(float frametime) {
 
   world->Update();
   
-  Input input;
-  input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);
-  input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
-  input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
-  input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
-  player->Update(frametime, input);
-  player->SetEyesPosition(mouse->GetWorldPosition());
-  
+  if(player != NULL) {
+    Input input;
+    input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);
+    input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
+    input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
+    input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
+    player->Update(frametime, input);
+    player->SetEyesPosition(mouse->GetWorldPosition());
+    UpdateView();
+  }
   this->ZCom_processOutput();
 }
 
 void Client::Draw() {
-  UpdateView();
   window->Clear(GameConstant::BackgroundColor);
 
   worldDisplay->Clear(sf::Color(0,0,0,0));
   world->Draw(worldDisplay);
-  player->Draw(worldDisplay);
+  if(player)
+    player->Draw(worldDisplay);
   worldDisplay->Display();
 
   window->Draw(sf::Sprite(worldDisplay->GetTexture()));
@@ -223,6 +226,14 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     float x = announcedata->getFloat(23);
     float y = announcedata->getFloat(23);
     world->AddCube(sf::Vector2f(x,y), type);
+  }
+  else if (requested_class == Player::GetClass(false)) {
+    ZCom_ConnID id = announcedata->getInt(32);
+    Player* p = new Player(imageManager, world);
+    p->RegisterZCom(this, false);
+    if(id == clientId)
+      player = p;
+    world->AddPlayer(p);
   }
 }
 

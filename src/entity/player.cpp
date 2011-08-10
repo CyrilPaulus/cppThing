@@ -3,6 +3,9 @@
 #include "../utils/vectorutils.h"
 #include <algorithm>
 
+ZCom_ClassID Player::netClassServerId = ZCom_Invalid_ID;
+ZCom_ClassID Player::netClassClientId = ZCom_Invalid_ID;
+
 Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) {
   this->world = world;
   sprite->SetTexture(*(imageManager->get("player")), true);
@@ -126,7 +129,31 @@ void Player::Update(float frametime, Input input) {
 
 void Player::RegisterClass(ZCom_Control * control, bool server){
   if(server)
-    netClassServerId = control->ZCom_registerClass("player");
+    Player::netClassServerId = control->ZCom_registerClass("player", ZCOM_CLASSFLAG_ANNOUNCEDATA);
   else
-    netClassClientId = control->ZCom_registerClass("player");
+    Player::netClassClientId = control->ZCom_registerClass("player", ZCOM_CLASSFLAG_ANNOUNCEDATA);
+}
+
+void Player::SetID(ZCom_ConnID id){
+  this->id = id;
+}
+
+ZCom_ConnID Player::GetID(){
+  return id;
+}
+
+void Player::RegisterZCom(ZCom_Control *control, bool server) {
+  node->registerNodeDynamic(GetClass(server), control);
+  if(server){
+    ZCom_BitStream *adata = new ZCom_BitStream();
+    adata->addInt(id, 32);
+    node->setAnnounceData(adata);
+  }
+}
+
+ZCom_ClassID Player::GetClass(bool server) {
+  if(server)
+    return(Player::netClassServerId);
+  else
+    return(Player::netClassClientId);
 }

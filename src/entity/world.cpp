@@ -14,12 +14,20 @@ World::~World() {
   std::list<Cube*>::iterator i;
   for(i = cubeList.begin(); i != cubeList.end(); i++)
     delete (*i);
+
+  std::list<Player*>::iterator p;
+  for(p = playerList.begin(); p != playerList.end(); p++)
+    delete (*p);
 }
 
 void World::Draw(sf::RenderTarget *rt){
   std::list<Cube*>::iterator i;
   for(i = cubeList.begin(); i != cubeList.end(); i++)
     (*i)->Draw(rt);
+
+  std::list<Player*>::iterator p;
+  for(p = playerList.begin(); p != playerList.end(); p++)
+    (*p)->Draw(rt);
 }
 
 void World::AddCube(sf::Vector2f pos, int type){
@@ -36,7 +44,16 @@ void World::AddCube(sf::Vector2f pos, int type){
       break;
     }
   }
-  
+
+  if(!exist) {
+    std::list<Player*>::iterator p;
+    for(p = playerList.begin(); p != playerList.end(); p++)
+      if((*p)->GetBbox().Intersects(bbox)) {
+	exist = true;
+	break;
+      }
+  }
+
   if(!exist) {
     Cube* cube = new Cube(imageManager, type);
     cube->SetPosition(gridPos);
@@ -57,6 +74,14 @@ void World::RemoveCube(sf::Vector2f pos) {
   }
 }
 
+void World::AddPlayer(Player *p) {
+  playerList.push_back(p);
+}
+
+void World::RemovePlayer(Player *p) {
+  playerList.remove(p);
+  delete(p);
+}
 Cube* World::GetCollidingCube(sf::FloatRect bbox){
   std::list<Cube*> candidate = quadTree->GetList(bbox);
   std::list<Cube*>::iterator it;
@@ -68,6 +93,7 @@ Cube* World::GetCollidingCube(sf::FloatRect bbox){
 } 
 
 void World::Update() {
+  //TODO find a bette way to delete
   std::list<Cube*> toDelete;
   std::list<Cube*>::iterator i;
   for(i = cubeList.begin(); i != cubeList.end(); i++) {
@@ -78,6 +104,18 @@ void World::Update() {
 
   for(i = toDelete.begin(); i != toDelete.end(); i++) {
     RemoveCube((*i)->GetPosition());
+  }
+
+  std::list<Player*> toDeleteP;
+  std::list<Player*>::iterator p;
+  for(p = playerList.begin(); p != playerList.end(); p++) {
+    (*p)->ProcessNodeEvents();
+    if((*p)->CanRemove())
+      toDeleteP.push_back(*p);
+  }
+
+  for(p = toDeleteP.begin(); p != toDeleteP.end(); p++) {
+    RemovePlayer((*p));
   }
 }
 

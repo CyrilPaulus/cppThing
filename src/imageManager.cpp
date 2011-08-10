@@ -7,7 +7,7 @@ ImageManager::~ImageManager() {
     delete i->second;
 }
 
-sf::Texture *ImageManager::get(std::string name) {
+const sf::Texture *ImageManager::get(std::string name) {
   sf::Texture *value = imageSet[name];
   if(value != NULL)
     return value;

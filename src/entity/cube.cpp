@@ -1,6 +1,8 @@
 #include "../config.h"
 #include "cube.h"
 
+ZCom_ClassID Cube::netClassServerId = ZCom_Invalid_ID;
+ZCom_ClassID Cube::netClassClientId = ZCom_Invalid_ID;
 
 Cube::Cube(ImageManager* imageManager, int type) : Entity(imageManager) {
   this->imageManager = imageManager;
@@ -28,7 +30,15 @@ void Cube::SetType(int type) {
 
 void Cube::RegisterClass(ZCom_Control * control, bool server){
   if(server)
-    netClassServerId = control->ZCom_registerClass("cube", ZCOM_CLASSFLAG_ANNOUNCEDATA);
+    Cube::netClassServerId = control->ZCom_registerClass("cube", ZCOM_CLASSFLAG_ANNOUNCEDATA);
   else
-    netClassClientId = control->ZCom_registerClass("cube", ZCOM_CLASSFLAG_ANNOUNCEDATA);
+    Cube::netClassClientId = control->ZCom_registerClass("cube", ZCOM_CLASSFLAG_ANNOUNCEDATA);
+}
+
+
+ZCom_ClassID Cube::GetClass(bool server) {
+  if(server)
+    return(Cube::netClassServerId);
+  else
+    return(Cube::netClassClientId);
 }

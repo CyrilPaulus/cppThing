@@ -16,9 +16,6 @@ class Entity {
   void SetPosition(sf::Vector2f);
   sf::Vector2f GetCenter();
   
-  static void RegisterClass(ZCom_Control * control, bool server);
-  static ZCom_ClassID GetClass(bool server);
-
   void RegisterZCom(ZCom_Control *, bool);
   void ProcessNodeEvents();
   bool CanRemove();
@@ -27,9 +24,6 @@ class Entity {
   ZCom_Node* node;
   bool remove;
   
-  static ZCom_ClassID netClassServerId;
-  static ZCom_ClassID netClassClientId;
- 
   sf::Sprite *sprite;
   sf::Vector2f position;
   sf::Vector2f offset;

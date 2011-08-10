@@ -1,9 +1,6 @@
 #include "../config.h"
 #include "entity.h"
 
-ZCom_ClassID Entity::netClassServerId = ZCom_Invalid_ID;
-ZCom_ClassID Entity::netClassClientId = ZCom_Invalid_ID;
-
 Entity::Entity(ImageManager *imageManager) {
   sprite = new sf::Sprite(*(imageManager->get("cube")));
   offset = sf::Vector2f(0, 0);
@@ -42,20 +39,6 @@ sf::Vector2f Entity::GetCenter() {
 
 void Entity::SetPosition(sf::Vector2f position){
   this->position = position;
-}
-
-ZCom_ClassID Entity::GetClass(bool server) {
-  if(server)
-    return(netClassServerId);
-  else
-    return(netClassClientId);
-}
-
-void Entity::RegisterClass(ZCom_Control * control, bool server){
-  if(server)
-    netClassServerId = control->ZCom_registerClass("default");
-  else
-    netClassClientId = control->ZCom_registerClass("default");
 }
 
 bool Entity::CanRemove(){

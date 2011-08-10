@@ -32,8 +32,10 @@ void Game::Run(){
   srand(time(NULL));
   Server* s = new Server(imageManager);
   Cube::RegisterClass(s, true);
+  Player::RegisterClass(s, true);
   Client* c = new Client(window, imageManager);
   Cube::RegisterClass(c, false);
+  Player::RegisterClass(c, false);
   sf::Thread serverThread(&startServer, s);
   
   s->Init();

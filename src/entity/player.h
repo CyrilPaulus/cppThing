@@ -6,6 +6,8 @@
 #include "world.h"
 #include "../input/input.h"
 
+class World;
+
 class Player : public Entity {
  public:
   Player(ImageManager*, World*);
@@ -15,8 +17,16 @@ class Player : public Entity {
   void Update(float, Input);
 
   static void RegisterClass(ZCom_Control * control, bool server);
+  void RegisterZCom(ZCom_Control *, bool);
+  void SetID(ZCom_ConnID);
+  ZCom_ConnID GetID();
+  static ZCom_ClassID GetClass(bool server);
 
  private:
+  static ZCom_ClassID netClassServerId;
+  static ZCom_ClassID netClassClientId;
+
+  ZCom_ConnID id;
   World* world;
   
   bool noclip;

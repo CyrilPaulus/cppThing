@@ -6,6 +6,9 @@
 
 #include "cube.h"
 #include "../utils/quadtree.h"
+#include "player.h"
+
+class Player;
 
 class World {
  public:
@@ -17,12 +20,16 @@ class World {
   void AddCube(sf::Vector2f, int);
   void RemoveCube(sf::Vector2f);
 
+  void AddPlayer(Player *);
+  void RemovePlayer(Player *);
+
   Cube* GetCollidingCube(sf::FloatRect);
  private:
   ImageManager* imageManager;
   ZCom_Control* control;
   bool server;
   std::list<Cube*> cubeList;
+  std::list<Player*> playerList;
   QuadTree *quadTree;
 };
 
