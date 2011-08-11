@@ -20,6 +20,6 @@ bool Ticker::Tick() {
   return false;
 }
 
-float Ticker::GetElapsedSeconds(){
-  return (float) elapsedTime / 1000.0;
+unsigned int Ticker::GetElapsedMilliSeconds(){
+  return elapsedTime;
 }

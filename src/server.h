@@ -14,7 +14,7 @@ class Server : public ZCom_Control {
   ~Server();
   void Run();
   void Stop();
-  void Update(float);
+  void Update(unsigned int);
   void Init();
   //zoidcom callbacks
   void ZCom_cbConnectResult( ZCom_ConnID id, eZCom_ConnectResult result, ZCom_BitStream &reply ) {}

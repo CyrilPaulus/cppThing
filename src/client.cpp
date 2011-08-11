@@ -42,7 +42,7 @@ int Client::Run(){
     }
 
     if(ticker->Tick()){
-      Update(ticker->GetElapsedSeconds());
+      Update(ticker->GetElapsedMilliSeconds());
     }
 
     mouse->Update();
@@ -129,7 +129,8 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 }
 
 
-void Client::Update(float frametime) {
+void Client::Update(unsigned int frametime) {
+  this->ZCom_processReplicators(frametime);
   this->ZCom_processInput();
   if (addCube){
     ZCom_BitStream *message = new ZCom_BitStream();
@@ -245,7 +246,7 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     p->SetColor(sf::Color(r, g, b));
     p->RegisterZCom(this, false);
     
-    if(idIn == clientId)
+    if(role == eZCom_RoleOwner)
       player = p;
     world->AddPlayer(p);
   }

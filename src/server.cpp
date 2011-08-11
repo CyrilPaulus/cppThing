@@ -23,7 +23,7 @@ void Server::Run() {
   world->AddCube(sf::Vector2f(0,90), 1);
   while(running) {
     if(ticker->Tick())
-      Update(ticker->GetElapsedSeconds());
+      Update(ticker->GetElapsedMilliSeconds());
     else
       sf::Sleep(0.01f);
   }
@@ -35,8 +35,10 @@ void Server::Stop() {
   running = false;
 }
 
-void Server::Update(float frametime) {
+void Server::Update(unsigned int frametime) {
+  ZCom_processReplicators(frametime);
   this->ZCom_processInput();
+  
   this->ZCom_processOutput();
 }
 
@@ -57,6 +59,7 @@ void Server::ZCom_cbConnectionSpawned(ZCom_ConnID id) {
   Player *p = new Player(imageManager, world);
   p->SetID(id);
   p->RegisterZCom(this, true);
+  p->node->setOwner(id, true);
   world->AddPlayer(p);
 }
 

@@ -33,7 +33,7 @@ class Client : public ZCom_Control{
   void ZCom_cbDiscovered( const ZCom_Address &addr, ZCom_BitStream &reply )  {}
  private:
 
-  void Update(float);
+  void Update(unsigned int);
   void Draw();
 
   std::string pseudo;

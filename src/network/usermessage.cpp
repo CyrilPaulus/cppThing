@@ -1,7 +1,7 @@
 #include "../config.h"
 #include "usermessage.h"
 
-UserMessage::UserMessage(float frametime, Input input, sf::Vector2f lookdir){
+UserMessage::UserMessage(unsigned int frametime, Input input, sf::Vector2f lookdir){
   this->type = Packet::UserMessage;
   this->input = input;
   this->frametime = frametime;
@@ -14,7 +14,7 @@ void UserMessage::Encode(ZCom_BitStream *message){
   message->addBool(input.Down);
   message->addBool(input.Left);
   message->addBool(input.Right);
-  message->addFloat(frametime, 23);
+  message->addInt(frametime, 32);
   message->addFloat(lookdir.x, 23);
   message->addFloat(lookdir.y, 23);
 }
@@ -27,13 +27,13 @@ UserMessage* UserMessage::Decode(ZCom_BitStream &message){
   input.Down = message.getBool();
   input.Left = message.getBool();
   input.Right = message.getBool();
-  float frametime = message.getFloat(23);
+  unsigned int frametime = message.getInt(32);
   float x = message.getFloat(23);
   float y = message.getFloat(23);
   return new UserMessage(frametime, input, sf::Vector2f(x, y));
 }
 
-float UserMessage::GetFrametime(){
+unsigned int UserMessage::GetFrametime(){
   return frametime;
 }
 

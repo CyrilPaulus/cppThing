@@ -14,7 +14,9 @@ class Player : public Entity {
   ~Player();
   void Draw(sf::RenderTarget *);
   void SetEyesPosition(sf::Vector2f);
-  void Update(float, Input);
+  void Update(unsigned int, Input);
+  void InputUpdate(unsigned int, Input);
+  void PhysicUpdate(unsigned int);
   void SetColor(sf::Color);
 
   static void RegisterClass(ZCom_Control * control, bool server);
@@ -46,6 +48,8 @@ class Player : public Entity {
 
   sf::Vector2f speed;
   sf::Vector2f acceleration;
+  unsigned int currentTime;
+  unsigned int accumTime;
 };
 
 #endif /* _PLAYER_H_ */

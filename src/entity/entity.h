@@ -19,9 +19,9 @@ class Entity {
   void RegisterZCom(ZCom_Control *, bool);
   void ProcessNodeEvents();
   bool CanRemove();
-
- protected:
   ZCom_Node* node;
+ protected:
+
   bool remove;
   
   sf::Sprite *sprite;
