@@ -34,6 +34,9 @@ Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) 
 
   accumTime = 0;
   currentTime = 0;
+
+  moveX = false;
+  moveY = false;
 }
 
 Player::~Player(){

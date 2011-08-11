@@ -31,7 +31,10 @@ class Player : public Entity {
 
   ZCom_ConnID id;
   World* world;
-  
+
+  bool moveX;
+  bool moveY;
+
   bool noclip;
   bool isFlying;
   sf::Sprite *pupil;
