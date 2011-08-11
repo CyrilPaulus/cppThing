@@ -12,7 +12,7 @@
 
 class Client : public ZCom_Control{
  public:
-  Client(sf::RenderWindow *window, ImageManager *imageManager);
+  Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom*);
   ~Client();
   int Run();
   void Connect();
@@ -43,7 +43,7 @@ class Client : public ZCom_Control{
   ImageManager *imageManager;
   Ticker *ticker;
   bool running;
-
+  ZoidCom* zcom;
   ZCom_ConnID clientId;
   ZCom_ConnID serverId;
   void HandleEvent(sf::Event event);
@@ -63,6 +63,8 @@ class Client : public ZCom_Control{
   bool addCube;
   bool removeCube;
   Player *player;
+  
+  
 };
 
 #endif /* _CLIENT_H_ */

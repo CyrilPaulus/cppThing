@@ -5,11 +5,12 @@
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 
-Server::Server(ImageManager* imageManager) {
+Server::Server(ImageManager* imageManager, ZoidCom* zcom) {
   this->imageManager = imageManager;
   this->world = new World(this, imageManager, true);
   this->running = false;
   this->ticker = new Ticker();
+  this->zcom = zcom;
 }
 
 Server::~Server() {
@@ -25,7 +26,11 @@ void Server::Run() {
     if(ticker->Tick())
       Update(ticker->GetElapsedMilliSeconds());
     else
+      {
       sf::Sleep(0.01f);
+      if(zcom)
+	zcom->Sleep(10);
+    }
   }
   printf("Server finished\n");
 }

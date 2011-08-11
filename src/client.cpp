@@ -3,11 +3,11 @@
 
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
-Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
+Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zcom){
   this->window = window;
   //TODO find why we can't use the same imageManager.
   this->imageManager = new ImageManager();
-  
+  this->zcom = zcom;
   ticker = new Ticker();
   worldDisplay = new sf::RenderTexture();
   worldDisplay->Create(window->GetWidth(), window->GetHeight());
@@ -22,7 +22,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager){
   displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					window->GetHeight() - 10 - Cube::HEIGHT));
   pseudo = "Anon";
-  
+   
 }
 
 Client::~Client(){
@@ -40,15 +40,18 @@ int Client::Run(){
     while(window->PollEvent(event)) {
       HandleEvent(event);
     }
-
+    
     if(ticker->Tick()){
       Update(ticker->GetElapsedMilliSeconds());
+    } else {
+      if(zcom)
+	zcom->Sleep(10);
     }
-
+    
     mouse->Update();
-
+    
     Draw();
-
+    
   }
   ZCom_Disconnect(serverId, NULL);
   return 1;
