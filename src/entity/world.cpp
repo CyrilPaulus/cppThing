@@ -127,7 +127,6 @@ void World::Update() {
   std::list<Player*> toDeleteP;
   std::list<Player*>::iterator p;
   for(p = playerList.begin(); p != playerList.end(); p++) {
-    (*p)->ProcessNodeEvents();
     if((*p)->CanRemove())
       toDeleteP.push_back(*p);
   }
@@ -135,6 +134,12 @@ void World::Update() {
   for(p = toDeleteP.begin(); p != toDeleteP.end(); p++) {
     RemovePlayer((*p));
   }
+}
+
+void World::UpdatePlayer(unsigned int frametime, Input input) {
+  std::list<Player*>::iterator p;
+  for(p = playerList.begin(); p != playerList.end(); p++)
+    (*p)->Update(frametime, input);
 }
 
 Player *World::GetPlayerByID(ZCom_ConnID id){

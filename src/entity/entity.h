@@ -25,7 +25,7 @@ class Entity {
   bool remove;
   
   sf::Sprite *sprite;
-  sf::Vector2f position;
+  zFloat position[2];
   sf::Vector2f offset;
   sf::Vector2f bbox;
 

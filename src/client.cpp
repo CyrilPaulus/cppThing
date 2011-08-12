@@ -150,22 +150,21 @@ void Client::Update(unsigned int frametime) {
   }
 
   world->Update();
+
+  Input input;
+  input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);
+  input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
+  input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
+  input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
+  
+  
+  world->UpdatePlayer(frametime, input);
   
   if(player != NULL) {
-    Input input;
-    input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);
-    input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
-    input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
-    input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
-    
-    ZCom_BitStream *message = new ZCom_BitStream();
-    UserMessage um(frametime, input, mouse->GetWorldPosition());
-    um.Encode(message);
-    ZCom_sendData(serverId, message);
-    
-    //player->SetEyesPosition(mouse->GetWorldPosition());
+    player->SetEyesPosition(mouse->GetWorldPosition());
     UpdateView();
   }
+  
   this->ZCom_processOutput();
 }
 
@@ -245,7 +244,7 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     int g = announcedata->getInt(8);
     int b = announcedata->getInt(8);
     Player* p = new Player(imageManager, world);
-    p->SetPosition(sf::Vector2f(x, y));
+    //p->SetPosition(sf::Vector2f(x, y));
     p->SetColor(sf::Color(r, g, b));
     p->RegisterZCom(this, false);
     

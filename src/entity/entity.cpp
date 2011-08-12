@@ -4,7 +4,8 @@
 Entity::Entity(ImageManager *imageManager) {
   sprite = new sf::Sprite(*(imageManager->get("cube")));
   offset = sf::Vector2f(0, 0);
-  position = sf::Vector2f(0, 0);
+  position[0] = 0;
+  position[1] = 0;
   bbox = sprite->GetSize();
   node = new ZCom_Node();  
   remove = false;
@@ -17,7 +18,7 @@ Entity::~Entity() {
 }
 
 void Entity::Draw(sf::RenderTarget *rt) {
-  sprite->SetPosition(position);
+  sprite->SetPosition(GetPosition());
   rt->Draw(*sprite);
 }
 
@@ -25,20 +26,21 @@ void Entity::Update(float frametime){
 }
 
 sf::FloatRect Entity::GetBbox() {
-  return sf::FloatRect( position.x, position.y, bbox.x, bbox.y);
+  return sf::FloatRect( position[0], position[1], bbox.x, bbox.y);
 }
 
 sf::Vector2f Entity::GetPosition() {
-  return position;
+  return sf::Vector2f(position[0], position[1]);
 }
 
 sf::Vector2f Entity::GetCenter() {
   sf::Vector2f hbbox = sf::Vector2f(bbox.x / 2, bbox.y / 2);
-  return position + hbbox;
+  return GetPosition() + hbbox;
 }
 
 void Entity::SetPosition(sf::Vector2f position){
-  this->position = position;
+  this->position[0] = position.x;
+  this->position[1] = position.y;
 }
 
 bool Entity::CanRemove(){

@@ -7,6 +7,7 @@
 #include "cube.h"
 #include "../utils/quadtree.h"
 #include "player.h"
+#include "../input/input.h"
 
 class Player;
 
@@ -17,6 +18,7 @@ class World {
   
   void Draw(sf::RenderTarget *);
   void Update();
+  void UpdatePlayer(unsigned int, Input);
   void AddCube(sf::Vector2f, int);
   void AddCube(sf::Vector2f, int, bool);
   void RemoveCube(sf::Vector2f);

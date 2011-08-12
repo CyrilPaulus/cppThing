@@ -15,8 +15,8 @@ void Cube::RegisterZCom(ZCom_Control *control, bool server) {
   if(server){
     ZCom_BitStream *adata = new ZCom_BitStream();
     adata->addInt(type, 32);
-    adata->addFloat(position.x, 23);
-    adata->addFloat(position.y, 23);
+    adata->addFloat(position[0], 23);
+    adata->addFloat(position[1], 23);
     node->setAnnounceData(adata);
   }
 }
