@@ -64,7 +64,6 @@ class Client : public ZCom_Control{
   bool removeCube;
   Player *player;
   
-  
 };
 
 #endif /* _CLIENT_H_ */

@@ -41,7 +41,7 @@ void Server::Stop() {
 }
 
 void Server::Update(unsigned int frametime) {
-  ZCom_processReplicators(frametime);
+  ZCom_processReplicators((GameConstant::SIMULATION_TIME_PER_UPDATE));
   this->ZCom_processInput();
   world->UpdatePlayer(frametime, Input());
   this->ZCom_processOutput();

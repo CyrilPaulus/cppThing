@@ -25,7 +25,7 @@ Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) 
   noclip = false;
 
   maxWalkSpeed = 100;
-  maxFallSpeed = 100;
+  maxFallSpeed = 200;
 
   speed[0] = speed[1]  = 0;
   acceleration = sf::Vector2f(350, 350);
@@ -125,7 +125,7 @@ void Player::PhysicUpdate(unsigned int frametime) {
       }
     }
     else
-      speed[1] += std::min((acceleration.y) * frameSec, maxFallSpeed);
+      speed[1] = std::min(speed[1] + (acceleration.y) * frameSec, maxFallSpeed);
     
     //Update position x and check for collision
     if(speed[0] != 0){
@@ -197,7 +197,7 @@ void Player::RegisterZCom(ZCom_Control *control, bool server) {
   moverep = new ZCom_Replicate_Movement<zFloat, 2>(32, ZCOM_REPFLAG_MOSTRECENT|ZCOM_REPFLAG_SETUPPERSISTS, ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY);
   ((ZCom_RSetupMovement<zFloat>*)moverep->getSetup())->setConstantErrorThreshold(0);
   ((ZCom_RSetupMovement<zFloat>*)moverep->getSetup())->setInterpolationTime(50);
-  moverep->setTimeScale((float)GameConstant::UPDATE_RATE/1000.0f);
+  moverep->setTimeScale(((float)GameConstant::UPDATE_RATE)/1000000.0f);
   
   node->addReplicator(moverep, true);
   moverep->setUpdateListener(this);
@@ -320,8 +320,9 @@ void Player::correctionReceived(zFloat *position, zFloat *speed, zFloat *acc, bo
   void *iter = NULL;
 
   accumTime = 0;
-  memcpy(this->position, position, sizeof(position));
-  memcpy(this->speed, speed, sizeof(speed));
+  memcpy(this->position, position, sizeof(this->position));
+  memcpy(this->speed, speed, sizeof(this->speed));
+
   
   while (true) {
     inputStream = moverep->getNextInputHistoryEntry(&time, &iter);

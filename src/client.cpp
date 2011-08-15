@@ -22,7 +22,6 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
   displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					window->GetHeight() - 10 - Cube::HEIGHT));
   pseudo = "Anon";
-   
 }
 
 Client::~Client(){
@@ -132,24 +131,23 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 }
 
 
-void Client::Update(unsigned int frametime) {
-  this->ZCom_processReplicators(frametime);
+void Client::Update(unsigned int frametime) {	
+  this->ZCom_processReplicators((GameConstant::SIMULATION_TIME_PER_UPDATE));
   this->ZCom_processInput();
-  if (addCube){
+  
+  if (addCube && world->CanAddCube(mouse->GetWorldPosition())){
     ZCom_BitStream *message = new ZCom_BitStream();
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true);
     cu.Encode(message);
-    ZCom_sendData(serverId, message);
+    ZCom_sendData(serverId, message);	
   }
-  
-  if (removeCube){
+    
+  if (removeCube && world->CanRemoveCube(mouse->GetWorldPosition())){
     ZCom_BitStream *message = new ZCom_BitStream();
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false);
     cu.Encode(message);
-    ZCom_sendData(serverId, message);
+    ZCom_sendData(serverId, message);	
   }
-
-  world->Update();
 
   Input input;
   input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);
@@ -157,7 +155,7 @@ void Client::Update(unsigned int frametime) {
   input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
   input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
   
-  
+  world->Update();
   world->UpdatePlayer(frametime, input);
   
   if(player != NULL) {

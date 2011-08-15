@@ -22,6 +22,8 @@ class World {
   void AddCube(sf::Vector2f, int);
   void AddCube(sf::Vector2f, int, bool);
   void RemoveCube(sf::Vector2f);
+  bool CanAddCube(sf::Vector2f);
+  bool CanRemoveCube(sf::Vector2f);
 
   void AddPlayer(Player *);
   void RemovePlayer(Player *);
