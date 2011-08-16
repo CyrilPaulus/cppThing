@@ -9,6 +9,7 @@ class Ticker{
   Ticker(float tickTime);
   bool Tick();
   unsigned int GetElapsedMilliSeconds();
+  void SetUpdateRate(int);
 
  private:
   sf::Clock clock;

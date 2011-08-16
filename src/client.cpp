@@ -9,6 +9,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
   this->imageManager = new ImageManager();
   this->zcom = zcom;
   ticker = new Ticker();
+  ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
   worldDisplay = new sf::RenderTexture();
   worldDisplay->Create(window->GetWidth(), window->GetHeight());
   mouse = new Mouse(window, worldDisplay, imageManager);
@@ -44,7 +45,7 @@ int Client::Run(){
       Update(ticker->GetElapsedMilliSeconds());
     } else {
       if(zcom)
-	zcom->Sleep(10);
+	zcom->Sleep(1);
     }
     
     mouse->Update();
@@ -131,8 +132,8 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 }
 
 
-void Client::Update(unsigned int frametime) {	
-  this->ZCom_processReplicators((GameConstant::SIMULATION_TIME_PER_UPDATE));
+void Client::Update(unsigned int frametime) {
+  this->ZCom_processReplicators(frametime);
   this->ZCom_processInput();
   
   if (addCube && world->CanAddCube(mouse->GetWorldPosition())){

@@ -10,6 +10,7 @@ Server::Server(ImageManager* imageManager, ZoidCom* zcom) {
   this->world = new World(this, imageManager, true);
   this->running = false;
   this->ticker = new Ticker();
+  this->ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
   this->zcom = zcom;
 }
 
@@ -43,7 +44,7 @@ void Server::Stop() {
 void Server::Update(unsigned int frametime) {
   ZCom_processReplicators((GameConstant::SIMULATION_TIME_PER_UPDATE));
   this->ZCom_processInput();
-  world->UpdatePlayer(frametime, Input());
+  world->UpdatePlayer((GameConstant::SIMULATION_TIME_PER_UPDATE), Input());
   this->ZCom_processOutput();
 }
 

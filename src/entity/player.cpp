@@ -103,8 +103,8 @@ void Player::InputUpdate(Input input) {
 
 }
 
-void Player::PhysicUpdate(unsigned int frametime) {
-  float frameSec = (GameConstant::SIMULATION_TIME_PER_UPDATE) / 1000.f;
+void Player::PhysicUpdate(unsigned int frametime) {	
+  float frameSec = GameConstant::SIMULATION_TIME_PER_UPDATE / 1000.f;
   accumTime += frametime;
   while(accumTime > 0 && accumTime >= GameConstant::SIMULATION_TIME_PER_UPDATE) {
     accumTime -= GameConstant::SIMULATION_TIME_PER_UPDATE;
@@ -164,7 +164,7 @@ void Player::Update(unsigned int frametime, Input input) {
   //PhysicUpdate(frametime);
   switch (node->getRole()){
   case eZCom_RoleOwner:
-    DoOwner(input);
+    DoOwner(input, frametime);
     break;
   case eZCom_RoleAuthority:
     DoAuth();
@@ -197,7 +197,7 @@ void Player::RegisterZCom(ZCom_Control *control, bool server) {
   moverep = new ZCom_Replicate_Movement<zFloat, 2>(32, ZCOM_REPFLAG_MOSTRECENT|ZCOM_REPFLAG_SETUPPERSISTS, ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY);
   ((ZCom_RSetupMovement<zFloat>*)moverep->getSetup())->setConstantErrorThreshold(0);
   ((ZCom_RSetupMovement<zFloat>*)moverep->getSetup())->setInterpolationTime(50);
-  moverep->setTimeScale(((float)GameConstant::UPDATE_RATE)/1000000.0f);
+  moverep->setTimeScale(0.001);
   
   node->addReplicator(moverep, true);
   moverep->setUpdateListener(this);
@@ -250,7 +250,7 @@ void Player::DoAuth() {
   }  
 }
 
-void Player::DoOwner(Input input) {
+void Player::DoOwner(Input input, unsigned int frametime) {
   while(node && node->checkEventWaiting()) {
     eZCom_Event eve;
     node->getNextEvent(&eve, NULL, NULL);
@@ -261,7 +261,7 @@ void Player::DoOwner(Input input) {
     }
   }
 
-  PhysicUpdate(GameConstant::SIMULATION_TIME_PER_UPDATE);
+  PhysicUpdate(frametime);
   if( input == lastInputSent) {
     moverep->updateInput(position, NULL);
   } else {
@@ -298,7 +298,7 @@ void Player::inputUpdated(ZCom_BitStream& inputstream, bool inputchanged, zU32 c
     return;
 
   if(currentTime > 0)
-    PhysicUpdate(clientTime - currentTime);
+    PhysicUpdate(clientTime - currentTime);	
 
   moverep->updateState(position, speed, NULL, false);
   currentTime = clientTime;

@@ -26,7 +26,7 @@ class Player : public Entity, public ZCom_MoveUpdateListener<zFloat> {
   static ZCom_ClassID GetClass(bool server);
 
  private:
-  void DoOwner(Input input);
+  void DoOwner(Input input, unsigned int frametime);
   void DoProxy();
   void DoAuth();
   
