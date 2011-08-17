@@ -22,7 +22,7 @@ Server::~Server() {
 void Server::Run() {
   running = true;
   printf("Server started\n");
-  world->AddCube(sf::Vector2f(0,90), 1);
+  world->AddCube(sf::Vector2f(0,90), 1, 1);
   while(running) {
     if(ticker->Tick())
       Update(ticker->GetElapsedMilliSeconds());
@@ -83,9 +83,9 @@ void Server::ZCom_cbDataReceived( ZCom_ConnID id, ZCom_BitStream &data ){
   case Packet::CubeUpdate:{
     CubeUpdate* cu = CubeUpdate::Decode(data);
     if(cu->GetAdded())
-      world->AddCube(cu->GetPosition(), cu->GetCubeType());
+      world->AddCube(cu->GetPosition(), cu->GetCubeType(), cu->GetLayer());
     else
-      world->RemoveCube(cu->GetPosition());
+      world->RemoveCube(cu->GetPosition(), cu->GetLayer());
     delete cu;
     break;
   }

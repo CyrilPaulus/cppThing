@@ -33,6 +33,7 @@ class Client : public ZCom_Control{
   void ZCom_cbDiscovered( const ZCom_Address &addr, ZCom_BitStream &reply )  {}
  private:
 
+  int layer;
   void Update(unsigned int);
   void Draw();
 
@@ -52,6 +53,7 @@ class Client : public ZCom_Control{
   void OnMouseButtonReleased(sf::Event event);
   void OnMouseWheelMoved(sf::Event event);
   void OnResized(sf::Event event);
+  void OnKeyPressed(sf::Event event);
 
   void UpdateView();
   float zoom;

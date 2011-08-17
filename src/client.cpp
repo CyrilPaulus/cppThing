@@ -23,6 +23,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
   displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					window->GetHeight() - 10 - Cube::HEIGHT));
   pseudo = "Anon";
+  layer = 1;
 }
 
 Client::~Client(){
@@ -71,6 +72,9 @@ void Client::HandleEvent(sf::Event event) {
   case sf::Event::MouseWheelMoved:
     OnMouseWheelMoved(event);
     break;
+  case sf::Event::KeyPressed:
+    OnKeyPressed(event);
+    break;
   case sf::Event::Resized:
     OnResized(event);
   default:
@@ -80,6 +84,21 @@ void Client::HandleEvent(sf::Event event) {
 
 void Client::OnClose() {
   running = false;
+}
+
+void Client::OnKeyPressed(sf::Event event) {
+  switch(event.Key.Code) {
+  case sf::Keyboard::A:
+    layer = (layer + GameConstant::LAYERNBR - 1) % GameConstant::LAYERNBR;
+    printf("%d\n", layer);
+    break;
+  case sf::Keyboard::Z:
+    layer = (layer + 1) % GameConstant::LAYERNBR;
+    printf("%d\n", layer);
+    break;
+  default:
+    break;
+  }
 }
 
 void Client::OnMouseButtonPressed(sf::Event event){
@@ -136,16 +155,16 @@ void Client::Update(unsigned int frametime) {
   this->ZCom_processReplicators(frametime);
   this->ZCom_processInput();
   
-  if (addCube && world->CanAddCube(mouse->GetWorldPosition())){
+  if (addCube && world->CanAddCube(mouse->GetWorldPosition(), layer)){
     ZCom_BitStream *message = new ZCom_BitStream();
-    CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true);
+    CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true, layer);
     cu.Encode(message);
     ZCom_sendData(serverId, message);	
   }
     
-  if (removeCube && world->CanRemoveCube(mouse->GetWorldPosition())){
+  if (removeCube && world->CanRemoveCube(mouse->GetWorldPosition(), layer)){
     ZCom_BitStream *message = new ZCom_BitStream();
-    CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false);
+    CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false, layer);
     cu.Encode(message);
     ZCom_sendData(serverId, message);	
   }
@@ -233,7 +252,8 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     int type = announcedata->getInt(32);
     float x = announcedata->getFloat(23);
     float y = announcedata->getFloat(23);
-    world->AddCube(sf::Vector2f(x,y), type, true);
+    int layerIndex = announcedata->getInt(8);
+    world->AddCube(sf::Vector2f(x,y), type, layerIndex, true);
   }
   else if (requested_class == Player::GetClass(false)) {
     ZCom_ConnID idIn = announcedata->getInt(32);

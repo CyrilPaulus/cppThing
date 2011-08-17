@@ -6,14 +6,16 @@
 
 class CubeUpdate : public Packet{
  public:
-  CubeUpdate(int, sf::Vector2f, bool);
+  CubeUpdate(int, sf::Vector2f, bool, int);
   void Encode(ZCom_BitStream *);
   static CubeUpdate *Decode(ZCom_BitStream &);
 
   sf::Vector2f GetPosition();
   bool GetAdded();
   int GetCubeType();
+  int GetLayer();
  private:
+  int layer;
   int cubeType;
   sf::Vector2f position;
   bool added;

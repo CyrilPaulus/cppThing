@@ -11,6 +11,7 @@ class GameConstant{
   static const int FRAMERATE_LIMIT = 60;
   static const unsigned int UPDATE_RATE = 50;
   static const unsigned int SIMULATION_TIME_PER_UPDATE = 1000 / UPDATE_RATE;
+  static const int LAYERNBR = 3;
   static const sf::Color BackgroundColor;
 };
 

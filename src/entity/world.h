@@ -19,11 +19,11 @@ class World {
   void Draw(sf::RenderTarget *);
   void Update();
   void UpdatePlayer(unsigned int, Input);
-  void AddCube(sf::Vector2f, int);
-  void AddCube(sf::Vector2f, int, bool);
-  void RemoveCube(sf::Vector2f);
-  bool CanAddCube(sf::Vector2f);
-  bool CanRemoveCube(sf::Vector2f);
+  void AddCube(sf::Vector2f, int, int);
+  void AddCube(sf::Vector2f, int, int, bool);
+  void RemoveCube(sf::Vector2f, int);
+  bool CanAddCube(sf::Vector2f, int);
+  bool CanRemoveCube(sf::Vector2f, int);
 
   void AddPlayer(Player *);
   void RemovePlayer(Player *);
@@ -34,9 +34,9 @@ class World {
   ImageManager* imageManager;
   ZCom_Control* control;
   bool server;
-  std::list<Cube*> cubeList;
+  std::list<Cube*> layer[GameConstant::LAYERNBR];
   std::list<Player*> playerList;
-  QuadTree *quadTree;
+  QuadTree* quadTrees[GameConstant::LAYERNBR];
 };
 
 #endif /* _WORLD_H_ */
