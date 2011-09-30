@@ -14,6 +14,8 @@ void processZoidcomLog(const char *log);
 
 Game::Game(){
   imageManager = new ImageManager();
+  ip = "localhost";
+  port = 50645;
 }
 
 Game::~Game(){
@@ -53,6 +55,8 @@ void Game::Run(int type){
     window->SetFramerateLimit(GameConstant::FRAMERATE_LIMIT);
     window->ShowMouseCursor(false);
     Client* c = new Client(window, imageManager, zcom);
+    c->SetIp(ip);
+    c->SetPort(port);
     Cube::RegisterClass(c, false);
     Player::RegisterClass(c, false);
     c->Connect();
@@ -60,6 +64,8 @@ void Game::Run(int type){
   }
   else if(type == Game::SERVER) {
     Server* s = new Server(imageManager, zcom);
+    printf("PORT : %d\n", port);
+s->SetPort(port);
     Cube::RegisterClass(s, true);
     Player::RegisterClass(s, true);
     s->Init();
@@ -76,4 +82,12 @@ void startServer(void* server){
 
 void processZoidcomLog(const char *log) {
   printf("%s\n", log);
+}
+
+void Game::SetIp(std::string ip){
+  this->ip = ip;
+}
+
+void Game::SetPort(int port){
+  this->port = port;
 }

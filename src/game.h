@@ -15,12 +15,15 @@ class Game {
   Game();
   ~Game();
   void Run(int type);
-
+  void SetIp(std::string ip);
+  void SetPort(int port);
  private:
   bool isClient;
   bool isServer;
   sf::RenderWindow *window;
   ImageManager* imageManager;
+  std::string ip;
+  int port;
 };
 
 #endif /* _GAME_H_ */

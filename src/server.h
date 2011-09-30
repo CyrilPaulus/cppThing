@@ -16,6 +16,7 @@ class Server : public ZCom_Control {
   void Stop();
   void Update(unsigned int);
   void Init();
+  void SetPort(int port);
   //zoidcom callbacks
   void ZCom_cbConnectResult( ZCom_ConnID id, eZCom_ConnectResult result, ZCom_BitStream &reply ) {}
   bool ZCom_cbConnectionRequest( ZCom_ConnID  id, ZCom_BitStream &request, ZCom_BitStream &reply );
@@ -38,6 +39,7 @@ class Server : public ZCom_Control {
   Ticker *ticker;
   World *world;
   ZoidCom* zcom;
+  int port;
   
 };
 

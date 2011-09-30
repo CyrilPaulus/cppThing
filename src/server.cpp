@@ -12,6 +12,7 @@ Server::Server(ImageManager* imageManager, ZoidCom* zcom) {
   this->ticker = new Ticker();
   this->ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
   this->zcom = zcom;
+  this->port = 50645;
 }
 
 Server::~Server() {
@@ -108,9 +109,13 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID id, zU8 requested_level, ZCom_BitSt
 
 void Server::Init(){
   this->ZCom_setDebugName("Server");
-  if (!this->ZCom_initSockets(true, 50645, 0)){
+  if (!this->ZCom_initSockets(true, port, 0)){
     printf("No sockets\n");
     exit(255);
   }
   printf("Socket created\n");
+}
+
+void Server::SetPort(int port){
+  this->port = port;
 }

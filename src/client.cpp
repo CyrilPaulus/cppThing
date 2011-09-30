@@ -1,8 +1,11 @@
 #include "config.h"
 #include "client.h"
 
+#include <iostream>
+
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
+
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zcom){
   this->window = window;
   //TODO find why we can't use the same imageManager.
@@ -24,6 +27,8 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
 					window->GetHeight() - 10 - Cube::HEIGHT));
   pseudo = "Anon";
   layer = 1;
+  port = 50645;
+  ip = "localhost";
 }
 
 Client::~Client(){
@@ -281,7 +286,12 @@ void Client::Connect() {
   }
 
   ZCom_Address server;
-  server.setAddress(eZCom_AddressUDP, 0, "localhost:50645");
+  std::stringstream saddress;
+  saddress<<ip;
+  saddress<<":";
+  saddress<<port;
+  
+  server.setAddress(eZCom_AddressUDP, 0, saddress.str().data());
   ZCom_BitStream *connectionInfo = new ZCom_BitStream();
   connectionInfo->addString(pseudo.data());
   serverId = this->ZCom_Connect(server, connectionInfo);
@@ -292,3 +302,10 @@ void Client::Connect() {
   this->Run();
 }
 
+void Client::SetPort(int port){
+  this->port = port;
+}
+
+void Client::SetIp(std::string ip){
+  this->ip = ip;
+}

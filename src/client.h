@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <zoidcom.h>
+
 #include "ticker.h"
 #include "imageManager.h"
 #include "mouse.h"
@@ -32,6 +33,9 @@ class Client : public ZCom_Control{
   bool ZCom_cbDiscoverRequest( const ZCom_Address &addr, 
                                ZCom_BitStream &request, ZCom_BitStream &reply ) {return false;}
   void ZCom_cbDiscovered( const ZCom_Address &addr, ZCom_BitStream &reply )  {}
+ 
+  void SetPort(int);
+  void SetIp(std::string);
  private:
 
   int layer;
@@ -66,7 +70,9 @@ class Client : public ZCom_Control{
   bool addCube;
   bool removeCube;
   Player *player;
-  
+
+  int port;
+  std::string ip;
 };
 
 #endif /* _CLIENT_H_ */
