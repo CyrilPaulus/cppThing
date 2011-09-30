@@ -276,7 +276,7 @@ void Player::DoProxy() {
     eZCom_Event eve;
     node->getNextEvent(&eve, NULL, NULL);
     
-    if(eve == eZCom_EventRemoved) {
+    if(eve == eZCom_EventRemoved) {      
       remove = true;
     }
   }
