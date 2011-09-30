@@ -1,0 +1,12 @@
+CPPTHING
+========
+
+What is it?
+-----------
+cppThing is a small 2d minecraft-like game.
+There is no goal in this game, just build and have fun online.
+
+What do I need?
+---------------
+cppThing needs SFML2 and zoidcom for networking.
+
