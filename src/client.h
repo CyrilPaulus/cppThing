@@ -6,6 +6,7 @@
 #include "ticker.h"
 #include "imageManager.h"
 #include "mouse.h"
+#include "config.h"
 
 #include "entity/world.h"
 #include "entity/player.h"
