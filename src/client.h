@@ -12,6 +12,8 @@
 #include "entity/world.h"
 #include "entity/player.h"
 
+#include "ui/layerDisplay.h"
+
 class Client : public ZCom_Control{
  public:
   Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom*);
@@ -70,7 +72,7 @@ class Client : public ZCom_Control{
   bool addCube;
   bool removeCube;
   Player *player;
-
+  LayerDisplay * layerDisplay;
   int port;
   std::string ip;
 };

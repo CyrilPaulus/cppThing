@@ -23,16 +23,21 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
   zoom = 1;
   cubeType = 0;
   displayCube = new Cube(imageManager, cubeType);
-  displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
-					window->GetHeight() - 10 - Cube::HEIGHT));
+  sf::Vector2f uiPosition = sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
+					 window->GetHeight() - 10 - Cube::HEIGHT); 
+  displayCube->SetPosition(uiPosition);
+  layerDisplay = new LayerDisplay(imageManager, GameConstant::LAYERNBR);
+  layerDisplay->SetPosition(uiPosition + sf::Vector2f(0, - 50));
   pseudo = "Anon";
   layer = 1;
+  layerDisplay->SetLayer(layer);
   port = 50645;
   ip = "localhost";
 }
 
 Client::~Client(){
   delete displayCube;
+  delete layerDisplay;
   delete ticker;
   delete mouse;
   delete worldDisplay;
@@ -95,10 +100,12 @@ void Client::OnKeyPressed(sf::Event event) {
   switch(event.Key.Code) {
   case sf::Keyboard::A:
     layer = (layer + GameConstant::LAYERNBR - 1) % GameConstant::LAYERNBR;
+    layerDisplay->SetLayer(layer);
     printf("%d\n", layer);
     break;
   case sf::Keyboard::Z:
     layer = (layer + 1) % GameConstant::LAYERNBR;
+    layerDisplay->SetLayer(layer);
     printf("%d\n", layer);
     break;
   default:
@@ -200,6 +207,7 @@ void Client::Draw() {
 
   window->Draw(sf::Sprite(worldDisplay->GetTexture()));
   displayCube->Draw(window);
+  layerDisplay->Draw(window);
   mouse->Draw(window);
   window->Display();
 }
