@@ -9,6 +9,9 @@ class LayerDisplay : public UiElement {
   ~LayerDisplay();
   void SetLayer(int);
   void Draw(sf::RenderTarget*);
+  sf::FloatRect GetBbox();
+  sf::Vector2f GetSize();
+  
  private:
   sf::Sprite *layer;
   int layerCount;

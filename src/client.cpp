@@ -22,12 +22,13 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
   player = NULL;
   zoom = 1;
   cubeType = 0;
-  displayCube = new Cube(imageManager, cubeType);
+  displayCube = new CubeDisplay(imageManager);
+  displayCube->SetType(cubeType);
   sf::Vector2f uiPosition = sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					 window->GetHeight() - 10 - Cube::HEIGHT); 
   displayCube->SetPosition(uiPosition);
   layerDisplay = new LayerDisplay(imageManager, GameConstant::LAYERNBR);
-  layerDisplay->SetPosition(uiPosition + sf::Vector2f(0, - 50));
+  layerDisplay->SetPosition(uiPosition + sf::Vector2f(0, - 5 - layerDisplay->GetSize().y));
   pseudo = "Anon";
   layer = 1;
   layerDisplay->SetLayer(layer);

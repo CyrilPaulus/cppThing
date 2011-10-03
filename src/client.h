@@ -13,6 +13,7 @@
 #include "entity/player.h"
 
 #include "ui/layerDisplay.h"
+#include "ui/cubeDisplay.h"
 
 class Client : public ZCom_Control{
  public:
@@ -65,7 +66,7 @@ class Client : public ZCom_Control{
   void UpdateView();
   float zoom;
   int cubeType;
-  Cube* displayCube;
+  CubeDisplay* displayCube;
 
   World *world;
 

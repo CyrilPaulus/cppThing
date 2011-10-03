@@ -12,6 +12,8 @@ class UiElement{
   void Draw(sf::RenderTarget *);
   void SetPosition(sf::Vector2f);
   sf::Vector2f GetPosition();
+  sf::FloatRect GetBbox();
+  sf::Vector2f GetSize();
 
  protected:
   sf::Vector2f position;

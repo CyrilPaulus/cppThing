@@ -30,3 +30,13 @@ void LayerDisplay::Draw(sf::RenderTarget *rt) {
 LayerDisplay::~LayerDisplay() {
   delete layer;
 }
+
+sf::Vector2f LayerDisplay::GetSize() {
+	float width = layerCount * 5 + layer->GetSize().x;
+	float height = 10 + layerCount * 5 + layer->GetSize().y;
+	return sf::Vector2f(width, height);
+}
+
+sf::FloatRect LayerDisplay::GetBbox() {
+	return sf::FloatRect(position.x, position.y, GetSize().x, GetSize().y);
+}
