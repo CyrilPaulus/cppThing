@@ -2,6 +2,7 @@
 #define _CLIENT_H_
 
 #include <SFML/Graphics.hpp>
+#include "screen.h"
 #include <zoidcom.h>
 
 #include "ticker.h"
@@ -15,7 +16,7 @@
 #include "ui/layerDisplay.h"
 #include "ui/cubeDisplay.h"
 
-class Client : public ZCom_Control{
+class Client : public Screen, public ZCom_Control{
  public:
   Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom*);
   ~Client();
@@ -45,11 +46,9 @@ class Client : public ZCom_Control{
   void Update(unsigned int);
   void Draw();
 
-  std::string pseudo;
-  sf::RenderWindow *window;
+  std::string pseudo;  
   sf::RenderTexture *worldDisplay;
-  Mouse *mouse;
-  ImageManager *imageManager;
+  Mouse *mouse;  
   Ticker *ticker;
   bool running;
   ZoidCom* zcom;

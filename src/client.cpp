@@ -6,8 +6,8 @@
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 
-Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zcom){
-  this->window = window;
+Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zcom) : Screen(window, imageManager) {
+ 
   //TODO find why we can't use the same imageManager.
   this->imageManager = new ImageManager();
   this->zcom = zcom;
@@ -22,6 +22,8 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
   player = NULL;
   zoom = 1;
   cubeType = 0;
+  
+  //TODO wrap this in a function
   displayCube = new CubeDisplay(imageManager);
   displayCube->SetType(cubeType);
   sf::Vector2f uiPosition = sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
