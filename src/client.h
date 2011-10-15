@@ -71,6 +71,7 @@ class Client : public Screen, public ZCom_Control{
 
   bool addCube;
   bool removeCube;
+  bool mainMenu;
   Player *player;
   LayerDisplay * layerDisplay;
   int port;

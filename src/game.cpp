@@ -25,33 +25,26 @@ Game::~Game(){
 }
 
 void Game::Run(int type){
-  ZoidCom *zcom = new ZoidCom(processZoidcomLog);
+  zcom = new ZoidCom(processZoidcomLog);
   if(!zcom || !zcom->Init())
     exit(255);
 
   srand(time(NULL));
   if(type == Game::LOCAL){
-    window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
-    window->SetFramerateLimit(GameConstant::FRAMERATE_LIMIT);
-    window->ShowMouseCursor(false);
-    Server* s = new Server(imageManager, zcom);
-    Cube::RegisterClass(s, true);
-    Player::RegisterClass(s, true);
-    Client* c = new Client(window, imageManager, NULL);
-    Cube::RegisterClass(c, false);
-    Player::RegisterClass(c, false);
-    sf::Thread serverThread(&startServer, s);
-    
-    s->Init();
-    serverThread.Launch();
-    c->Connect();
-    s->Stop();
-    serverThread.Wait();
-    delete c;
-    delete s;    
+    this->RunLocal();       
   }
   else if(type == Game::CLIENT) {
-    window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
+    this->RunClient();
+  }
+  else if(type == Game::SERVER) {
+	this->RunServer();
+  }
+
+  delete zcom;
+}
+
+void Game::RunClient() {
+	window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
     window->SetFramerateLimit(GameConstant::FRAMERATE_LIMIT);
     window->ShowMouseCursor(false);
     Client* c = new Client(window, imageManager, zcom);
@@ -60,20 +53,44 @@ void Game::Run(int type){
     Cube::RegisterClass(c, false);
     Player::RegisterClass(c, false);
     c->Connect();
+	Screen* screens[1];
+	int screen = 0;
+	screens[0] = c;
+	while (screen >= 0) {
+		int prevScreen = screen;
+		screen = screens[screen]->Run();
+	}
     delete c;
-  }
-  else if(type == Game::SERVER) {
-    Server* s = new Server(imageManager, zcom);
+}
+
+void Game::RunLocal() {
+	ImageManager* serverImgManager = new ImageManager();
+	Server* s = new Server(serverImgManager, zcom);
+    Cube::RegisterClass(s, true);
+    Player::RegisterClass(s, true);
+    
+    sf::Thread serverThread(&startServer, s);
+    
+    s->Init();
+    serverThread.Launch();
+	sf::Sleep(1);
+	this->RunClient();
+    
+    s->Stop();
+    serverThread.Wait();    
+    delete s;
+	delete serverImgManager;
+}
+
+void Game::RunServer() {
+	Server* s = new Server(imageManager, zcom);
     printf("PORT : %d\n", port);
-s->SetPort(port);
+	s->SetPort(port);
     Cube::RegisterClass(s, true);
     Player::RegisterClass(s, true);
     s->Init();
     s->Run();
     delete s;
-  }
-
-  delete zcom;
 }
 
 void startServer(void* server){

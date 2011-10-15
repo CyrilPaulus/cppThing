@@ -8,8 +8,6 @@
 
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zcom) : Screen(window, imageManager) {
  
-  //TODO find why we can't use the same imageManager.
-  this->imageManager = new ImageManager();
   this->zcom = zcom;
   ticker = new Ticker();
   ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
@@ -36,6 +34,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
   layerDisplay->SetLayer(layer);
   port = 50645;
   ip = "localhost";
+  mainMenu = false;
 }
 
 Client::~Client(){
@@ -54,6 +53,9 @@ int Client::Run(){
     while(window->PollEvent(event)) {
       HandleEvent(event);
     }
+	
+	if(mainMenu)
+		return -1;
     
     if(ticker->Tick()){
       Update(ticker->GetElapsedMilliSeconds());
@@ -68,7 +70,7 @@ int Client::Run(){
     
   }
   ZCom_Disconnect(serverId, NULL);
-  return 1;
+  return -1;
 }
 
 void Client::HandleEvent(sf::Event event) {
@@ -111,6 +113,9 @@ void Client::OnKeyPressed(sf::Event event) {
     layerDisplay->SetLayer(layer);
     printf("%d\n", layer);
     break;
+	case sf::Keyboard::Escape:
+		mainMenu = true;
+		break;
   default:
     break;
   }
@@ -244,7 +249,6 @@ void Client::ZCom_cbConnectResult(ZCom_ConnID id, eZCom_ConnectResult result, ZC
     std::string newPseudo(reply.getStringStatic());
     pseudo = newPseudo;
     ZCom_requestZoidMode(serverId, 1);
-    this->Run();
   }
   else
     printf("Connection failed");
@@ -309,8 +313,7 @@ void Client::Connect() {
   if(serverId == ZCom_Invalid_ID){
     printf("Invalid id\n");
     exit(255);
-  }
-  this->Run();
+  }  
 }
 
 void Client::SetPort(int port){

@@ -18,12 +18,16 @@ class Game {
   void SetIp(std::string ip);
   void SetPort(int port);
  private:
+  ZoidCom *zcom;
   bool isClient;
   bool isServer;
   sf::RenderWindow *window;
   ImageManager* imageManager;
   std::string ip;
   int port;
+  void RunClient();
+  void RunServer();
+  void RunLocal();
 };
 
 #endif /* _GAME_H_ */

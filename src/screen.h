@@ -6,12 +6,11 @@
 
 class Screen {
 	public:
-	
-	protected:
 		Screen(sf::RenderWindow *window, ImageManager *imageManager);
-		~Screen();
-		int Run();
-		
+		virtual ~Screen();
+		virtual int Run() =0;
+	
+	protected:		
 		ImageManager *imageManager;
 		sf::RenderWindow *window;
 		
