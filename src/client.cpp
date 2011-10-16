@@ -2,7 +2,6 @@
 #include "client.h"
 
 #include <iostream>
-
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 
