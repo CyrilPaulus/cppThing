@@ -10,7 +10,7 @@ class MainMenu : public Screen {
   MainMenu(sf::RenderWindow* , ImageManager* , Game*);
   ~MainMenu();
   int Run();
-
+  void Resize(int, int);
  private:
   Game* game;
   bool running;

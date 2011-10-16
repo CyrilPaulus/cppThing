@@ -50,6 +50,7 @@ MainMenu::~MainMenu() {
 
 int MainMenu::Run() {
 
+  Resize(window->GetWidth(), window->GetHeight());
   sf::Event event;
   while(running) {
     while(window->PollEvent(event)) {
@@ -78,6 +79,9 @@ int MainMenu::HandleEvent(sf::Event event) {
   case sf::Event::KeyPressed:
     return OnKeyPressed(event);
     break;
+  case sf::Event::Resized:
+    this->Resize(event.Size.Width, event.Size.Height);
+    break;
   default:
     return Screen::NONE;
     break;
@@ -105,4 +109,10 @@ int MainMenu::OnKeyPressed(sf::Event event) {
     return Screen::NONE;
     break;
   }
+}
+
+void MainMenu::Resize(int width, int height) {
+  window->SetView(sf::View(sf::FloatRect(0, 0, width, height)));
+  for(int i = 0; i < itemCount; i++)
+    items[i]->CenterX(width);
 }
