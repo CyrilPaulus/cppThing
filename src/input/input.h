@@ -1,7 +1,6 @@
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
-#include <zoidcom.h>
 
 struct Input {
   bool Left;
@@ -13,7 +12,7 @@ struct Input {
     Up = Down = Left = Right = false;
   }
 
-  void Pack(ZCom_BitStream &str) { 
+  /*void Pack(ZCom_BitStream &str) { 
     str.addBool(Left);
     str.addBool(Right);
     str.addBool(Up);
@@ -25,7 +24,7 @@ struct Input {
     Right = str.getBool();
     Up = str.getBool();
     Down = str.getBool();
-  }
+  }*/
 
   bool operator==(const Input& in) {
     return (Up == in.Up && Down == in.Down && Right == in.Right && Left == in.Left);
