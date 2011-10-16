@@ -5,13 +5,12 @@
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 
-Server::Server(ImageManager* imageManager, ZoidCom* zcom) {
+Server::Server(ImageManager* imageManager) {
   this->imageManager = imageManager;
-  this->world = new World(this, imageManager, true);
+  this->world = new World(imageManager, true);
   this->running = false;
   this->ticker = new Ticker();
   this->ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
-  this->zcom = zcom;
   this->port = 50645;
 }
 
@@ -27,11 +26,8 @@ void Server::Run() {
   while(running) {
     if(ticker->Tick())
       Update(ticker->GetElapsedMilliSeconds());
-    else
-      {
+    else {
       sf::Sleep(0.01f);
-      if(zcom)
-	zcom->Sleep(10);
     }
   }
   printf("Server finished\n");
@@ -43,14 +39,12 @@ void Server::Stop() {
 }
 
 void Server::Update(unsigned int frametime) {
-  ZCom_processReplicators((GameConstant::SIMULATION_TIME_PER_UPDATE));
-  this->ZCom_processInput();
   world->UpdatePlayer((GameConstant::SIMULATION_TIME_PER_UPDATE), Input());
-  this->ZCom_processOutput();
 }
 
 //zoidcom handling
 
+/*
 bool Server::ZCom_cbConnectionRequest(ZCom_ConnID id, ZCom_BitStream &request, ZCom_BitStream &reply){
   printf("A client requested connection, id : [%d].\n", id);
   std::string pseudo(request.getStringStatic());
@@ -106,13 +100,10 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID id, zU8 requested_level, ZCom_BitSt
 
   return requested_level == 1;
 }
+*/
 
 void Server::Init(){
-  this->ZCom_setDebugName("Server");
-  if (!this->ZCom_initSockets(true, port, 0)){
-    printf("No sockets\n");
-    exit(255);
-  }
+  //TODO create TCP socket and other things
   printf("Socket created\n");
 }
 

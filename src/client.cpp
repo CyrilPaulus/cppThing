@@ -5,15 +5,14 @@
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 
-Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zcom) : Screen(window, imageManager) {
+Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(window, imageManager) {
  
-  this->zcom = zcom;
   ticker = new Ticker();
   ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
   worldDisplay = new sf::RenderTexture();
   worldDisplay->Create(window->GetWidth(), window->GetHeight());
   mouse = new Mouse(window, worldDisplay, imageManager);
-  world = new World(this, imageManager, false);
+  world = new World(imageManager, false);
   addCube = false;
   removeCube = false;
   player = NULL;
@@ -23,8 +22,8 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager, ZoidCom* zc
   //TODO wrap this in a function
   displayCube = new CubeDisplay(imageManager);
   displayCube->SetType(cubeType);
-  sf::Vector2f uiPosition = sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
-					 window->GetHeight() - 10 - Cube::HEIGHT); 
+  sf::Vector2f uiPosition = sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH
+					 ,window->GetHeight() - 10 - Cube::HEIGHT); 
   displayCube->SetPosition(uiPosition);
   layerDisplay = new LayerDisplay(imageManager, GameConstant::LAYERNBR);
   layerDisplay->SetPosition(uiPosition + sf::Vector2f(0, - 5 - layerDisplay->GetSize().y));
@@ -60,17 +59,13 @@ int Client::Run(){
     
     if(ticker->Tick()){
       Update(ticker->GetElapsedMilliSeconds());
-    } else {
-      if(zcom)
-	zcom->Sleep(1);
-    }
+    }     
     
     mouse->Update();
     
     Draw();
     
   }
-  ZCom_Disconnect(serverId, NULL);
   return -1;
 }
 
@@ -107,16 +102,14 @@ void Client::OnKeyPressed(sf::Event event) {
   case sf::Keyboard::A:
     layer = (layer + GameConstant::LAYERNBR - 1) % GameConstant::LAYERNBR;
     layerDisplay->SetLayer(layer);
-    printf("%d\n", layer);
     break;
   case sf::Keyboard::Z:
     layer = (layer + 1) % GameConstant::LAYERNBR;
     layerDisplay->SetLayer(layer);
-    printf("%d\n", layer);
     break;
-	case sf::Keyboard::Escape:
-		mainMenu = true;
-		break;
+  case sf::Keyboard::Escape:
+    mainMenu = true;
+    break;
   default:
     break;
   }
@@ -157,10 +150,10 @@ void Client::OnResized(sf::Event event){
   newView.SetCenter(player->GetCenter());
   newView.Zoom(zoom);
   worldDisplay->SetView(newView);
-
- displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
+  
+  displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
 					window->GetHeight() - 10 - Cube::HEIGHT));
-
+  
 }
 
 void Client::OnMouseWheelMoved(sf::Event event) {
@@ -173,21 +166,15 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 
 
 void Client::Update(unsigned int frametime) {
-  this->ZCom_processReplicators(frametime);
-  this->ZCom_processInput();
   
   if (addCube && world->CanAddCube(mouse->GetWorldPosition(), layer)){
-    ZCom_BitStream *message = new ZCom_BitStream();
+    //TODO send cube update pkt
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true, layer);
-    cu.Encode(message);
-    ZCom_sendData(serverId, message);	
   }
     
   if (removeCube && world->CanRemoveCube(mouse->GetWorldPosition(), layer)){
-    ZCom_BitStream *message = new ZCom_BitStream();
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false, layer);
-    cu.Encode(message);
-    ZCom_sendData(serverId, message);	
+    //TODO send cube update pkt;	
   }
 
   Input input;
@@ -195,7 +182,8 @@ void Client::Update(unsigned int frametime) {
   input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
   input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
   input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
-  
+
+  //TODO send player update
   world->Update();
   world->UpdatePlayer(frametime, input);
   
@@ -204,7 +192,6 @@ void Client::Update(unsigned int frametime) {
     UpdateView();
   }
   
-  this->ZCom_processOutput();
 }
 
 void Client::Draw() {
@@ -237,12 +224,12 @@ void Client::UpdateView() {
     newView.Move(sf::Vector2f(0, player->GetBbox().Top - 100 * zoom - top));
   else if(player->GetBbox().Top + player->GetBbox().Height + 100 * zoom > bottom)
     newView.Move(sf::Vector2f(0, player->GetBbox().Top + player->GetBbox().Height + 100 * zoom - bottom));
-
+  
   worldDisplay->SetView(newView);
 }
 
-//Zoidcom handling
 
+/*
 void Client::ZCom_cbConnectResult(ZCom_ConnID id, eZCom_ConnectResult result, ZCom_BitStream &reply) {
   if (result == eZCom_ConnAccepted){
     printf("Connection established, launching...\n");
@@ -293,28 +280,16 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
     world->AddPlayer(p);
   }
 }
+*/
 
 void Client::Connect() {
-  this->ZCom_setDebugName("Client");
-  if(!this->ZCom_initSockets(true, 0, 0)) {
-    printf("Can't init client socket\n");
-    exit(255);
-  }
-
-  ZCom_Address server;
+  
+  //TODO connect to server
   std::stringstream saddress;
   saddress<<ip;
   saddress<<":";
   saddress<<port;
-  
-  server.setAddress(eZCom_AddressUDP, 0, saddress.str().data());
-  ZCom_BitStream *connectionInfo = new ZCom_BitStream();
-  connectionInfo->addString(pseudo.data());
-  serverId = this->ZCom_Connect(server, connectionInfo);
-  if(serverId == ZCom_Invalid_ID){
-    printf("Invalid id\n");
-    exit(255);
-  }  
+     
 }
 
 void Client::SetPort(int port){

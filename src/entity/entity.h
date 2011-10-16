@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "../imageManager.h"
-#include <zoidcom.h>
+
 class Entity {
  public:
   Entity(ImageManager *);
@@ -16,16 +16,15 @@ class Entity {
   void SetPosition(sf::Vector2f);
   sf::Vector2f GetCenter();
   
-  void RegisterZCom(ZCom_Control *, bool);
-  void ProcessNodeEvents();
+
   bool CanRemove();
-  ZCom_Node* node;
+
  protected:
 
   bool remove;
   
   sf::Sprite *sprite;
-  zFloat position[2];
+  sf::Vector2f position;
   sf::Vector2f offset;
   sf::Vector2f bbox;
 

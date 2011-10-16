@@ -3,8 +3,7 @@
 #include "../utils/vectorutils.h"
 #include <algorithm>
 
-ZCom_ClassID Player::netClassServerId = ZCom_Invalid_ID;
-ZCom_ClassID Player::netClassClientId = ZCom_Invalid_ID;
+
 
 Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) {
   this->world = world;
@@ -27,18 +26,13 @@ Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) 
   maxWalkSpeed = 100;
   maxFallSpeed = 200;
 
-  speed[0] = speed[1]  = 0;
+  speed = sf::Vector2f(0, 0);
   acceleration = sf::Vector2f(350, 350);
   isFlying = false;
   jumpForce = 200;
 
-  accumTime = 0;
-  currentTime = 0;
-
   moveX = false;
   moveY = false;
-
-  lastInputSent = Input();
 }
 
 Player::~Player(){
@@ -75,28 +69,28 @@ void Player::InputUpdate(Input input) {
   moveX = false;
   moveY = false;
   float frameSec = (GameConstant::SIMULATION_TIME_PER_UPDATE / 1000.f);
-  if (input.Left && speed[0] > -maxWalkSpeed) {
-    speed[0] -= acceleration.x * frameSec;
+  if (input.Left && speed.x > -maxWalkSpeed) {
+    speed.x -= acceleration.x * frameSec;
     moveX = true;
   }
-  else if(input.Right && speed[0] < maxWalkSpeed) {
-    speed[0] +=  acceleration.x * frameSec;
+  else if(input.Right && speed.x < maxWalkSpeed) {
+    speed.x +=  acceleration.x * frameSec;
     moveX = true;
   }
   
   //Update speed Y
   if(noclip){
-    if (input.Up && speed[1] > -maxFallSpeed) {
-      speed[1] -= (acceleration.y) * frameSec;
+    if (input.Up && speed.y > -maxFallSpeed) {
+      speed.y -= (acceleration.y) * frameSec;
       moveY = true;
     }
-    else if(input.Down && speed[1] < maxFallSpeed) {
-      speed[1] += (acceleration.y) * frameSec;
+    else if(input.Down && speed.y < maxFallSpeed) {
+      speed.y += (acceleration.y) * frameSec;
       moveY = true;
     }    
   }else {
     if(input.Up && !isFlying){
-      speed[1] -= jumpForce;
+      speed.y -= jumpForce;
       isFlying = true;
     }  
   }
@@ -104,65 +98,65 @@ void Player::InputUpdate(Input input) {
 }
 
 void Player::PhysicUpdate(unsigned int frametime) {	
-  float frameSec = GameConstant::SIMULATION_TIME_PER_UPDATE / 1000.f;
+  /*float frameSec = GameConstant::SIMULATION_TIME_PER_UPDATE / 1000.f;
   accumTime += frametime;
   while(accumTime > 0 && accumTime >= GameConstant::SIMULATION_TIME_PER_UPDATE) {
     accumTime -= GameConstant::SIMULATION_TIME_PER_UPDATE;
     
-    if(speed[0] > 0 && !moveX) {
-      speed[0] = std::max(0.F, speed[0] - (acceleration.x) * frameSec);
+    if(speed.x > 0 && !moveX) {
+      speed.x = std::max(0.F, speed.x - (acceleration.x) * frameSec);
     }
-    else if(speed[0] < 0 && !moveX){
-      speed[0] = std::min(0.F, speed[0] + (acceleration.x) * frameSec);
+    else if(speed.x < 0 && !moveX){
+      speed.x = std::min(0.F, speed[0] + (acceleration.x) * frameSec);
     }    
     
     if(noclip) {
-      if(speed[1] > 0 && !moveY) {
-	speed[1] = std::max(0.F, speed[1] - (acceleration.y) * frameSec);
+      if(speed.y > 0 && !moveY) {
+	speed.y = std::max(0.F, speed.y - (acceleration.y) * frameSec);
       }
-      else if(speed[1] < 0 && !moveY){
-	speed[1] = std::min(0.F, speed[1] + (acceleration.y) * frameSec);
+      else if(speed.y < 0 && !moveY){
+	speed.y = std::min(0.F, speed.y + (acceleration.y) * frameSec);
       }
     }
     else
-      speed[1] = std::min(speed[1] + (acceleration.y) * frameSec, maxFallSpeed);
+      speed.y = std::min(speed.y + (acceleration.y) * frameSec, maxFallSpeed);
     
     //Update position x and check for collision
-    if(speed[0] != 0){
-      position[0] += speed[0] * frameSec;
+    if(speed.x != 0){
+      position.x += speed.x * frameSec;
       
       Cube *c = world->GetCollidingCube(GetBbox());
       if( c != NULL){
-	if(speed[0] < 0)
-	  position[0] = c->GetBbox().Left + c->GetBbox().Width;
+	if(speed.x < 0)
+	  position.x = c->GetBbox().Left + c->GetBbox().Width;
 	else
-	  position[0] = c->GetBbox().Left - GetBbox().Width;
+	  position.x = c->GetBbox().Left - GetBbox().Width;
 	speed[0] = 0;
       }
     }
     
     //Update position with speed and check for collision
-    if(speed[1] != 0){
-      position[1] += speed[1] * frameSec;
+    if(speed.y != 0){
+      position.y += speed.y * frameSec;
       isFlying = true;
       Cube *c = world->GetCollidingCube(GetBbox());
       if( c != NULL){
-	if(speed[1] < 0)
-	  position[1] = c->GetBbox().Top + c->GetBbox().Height;
+	if(speed.y < 0)
+	  position.y = c->GetBbox().Top + c->GetBbox().Height;
 	else{
-	  position[1] = c->GetBbox().Top - GetBbox().Height;
+	  position.y = c->GetBbox().Top - GetBbox().Height;
 	  isFlying = false;
 	}
-	speed[1] = 0;
+	speed.y = 0;
       }
     }
-  }
+    }*/
 }
 
 void Player::Update(unsigned int frametime, Input input) {
-  //InputUpdate(input);
-  //PhysicUpdate(frametime);
-  switch (node->getRole()){
+  InputUpdate(input);
+  PhysicUpdate(frametime);
+  /*switch (node->getRole()){
   case eZCom_RoleOwner:
     DoOwner(input, frametime);
     break;
@@ -174,24 +168,19 @@ void Player::Update(unsigned int frametime, Input input) {
     break;
   default:
     break;
-  }
+    }*/
     
 }
-void Player::RegisterClass(ZCom_Control * control, bool server){
-  if(server)
-    Player::netClassServerId = control->ZCom_registerClass("player", ZCOM_CLASSFLAG_ANNOUNCEDATA);
-  else
-    Player::netClassClientId = control->ZCom_registerClass("player", ZCOM_CLASSFLAG_ANNOUNCEDATA);
-}
 
-void Player::SetID(ZCom_ConnID id){
+void Player::SetID(int id){
   this->id = id;
 }
 
-ZCom_ConnID Player::GetID(){
+int Player::GetID(){
   return id;
 }
 
+/*
 void Player::RegisterZCom(ZCom_Control *control, bool server) {
   node->beginReplicationSetup(5);
   moverep = new ZCom_Replicate_Movement<zFloat, 2>(32, ZCOM_REPFLAG_MOSTRECENT|ZCOM_REPFLAG_SETUPPERSISTS, ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY);
@@ -225,18 +214,13 @@ void Player::RegisterZCom(ZCom_Control *control, bool server) {
     node->setAnnounceData(adata);
   }
 }
-
-ZCom_ClassID Player::GetClass(bool server) {
-  if(server)
-    return(Player::netClassServerId);
-  else
-    return(Player::netClassClientId);
-}
+*/
 
 void Player::SetColor(sf::Color c){
   colorMask->SetColor(c);
 }
 
+/*
 void Player::DoAuth() {
   while (node && node->checkEventWaiting()) {
     eZCom_Event eve;
@@ -282,9 +266,10 @@ void Player::DoProxy() {
   }
   moverep->getExtrapolatedPosition(0, position);
   moverep->getExtrapolatedVelocity(0, speed);
-}
+  }*/
 
 
+/*
 void Player::inputUpdated(ZCom_BitStream& inputstream, bool inputchanged, zU32 clientTime, zU32 estimatedtimesent) {
   Input in;
   if(inputchanged) {
@@ -340,3 +325,4 @@ void Player::correctionReceived(zFloat *position, zFloat *speed, zFloat *acc, bo
     currentTimeBis = time;
   }
 }
+*/

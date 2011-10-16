@@ -10,15 +10,10 @@ class Cube : public Entity{
 
   Cube(ImageManager*, int);
   void SetType(int);
-  static void RegisterClass(ZCom_Control * , bool);
-  void RegisterZCom(ZCom_Control *, bool, int);
-  static ZCom_ClassID GetClass(bool server);
+
  private:
   int type;
   ImageManager *imageManager;
-    
-  static ZCom_ClassID netClassServerId;
-  static ZCom_ClassID netClassClientId;
 };
 
 #endif /* _CUBE_H_ */

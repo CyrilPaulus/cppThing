@@ -8,7 +8,7 @@
 
 class World;
 
-class Player : public Entity, public ZCom_MoveUpdateListener<zFloat> {
+class Player : public Entity {
  public:
   Player(ImageManager*, World*);
   ~Player();
@@ -18,25 +18,14 @@ class Player : public Entity, public ZCom_MoveUpdateListener<zFloat> {
   void InputUpdate(Input);
   void PhysicUpdate(unsigned int);
   void SetColor(sf::Color);
-  
-  static void RegisterClass(ZCom_Control * control, bool server);
-  void RegisterZCom(ZCom_Control *, bool);
-  void SetID(ZCom_ConnID);
-  ZCom_ConnID GetID();
-  static ZCom_ClassID GetClass(bool server);
-
+  void SetID(int);
+  int GetID();
  private:
   void DoOwner(Input input, unsigned int frametime);
   void DoProxy();
   void DoAuth();
-  
-  static ZCom_ClassID netClassServerId;
-  static ZCom_ClassID netClassClientId;
-
-  ZCom_ConnID id;
   World* world;
-  ZCom_Replicate_Movement<zFloat, 2> *moverep;
-
+  
   bool moveX;
   bool moveY;
 
@@ -54,19 +43,10 @@ class Player : public Entity, public ZCom_MoveUpdateListener<zFloat> {
   float maxFallSpeed;
   float jumpForce;
 
-  zFloat speed[2];
+  sf::Vector2f speed;
   sf::Vector2f acceleration;
-  zU32 currentTime;
-  zU32 accumTime;
-  Input lastInputSent;
-  Input lastInputReceived;
-  bool updateOut;
-  bool updateIn;
-
-  void inputUpdated(ZCom_BitStream&, bool, zU32, zU32);
-  void inputSent(ZCom_BitStream&);
-  void correctionReceived(zFloat*, zFloat*, zFloat*, bool, zU32);
-  void updateReceived(ZCom_BitStream&, zFloat*, zFloat*, zFloat*, zU32) {};
+  
+  int id;
 };
 
 #endif /* _PLAYER_H_ */

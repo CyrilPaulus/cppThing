@@ -2,12 +2,11 @@
 #include "world.h"
 #include "math.h"
 
-World::World(ZCom_Control *control, ImageManager *imageManager, bool server){
+World::World(ImageManager *imageManager, bool server){
   this->imageManager = imageManager;
   for(int i = 0; i < GameConstant::LAYERNBR; i++){
     this->quadTrees[i] = new QuadTree(10, sf::Vector2f(90, 90));
   }  
-  this->control = control;
   this->server = server;
 }
 
@@ -35,8 +34,7 @@ void World::Draw(sf::RenderTarget *rt){
   
     if(i == 0) {
       sf::Vector2f origin = rt->ConvertCoords(0,0);
-      sf::Shape fog = sf::Shape::Rectangle(sf::FloatRect(origin.x, origin.y, rt->GetDefaultView().GetSize().x, 
-			      rt->GetDefaultView().GetSize().y), sf::Color(100, 149, 237, 150));
+      sf::Shape fog = sf::Shape::Rectangle(sf::FloatRect(origin.x, origin.y, rt->GetDefaultView().GetSize().x, rt->GetDefaultView().GetSize().y), sf::Color(100, 149, 237, 150));
       rt->Draw(fog);
     }
     if(i == 1){
@@ -55,7 +53,6 @@ void World::AddCube(sf::Vector2f pos, int type, int layerIndex, bool force){
   if(force || CanAddCube(pos, layerIndex)) {
     Cube* cube = new Cube(imageManager, type);
     cube->SetPosition(gridPos);
-    cube->RegisterZCom(control, server, layerIndex);    
     layer[layerIndex].push_back(cube);
     quadTrees[layerIndex]->Add(cube);
   } 
@@ -120,17 +117,6 @@ void World::RemovePlayer(Player *p) {
   delete(p);
 }
 
-void World::RemovePlayerByID(ZCom_ConnID id){
-  std::list<Player*>::iterator p;
-  for(p = playerList.begin(); p != playerList.end(); p++) {
-    if((*p)->GetID() == id) {
-      delete(*p);
-      playerList.erase(p);
-      break;
-    }
-  }
-}
-
 Cube* World::GetCollidingCube(sf::FloatRect bbox){
   std::list<Cube*> candidate = quadTrees[1]->GetList(bbox);
   std::list<Cube*>::iterator it;
@@ -146,7 +132,6 @@ void World::Update() {
   std::list<Cube*>::iterator c;  
   for(int i = 0; i < GameConstant::LAYERNBR; i++) {
     for(c = layer[i].begin(); c != layer[i].end(); c++) {
-      (*c)->ProcessNodeEvents();
       if((*c)->CanRemove()){
 	quadTrees[i]->Remove((*c));
 	delete (*c);
@@ -172,12 +157,3 @@ void World::UpdatePlayer(unsigned int frametime, Input input) {
   for(p = playerList.begin(); p != playerList.end(); p++)
     (*p)->Update(frametime, input);
 }
-
-Player *World::GetPlayerByID(ZCom_ConnID id){
-  std::list<Player*>::iterator p;
-  for(p = playerList.begin(); p != playerList.end(); p++){
-    if((*p)->GetID() == id)
-      return (*p);
-  }
-  return NULL;
-} 

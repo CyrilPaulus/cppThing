@@ -9,6 +9,7 @@ CubeUpdate::CubeUpdate(int cubeType, sf::Vector2f position, bool added, int laye
   this->layer = layer;
 }
 
+/*
 void CubeUpdate::Encode(ZCom_BitStream *message){
   message->addInt(Packet::CubeUpdate, 8);
   message->addInt(cubeType, 32);
@@ -29,6 +30,7 @@ CubeUpdate* CubeUpdate::Decode(ZCom_BitStream &message){
   int layer = message.getInt(8);
   return new CubeUpdate(cubeType, position, added, layer);
 }
+*/
 
 int CubeUpdate::GetCubeType() {
   return cubeType;

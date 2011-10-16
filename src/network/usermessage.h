@@ -6,8 +6,8 @@
 class UserMessage : public Packet{
  public:
   UserMessage(unsigned int, Input, sf::Vector2f lookdir);
-  void Encode(ZCom_BitStream *);
-  static UserMessage *Decode(ZCom_BitStream &);
+  //  void Encode(ZCom_BitStream *);
+  //   static UserMessage *Decode(ZCom_BitStream &);
 
   unsigned int GetFrametime();
   Input GetInput();

@@ -1,7 +1,6 @@
 #ifndef _PACKET_H_
 #define _PACKET_H_
 
-#include <zoidcom.h>
 
 class Packet{
  public:

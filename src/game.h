@@ -23,7 +23,7 @@ class Game {
   sf::Thread* serverThread;
   Server* s;
   Client* c;
-  ZoidCom *zcom;
+
   bool isClient;
   bool isServer;
   bool serverRunning;

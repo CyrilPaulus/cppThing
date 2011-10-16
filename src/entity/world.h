@@ -13,7 +13,7 @@ class Player;
 
 class World {
  public:
-  World(ZCom_Control*, ImageManager *, bool);
+  World(ImageManager *, bool);
   ~World();
   
   void Draw(sf::RenderTarget *);
@@ -27,12 +27,9 @@ class World {
 
   void AddPlayer(Player *);
   void RemovePlayer(Player *);
-  void RemovePlayerByID(ZCom_ConnID);
-  Player* GetPlayerByID(ZCom_ConnID);
   Cube* GetCollidingCube(sf::FloatRect);
  private:
   ImageManager* imageManager;
-  ZCom_Control* control;
   bool server;
   std::list<Cube*> layer[GameConstant::LAYERNBR];
   std::list<Player*> playerList;

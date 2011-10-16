@@ -8,7 +8,7 @@ UserMessage::UserMessage(unsigned int frametime, Input input, sf::Vector2f lookd
   this->lookdir = lookdir;
 }
 
-void UserMessage::Encode(ZCom_BitStream *message){
+/*void UserMessage::Encode(ZCom_BitStream *message){
   message->addInt(Packet::UserMessage, 8);
   message->addBool(input.Up);
   message->addBool(input.Down);
@@ -31,7 +31,7 @@ UserMessage* UserMessage::Decode(ZCom_BitStream &message){
   float x = message.getFloat(23);
   float y = message.getFloat(23);
   return new UserMessage(frametime, input, sf::Vector2f(x, y));
-}
+  }*/
 
 unsigned int UserMessage::GetFrametime(){
   return frametime;

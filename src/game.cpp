@@ -1,6 +1,5 @@
 #include "config.h"
 #include "game.h"
-#include <zoidcom.h>
 #include <time.h>
 #include <SFML/System.hpp>
 #include <stdio.h>
@@ -11,7 +10,6 @@
 #include "menu/mainMenu.h"
 
 void startServer(void* server);
-void processZoidcomLog(const char *log);
 
 Game::Game(){
   imageManager = new ImageManager();
@@ -30,10 +28,7 @@ Game::~Game(){
 }
 
 void Game::Run(int type){
-  zcom = new ZoidCom(processZoidcomLog);
-  if(!zcom || !zcom->Init())
-    exit(255);
-
+  
   srand(time(NULL));
   if(type == Game::LOCAL){
     this->RunLocal();       
@@ -45,18 +40,16 @@ void Game::Run(int type){
     this->RunServer();
   }
 
-  delete zcom;
 }
 
 void Game::RunClient() {
   window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
   window->SetFramerateLimit(GameConstant::FRAMERATE_LIMIT);
   window->ShowMouseCursor(false);
-  c = new Client(window, imageManager, zcom);
+  c = new Client(window, imageManager);
   c->SetIp(ip);
   c->SetPort(port);
-  Cube::RegisterClass(c, false);
-  Player::RegisterClass(c, false);
+  
   c->Connect();
 
   MainMenu* main = new MainMenu(window, imageManager, this);
@@ -86,10 +79,8 @@ void Game::RunServer() {
 
 void Game::StartServer() {
   serverImgManager = new ImageManager();
-  s = new Server(serverImgManager, zcom);
-  Cube::RegisterClass(s, true);
-  Player::RegisterClass(s, true);
-  
+  s = new Server(serverImgManager);
+ 
   serverThread = new sf::Thread(&startServer, s);
   
   s->Init();
@@ -110,10 +101,6 @@ void Game::StopServer() {
 
 void startServer(void* server){
   (static_cast<Server*>(server))->Run();
-}
-
-void processZoidcomLog(const char *log) {
-  printf("%s\n", log);
 }
 
 void Game::SetIp(std::string ip){
