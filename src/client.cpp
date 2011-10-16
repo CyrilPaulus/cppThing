@@ -53,8 +53,10 @@ int Client::Run(){
       HandleEvent(event);
     }
     
-    if(mainMenu)
+    if(mainMenu){
+      mainMenu = false;
       return Screen::MAINMENU;
+    }
     
     if(ticker->Tick()){
       Update(ticker->GetElapsedMilliSeconds());

@@ -17,7 +17,8 @@ class MainMenu : public Screen {
   int selectedItem;
   int itemCount;
   MenuItem** items;
-
+  int HandleEvent(sf::Event e);
+  int OnKeyPressed(sf::Event e);
 };
 
 #endif /* _MAINMENU_H_ */

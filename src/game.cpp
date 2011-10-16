@@ -42,7 +42,7 @@ void Game::Run(int type){
     this->RunClient();
   }
   else if(type == Game::SERVER) {
-	this->RunServer();
+    this->RunServer();
   }
 
   delete zcom;
@@ -64,7 +64,7 @@ void Game::RunClient() {
   int screen = 1;
   screens[Screen::GAME] = c;
   screens[Screen::MAINMENU] = main;
-  while (screen >= 0) {
+  while (screen != Screen::EXIT) {
     int prevScreen = screen;
     screen = screens[screen]->Run();
   }
