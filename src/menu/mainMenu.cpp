@@ -48,6 +48,9 @@ MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(
   v.SetCenter(p->GetCenter() + sf::Vector2f(0, -30));
   pImage->SetView(v);
   running = true;
+
+  background = sf::Color::Black;
+  nextColor = sf::Color::Black;
 }
 
 MainMenu::~MainMenu() {
@@ -60,7 +63,7 @@ MainMenu::~MainMenu() {
 }
 
 int MainMenu::Run() {
-
+  p->SetColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
   Resize(window->GetWidth(), window->GetHeight());
   sf::Event event;
   while(running) {
@@ -69,11 +72,12 @@ int MainMenu::Run() {
       if(rtn != Screen::NONE)
 	return rtn;
     }
-
+    
+    UpdateColor();
     mouse->Update();
 
-    window->Clear(sf::Color(100, 149, 237));
-    pImage->Clear(sf::Color(100, 149, 237));
+    window->Clear(background);
+    pImage->Clear(background);
     p->Draw(pImage);
     pImage->Display();
 
@@ -132,7 +136,6 @@ int MainMenu::OnKeyPressed(sf::Event event) {
     return items[selectedItem]->DoAction();
     break;
   case sf::Keyboard::Escape:
-    printf("Back to game\n");
     return Screen::GAME;
     break;
   default:
@@ -169,4 +172,26 @@ int MainMenu::OnMouseButtonReleased(sf::Event event) {
     }
   }
   return Screen::NONE;
+}
+
+void MainMenu::UpdateColor() {
+
+  if(background == nextColor) {
+    nextColor = sf::Color(rand() % 255, rand() % 255, rand() % 255);
+  }
+
+  if(background.r > nextColor.r)
+    background.r -= 1;
+  else if(background.r < nextColor.r)
+    background.r += 1;
+
+  if(background.g > nextColor.g)
+    background.g -= 1;
+  else if(background.g < nextColor.g)
+    background.g += 1;
+
+  if(background.b > nextColor.b)
+    background.b -= 1;
+  else if(background.b < nextColor.b)
+    background.b += 1;
 }

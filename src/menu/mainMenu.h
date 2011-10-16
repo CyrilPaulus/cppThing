@@ -28,6 +28,10 @@ class MainMenu : public Screen {
   //Candyeye stuff
   sf::RenderTexture* pImage;
   Player* p;
+  sf::Color background;
+  sf::Color nextColor;
+  
+  void UpdateColor();
 };
 
 #endif /* _MAINMENU_H_ */
