@@ -12,6 +12,7 @@ class MainMenu : public Screen {
   int Run();
   void Resize(int, int);
  private:
+  Mouse* mouse;
   Game* game;
   bool running;
   int selectedItem;
@@ -19,6 +20,8 @@ class MainMenu : public Screen {
   MenuItem** items;
   int HandleEvent(sf::Event e);
   int OnKeyPressed(sf::Event e);
+  void OnMouseMoved(sf::Event e);
+  int OnMouseButtonReleased(sf::Event e);
 };
 
 #endif /* _MAINMENU_H_ */
