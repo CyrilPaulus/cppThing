@@ -14,19 +14,28 @@ class Game {
   static const int SERVER = 2;
   Game();
   ~Game();
+  Client* GetClient();
+  Server* GetServer();
   void Run(int type);
   void SetIp(std::string ip);
   void SetPort(int port);
  private:
+  sf::Thread* serverThread;
+  Server* s;
+  Client* c;
   ZoidCom *zcom;
   bool isClient;
   bool isServer;
+  bool serverRunning;
   sf::RenderWindow *window;
   ImageManager* imageManager;
+  ImageManager* serverImgManager;
   std::string ip;
   int port;
   void RunClient();
   void RunServer();
+  void StartServer();
+  void StopServer();
   void RunLocal();
 };
 

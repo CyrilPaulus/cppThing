@@ -52,9 +52,9 @@ int Client::Run(){
     while(window->PollEvent(event)) {
       HandleEvent(event);
     }
-	
-	if(mainMenu)
-		return -1;
+    
+    if(mainMenu)
+      return Screen::MAINMENU;
     
     if(ticker->Tick()){
       Update(ticker->GetElapsedMilliSeconds());
