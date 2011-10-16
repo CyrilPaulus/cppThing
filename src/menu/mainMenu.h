@@ -1,8 +1,10 @@
 #ifndef _MAINMENU_H_
 #define _MAINMENU_H_
 
+
 #include "../screen.h"
 #include "../game.h"
+#include "../entity/player.h"
 #include "../ui/menuItem.h"
 
 class MainMenu : public Screen {
@@ -22,6 +24,10 @@ class MainMenu : public Screen {
   int OnKeyPressed(sf::Event e);
   void OnMouseMoved(sf::Event e);
   int OnMouseButtonReleased(sf::Event e);
+  
+  //Candyeye stuff
+  sf::RenderTexture* pImage;
+  Player* p;
 };
 
 #endif /* _MAINMENU_H_ */

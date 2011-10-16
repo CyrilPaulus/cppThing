@@ -40,12 +40,21 @@ MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(
   for(int i = 0; i < itemCount; i++)
     items[i]->CenterX(window->GetWidth());
   
+  p = new Player(imageManager, NULL);
+  pImage = new sf::RenderTexture();
+  pImage->Create(window->GetWidth(), window->GetHeight());
+  sf::View v = pImage->GetDefaultView();
+  v.Zoom(0.08);
+  v.SetCenter(p->GetCenter() + sf::Vector2f(0, -30));
+  pImage->SetView(v);
   running = true;
 }
 
 MainMenu::~MainMenu() {
   for(int i = 0; i < itemCount; i++)
     delete items[i];
+  delete p;
+  delete pImage;
   delete mouse;
   delete items;
 }
@@ -64,6 +73,14 @@ int MainMenu::Run() {
     mouse->Update();
 
     window->Clear(sf::Color(100, 149, 237));
+    pImage->Clear(sf::Color(100, 149, 237));
+    p->Draw(pImage);
+    pImage->Display();
+
+    sf::Sprite pSprite(pImage->GetTexture());
+    pSprite.SetPosition(sf::Vector2f((window->GetWidth() - pImage->GetWidth()) / 2
+				     , window->GetHeight() - pImage->GetHeight()));
+    window->Draw(pSprite);
     for(int i = 0; i < itemCount; i++) {
       items[i]->Draw(window, i == selectedItem);
     }
@@ -134,6 +151,7 @@ void MainMenu::OnMouseMoved(sf::Event event) {
   int x = event.MouseMove.X;
   int y = event.MouseMove.Y;
 
+  p->SetEyesPosition(pImage->ConvertCoords(x, y));
   for(int i = 0; i < itemCount; i++) {
     if(items[i]->GetBbox().Contains(x, y)) {
 	selectedItem = i;
