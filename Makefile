@@ -1,7 +1,7 @@
 CC := g++
 
 CFLAGS := -g -Wall
-LDFLAGS := -lm -lsfml-graphics -lsfml-system 
+LDFLAGS := -lm -lsfml-window -lsfml-graphics -lsfml-system 
 
 EXEC:= a.out
 EXPORT := export.tar.gz

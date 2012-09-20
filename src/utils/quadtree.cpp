@@ -41,9 +41,9 @@ void QuadTreeNode::Add(Cube *b) {
   if(!children.empty()){
     std::list<QuadTreeNode*>::iterator i;
     for (i = children.begin(); i != children.end(); i++)
-      if ((*i)->range.Intersects(b->GetBbox()))
+      if ((*i)->range.intersects(b->GetBbox()))
 	(*i)->Add(b);	  
-  } else if ((int)cubeList.size() < capacity || (range.Width <= minSize.x || range.Height <= minSize.y)) {
+  } else if ((int)cubeList.size() < capacity || (range.width <= minSize.x || range.height <= minSize.y)) {
     cubeList.push_back(b);
   } else {
     Explode();
@@ -52,15 +52,15 @@ void QuadTreeNode::Add(Cube *b) {
 } 
 
 void QuadTreeNode::Explode() {
-  if(range.Width <= minSize.x || range.Height <= minSize.y)
+  if(range.width <= minSize.x || range.height <= minSize.y)
     return;
 
-  float width = range.Width / 2;
-  float height = range.Height / 2;
-  children.push_back(new QuadTreeNode(sf::FloatRect(range.Left, range.Top, width, height), capacity, minSize));
-  children.push_back(new QuadTreeNode(sf::FloatRect(range.Left + width, range.Top, width, height), capacity, minSize));
-  children.push_back(new QuadTreeNode(sf::FloatRect(range.Left, range.Top + height, width, height), capacity, minSize));
-  children.push_back(new QuadTreeNode(sf::FloatRect(range.Left + width, range.Top + height, width, height), capacity, minSize));
+  float width = range.width / 2;
+  float height = range.height / 2;
+  children.push_back(new QuadTreeNode(sf::FloatRect(range.left, range.top, width, height), capacity, minSize));
+  children.push_back(new QuadTreeNode(sf::FloatRect(range.left + width, range.top, width, height), capacity, minSize));
+  children.push_back(new QuadTreeNode(sf::FloatRect(range.left, range.top + height, width, height), capacity, minSize));
+  children.push_back(new QuadTreeNode(sf::FloatRect(range.left + width, range.top + height, width, height), capacity, minSize));
 
   std::list<Cube*>::iterator i;
   for (i = cubeList.begin(); i != cubeList.end(); i++){
@@ -73,7 +73,7 @@ void QuadTreeNode::Remove(Cube *b) {
   if(!children.empty()) {
     std::list<QuadTreeNode*>::iterator i;
     for (i = children.begin(); i != children.end(); i++)
-      if((*i)->range.Intersects(b->GetBbox()))
+      if((*i)->range.intersects(b->GetBbox()))
 	(*i)->Remove(b);
   }
   else
@@ -85,7 +85,7 @@ std::list<Cube*> QuadTreeNode::GetList(sf::FloatRect bbox) {
     std::list<Cube*> rtn;
     std::list<QuadTreeNode*>::iterator i;
     for (i = children.begin(); i != children.end(); i++) {
-      if((*i)->range.Intersects(bbox)) {
+      if((*i)->range.intersects(bbox)) {
 	std::list<Cube*> candidate = (*i)->GetList(bbox);
 	std::list<Cube*>::iterator c;
 	for (c = candidate.begin(); c != candidate.end(); c++)
