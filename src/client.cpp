@@ -61,7 +61,7 @@ int Client::Run(){
     }
     
     if(ticker->Tick()){
-      Update(ticker->GetElapsedMilliSeconds());
+      Update(ticker->GetElapsedTime());
     }     
     
     mouse->Update();
@@ -171,7 +171,7 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 }
 
 
-void Client::Update(unsigned int frametime) {
+void Client::Update(sf::Time frametime) {
   
   if (addCube && world->CanAddCube(mouse->GetWorldPosition(), layer)){
     //TODO send cube update pkt

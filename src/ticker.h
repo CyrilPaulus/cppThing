@@ -6,15 +6,15 @@
 class Ticker{
  public:
   Ticker();
-  Ticker(float tickTime);
+  Ticker(sf::Time tickTime);
   bool Tick();
-  unsigned int GetElapsedMilliSeconds();
+  sf::Time GetElapsedTime();
   void SetUpdateRate(int);
 
  private:
   sf::Clock clock;
-  float tickTime;
-  unsigned int elapsedTime;
+  sf::Time tickTime;
+  sf::Time elapsedTime;
 };
 
 #endif /* _TICKER_H_ */

@@ -25,7 +25,7 @@ void Server::Run() {
   world->AddCube(sf::Vector2f(0,90), 1, 1);
   while(running) {
     if(ticker->Tick())
-      Update(ticker->GetElapsedMilliSeconds());
+      Update(ticker->GetElapsedTime());
     else {
       sf::sleep(sf::seconds(0.01f));
     }
@@ -38,8 +38,8 @@ void Server::Stop() {
   running = false;
 }
 
-void Server::Update(unsigned int frametime) {
-  world->UpdatePlayer((GameConstant::SIMULATION_TIME_PER_UPDATE), Input());
+void Server::Update(sf::Time frametime) {
+  world->UpdatePlayer(frametime, Input());
 }
 
 //zoidcom handling

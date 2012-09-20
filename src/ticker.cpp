@@ -2,21 +2,20 @@
 #include "ticker.h"
 
 Ticker::Ticker() {
-  tickTime = 25;
-  elapsedTime = 0;
+  tickTime = sf::milliseconds(25);
+  elapsedTime = sf::milliseconds(0);
 }
 
-Ticker::Ticker(float tickTime) {
+Ticker::Ticker(sf::Time tickTime) {
   this->tickTime = tickTime;    
 }
 
 void Ticker::SetUpdateRate(int updateRate){
-	tickTime = 1000 / updateRate;
+  tickTime = sf::milliseconds(1000 / updateRate);
 }
 
 bool Ticker::Tick() {
-  //Todo use sf::Time everywhere
-  elapsedTime = clock.getElapsedTime().asMilliseconds();
+  elapsedTime = clock.getElapsedTime();
   if(elapsedTime >= tickTime){
     clock.restart();
     return true;
@@ -25,6 +24,6 @@ bool Ticker::Tick() {
   return false;
 }
 
-unsigned int Ticker::GetElapsedMilliSeconds(){
+sf::Time Ticker::GetElapsedTime(){
   return elapsedTime;
 }

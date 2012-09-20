@@ -27,7 +27,7 @@ class Client : public Screen{
 
  private:
   int layer;
-  void Update(unsigned int);
+  void Update(sf::Time frametime);
   void Draw();
 
   std::string pseudo;  

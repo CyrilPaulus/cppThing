@@ -18,7 +18,7 @@ class World {
   
   void Draw(sf::RenderTarget *);
   void Update();
-  void UpdatePlayer(unsigned int, Input);
+  void UpdatePlayer(sf::Time frametime, Input);
   void AddCube(sf::Vector2f, int, int);
   void AddCube(sf::Vector2f, int, int, bool);
   void RemoveCube(sf::Vector2f, int);

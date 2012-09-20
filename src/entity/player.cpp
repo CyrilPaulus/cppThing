@@ -97,8 +97,8 @@ void Player::InputUpdate(Input input) {
 
 }
 
-void Player::PhysicUpdate(unsigned int frametime) {	
-  float seconds = frametime / 1000.0;
+void Player::PhysicUpdate(sf::Time frametime) {	
+  float seconds = frametime.asSeconds();
   
   if(speed.x > 0 && !moveX) {
     speed.x = std::max(0.F, speed.x - (acceleration.x) * seconds);
@@ -149,7 +149,7 @@ void Player::PhysicUpdate(unsigned int frametime) {
   }
 }
 
-void Player::Update(unsigned int frametime, Input input) {
+void Player::Update(sf::Time frametime, Input input) {
   InputUpdate(input);
   PhysicUpdate(frametime);
   /*switch (node->getRole()){

@@ -13,7 +13,7 @@ class Server {
   ~Server();
   void Run();
   void Stop();
-  void Update(unsigned int);
+  void Update(sf::Time frametime);
   void Init();
   void SetPort(int port);
  

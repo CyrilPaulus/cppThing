@@ -154,7 +154,7 @@ void World::Update() {
   }
 }
 
-void World::UpdatePlayer(unsigned int frametime, Input input) {
+void World::UpdatePlayer(sf::Time frametime, Input input) {
   std::list<Player*>::iterator p;
   for(p = playerList.begin(); p != playerList.end(); p++)
     (*p)->Update(frametime, input);

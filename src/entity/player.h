@@ -14,9 +14,9 @@ class Player : public Entity {
   ~Player();
   void Draw(sf::RenderTarget *);
   void SetEyesPosition(sf::Vector2f);
-  void Update(unsigned int, Input);
+  void Update(sf::Time frametime, Input);
   void InputUpdate(Input);
-  void PhysicUpdate(unsigned int);
+  void PhysicUpdate(sf::Time frametime);
   void SetColor(sf::Color);
   void SetID(int);
   int GetID();
