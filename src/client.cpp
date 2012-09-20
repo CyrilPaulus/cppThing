@@ -17,7 +17,8 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   world = new World(imageManager, false);
   addCube = false;
   removeCube = false;
-  player = NULL;
+  player = new Player(imageManager, world);
+  world->AddPlayer(player);
   zoom = 1;
   cubeType = 0;
   
@@ -175,10 +176,13 @@ void Client::Update(unsigned int frametime) {
   if (addCube && world->CanAddCube(mouse->GetWorldPosition(), layer)){
     //TODO send cube update pkt
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true, layer);
+    world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
   }
     
   if (removeCube && world->CanRemoveCube(mouse->GetWorldPosition(), layer)){
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false, layer);
+    world->RemoveCube(cu.GetPosition(), cu.GetLayer());
+
     //TODO send cube update pkt;	
   }
 

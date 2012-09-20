@@ -98,59 +98,55 @@ void Player::InputUpdate(Input input) {
 }
 
 void Player::PhysicUpdate(unsigned int frametime) {	
-  /*float frameSec = GameConstant::SIMULATION_TIME_PER_UPDATE / 1000.f;
-  accumTime += frametime;
-  while(accumTime > 0 && accumTime >= GameConstant::SIMULATION_TIME_PER_UPDATE) {
-    accumTime -= GameConstant::SIMULATION_TIME_PER_UPDATE;
-    
-    if(speed.x > 0 && !moveX) {
-      speed.x = std::max(0.F, speed.x - (acceleration.x) * frameSec);
-    }
-    else if(speed.x < 0 && !moveX){
-      speed.x = std::min(0.F, speed[0] + (acceleration.x) * frameSec);
-    }    
-    
-    if(noclip) {
-      if(speed.y > 0 && !moveY) {
-	speed.y = std::max(0.F, speed.y - (acceleration.y) * frameSec);
+  float seconds = frametime / 1000.0;
+  
+  if(speed.x > 0 && !moveX) {
+    speed.x = std::max(0.F, speed.x - (acceleration.x) * seconds);
+  }
+  else if(speed.x < 0 && !moveX){
+    speed.x = std::min(0.F, speed.x + (acceleration.x) * seconds);
+  }    
+  
+  if(noclip) {
+    if(speed.y > 0 && !moveY) {
+      speed.y = std::max(0.F, speed.y - (acceleration.y) * seconds);
       }
-      else if(speed.y < 0 && !moveY){
-	speed.y = std::min(0.F, speed.y + (acceleration.y) * frameSec);
-      }
+    else if(speed.y < 0 && !moveY){
+      speed.y = std::min(0.F, speed.y + (acceleration.y) * seconds);
     }
-    else
-      speed.y = std::min(speed.y + (acceleration.y) * frameSec, maxFallSpeed);
+  }
+  else
+    speed.y = std::min(speed.y + (acceleration.y) * seconds, maxFallSpeed);
     
-    //Update position x and check for collision
-    if(speed.x != 0){
-      position.x += speed.x * frameSec;
-      
-      Cube *c = world->GetCollidingCube(GetBbox());
-      if( c != NULL){
-	if(speed.x < 0)
-	  position.x = c->GetBbox().Left + c->GetBbox().Width;
-	else
-	  position.x = c->GetBbox().Left - GetBbox().Width;
-	speed[0] = 0;
-      }
-    }
+  //Update position x and check for collision
+  if(speed.x != 0){
+    position.x += speed.x * seconds;
     
-    //Update position with speed and check for collision
-    if(speed.y != 0){
-      position.y += speed.y * frameSec;
-      isFlying = true;
-      Cube *c = world->GetCollidingCube(GetBbox());
-      if( c != NULL){
-	if(speed.y < 0)
-	  position.y = c->GetBbox().Top + c->GetBbox().Height;
-	else{
-	  position.y = c->GetBbox().Top - GetBbox().Height;
-	  isFlying = false;
-	}
-	speed.y = 0;
-      }
+    Cube *c = world->GetCollidingCube(GetBbox());
+    if( c != NULL){
+      if(speed.x < 0)
+	position.x = c->GetBbox().left + c->GetBbox().width;
+      else
+	position.x = c->GetBbox().left - GetBbox().width;
+      speed.x = 0;
     }
-    }*/
+  }
+  
+  //Update position with speed and check for collision
+  if(speed.y != 0){
+    position.y += speed.y * seconds;
+    isFlying = true;
+    Cube *c = world->GetCollidingCube(GetBbox());
+    if( c != NULL){
+      if(speed.y < 0)
+	position.y = c->GetBbox().top + c->GetBbox().height;
+      else{
+	position.y = c->GetBbox().top - GetBbox().height;
+	isFlying = false;
+      }
+      speed.y = 0;
+    }
+  }
 }
 
 void Player::Update(unsigned int frametime, Input input) {
