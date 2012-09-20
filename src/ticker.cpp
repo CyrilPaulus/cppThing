@@ -15,9 +15,10 @@ void Ticker::SetUpdateRate(int updateRate){
 }
 
 bool Ticker::Tick() {
-  elapsedTime = clock.GetElapsedTime();
+  //Todo use sf::Time everywhere
+  elapsedTime = clock.getElapsedTime().asMilliseconds();
   if(elapsedTime >= tickTime){
-    clock.Reset();
+    clock.restart();
     return true;
   }
 

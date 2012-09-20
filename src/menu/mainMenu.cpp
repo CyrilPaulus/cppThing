@@ -28,6 +28,7 @@ int Exit() {
 MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(w, img) {
   mouse = new Mouse(w, w, img);
   itemCount = 6;
+  //TODO Use a vector...
   items = (MenuItem**) malloc(itemCount * sizeof(MenuItem*));
   items[0] = new MenuItem("Local Game", sf::Vector2f(0, 100), &LocalGame);
   items[1] = new MenuItem("Connect", sf::Vector2f(0, 130), &Connect);
@@ -38,15 +39,15 @@ MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(
   selectedItem = 0;
   
   for(int i = 0; i < itemCount; i++)
-    items[i]->CenterX(window->GetWidth());
+    items[i]->CenterX(window->getSize().x);
   
   p = new Player(imageManager, NULL);
   pImage = new sf::RenderTexture();
-  pImage->Create(window->GetWidth(), window->GetHeight());
-  sf::View v = pImage->GetDefaultView();
-  v.Zoom(0.08);
-  v.SetCenter(p->GetCenter() + sf::Vector2f(0, -30));
-  pImage->SetView(v);
+  pImage->create(window->getSize().x, window->getSize().y);
+  sf::View v = pImage->getDefaultView();
+  v.zoom(0.08);
+  v.setCenter(p->GetCenter() + sf::Vector2f(0, -30));
+  pImage->setView(v);
   running = true;
 
   background = sf::Color::Black;
@@ -64,10 +65,10 @@ MainMenu::~MainMenu() {
 
 int MainMenu::Run() {
   p->SetColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
-  Resize(window->GetWidth(), window->GetHeight());
+  Resize(window->getSize().x, window->getSize().y);
   sf::Event event;
   while(running) {
-    while(window->PollEvent(event)) {
+    while(window->pollEvent(event)) {
       int rtn = HandleEvent(event);
       if(rtn != Screen::NONE)
 	return rtn;
@@ -76,21 +77,21 @@ int MainMenu::Run() {
     UpdateColor();
     mouse->Update();
 
-    window->Clear(background);
-    pImage->Clear(background);
+    window->clear(background);
+    pImage->clear(background);
     p->Draw(pImage);
-    pImage->Display();
+    pImage->display();
 
-    sf::Sprite pSprite(pImage->GetTexture());
-    pSprite.SetPosition(sf::Vector2f((window->GetWidth() - pImage->GetWidth()) / 2
-				     , window->GetHeight() - pImage->GetHeight()));
-    window->Draw(pSprite);
+    sf::Sprite pSprite(pImage->getTexture());
+    pSprite.setPosition(sf::Vector2f((window->getSize().x - pImage->getSize().x) / 2
+				     , window->getSize().y - pImage->getSize().y));
+    window->draw(pSprite);
     for(int i = 0; i < itemCount; i++) {
       items[i]->Draw(window, i == selectedItem);
     }
     mouse->Draw(window);
-    window->Display();
-    sf::Sleep(0.01);
+    window->display();
+    sf::sleep(sf::seconds(0.01));
   }
 
   return -1;
@@ -98,7 +99,7 @@ int MainMenu::Run() {
 
 
 int MainMenu::HandleEvent(sf::Event event) {
-  switch (event.Type) {
+  switch (event.type) {
   case sf::Event::Closed:
     return Screen::EXIT;
     break;
@@ -106,7 +107,7 @@ int MainMenu::HandleEvent(sf::Event event) {
     return OnKeyPressed(event);
     break;
   case sf::Event::Resized:
-    this->Resize(event.Size.Width, event.Size.Height);
+    this->Resize(event.size.width, event.size.height);
     return Screen::NONE;
     break;
   case sf::Event::MouseMoved:
@@ -123,7 +124,7 @@ int MainMenu::HandleEvent(sf::Event event) {
 }
 
 int MainMenu::OnKeyPressed(sf::Event event) {
-  switch(event.Key.Code) {
+  switch(event.key.code) {
   case sf::Keyboard::Up:
     selectedItem = (selectedItem + itemCount - 1) % itemCount;
     return Screen::NONE;
@@ -145,18 +146,18 @@ int MainMenu::OnKeyPressed(sf::Event event) {
 }
 
 void MainMenu::Resize(int width, int height) {
-  window->SetView(sf::View(sf::FloatRect(0, 0, width, height)));
+  window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
   for(int i = 0; i < itemCount; i++)
     items[i]->CenterX(width);
 }
 
 void MainMenu::OnMouseMoved(sf::Event event) {
-  int x = event.MouseMove.X;
-  int y = event.MouseMove.Y;
+  int x = event.mouseMove.x;
+  int y = event.mouseMove.y;
 
-  p->SetEyesPosition(pImage->ConvertCoords(x, y));
+  p->SetEyesPosition(pImage->convertCoords(sf::Vector2i(x, y)));
   for(int i = 0; i < itemCount; i++) {
-    if(items[i]->GetBbox().Contains(x, y)) {
+    if(items[i]->GetBbox().contains(x, y)) {
 	selectedItem = i;
 	break;
       }
@@ -164,9 +165,9 @@ void MainMenu::OnMouseMoved(sf::Event event) {
 }
 
 int MainMenu::OnMouseButtonReleased(sf::Event event) {
-  if(event.MouseButton.Button == sf::Mouse::Left) {
+  if(event.mouseButton.button == sf::Mouse::Left) {
     for(int i = 0; i < itemCount; i++) {
-      if(items[i]->GetBbox().Contains(mouse->GetPosition().x, mouse->GetPosition().y)) {
+      if(items[i]->GetBbox().contains(mouse->GetPosition().x, mouse->GetPosition().y)) {
 	return items[i]->DoAction();
       }
     }

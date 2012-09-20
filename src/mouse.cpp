@@ -13,17 +13,17 @@ Mouse::~Mouse() {
 }
 
 sf::Vector2f Mouse::GetPosition() {
-  return sprite->GetPosition();
+  return sprite->getPosition();
 }
 
 sf::Vector2f Mouse::GetWorldPosition() {
-  return world->ConvertCoords((unsigned int) sprite->GetPosition().x, (unsigned int) sprite->GetPosition().y);
+  return world->convertCoords(sf::Vector2i(sprite->getPosition().x, sprite->getPosition().y));
 }
 
 void Mouse::Update() {
-  sprite->SetPosition((sf::Vector2f) sf::Mouse::GetPosition(*window));
+  sprite->setPosition((sf::Vector2f) sf::Mouse::getPosition(*window));
 }
 
 void Mouse::Draw(sf::RenderTarget *rt) {
-  rt->Draw(*sprite);
+  rt->draw(*sprite);
 }

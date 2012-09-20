@@ -1,6 +1,6 @@
 CC := g++
 
-CFLAGS := -g -Wall -I include
+CFLAGS := -g -Wall
 LDFLAGS := -lm -lsfml-graphics -lsfml-system 
 
 EXEC:= a.out

@@ -7,13 +7,13 @@
 
 Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) {
   this->world = world;
-  sprite->SetTexture(*(imageManager->get("player")), true);
-  bbox = sf::Vector2f(sprite->GetSize().x - 2, sprite->GetSize().y - 2);
+  sprite->setTexture(*(imageManager->get("player")), true);
+  bbox = sf::Vector2f(sprite->getGlobalBounds().width - 2, sprite->getGlobalBounds().height - 2);
   offset = sf::Vector2f(-1 , 0);
   pupil = new sf::Sprite(*(imageManager->get("pupil")));
   colorMask = new sf::Sprite(*(imageManager->get("colorMask")));
 
-  colorMask->SetColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+  colorMask->setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
 
   lpOrigin = sf::Vector2f(5, 9);
   rpOrigin = sf::Vector2f(20, 9);
@@ -44,12 +44,12 @@ Player::~Player(){
 
 void Player::Draw(sf::RenderTarget * rt) {
   Entity::Draw(rt);
-  pupil->SetPosition(GetPosition() + lpPosition);
-  rt->Draw(*(pupil));
-  pupil->SetPosition(GetPosition() + rpPosition);
-  rt->Draw(*(pupil));
-  colorMask->SetPosition(GetPosition());
-  rt->Draw(*(colorMask));
+  pupil->setPosition(GetPosition() + lpPosition);
+  rt->draw(*(pupil));
+  pupil->setPosition(GetPosition() + rpPosition);
+  rt->draw(*(pupil));
+  colorMask->setPosition(GetPosition());
+  rt->draw(*(colorMask));
 }
 
 void Player::SetEyesPosition(sf::Vector2f target) {
@@ -217,7 +217,7 @@ void Player::RegisterZCom(ZCom_Control *control, bool server) {
 */
 
 void Player::SetColor(sf::Color c){
-  colorMask->SetColor(c);
+  colorMask->setColor(c);
 }
 
 /*

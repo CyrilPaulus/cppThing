@@ -5,7 +5,9 @@ Entity::Entity(ImageManager *imageManager) {
   sprite = new sf::Sprite(*(imageManager->get("cube")));
   offset = sf::Vector2f(0, 0);
   position = sf::Vector2f(0, 0);
-  bbox = sprite->GetSize();
+  bbox = sf::Vector2f(0,0);
+  bbox.x = sprite->getGlobalBounds().width;
+  bbox.y = sprite->getGlobalBounds().height;
   remove = false;
 }
 
@@ -14,8 +16,8 @@ Entity::~Entity() {
 }
 
 void Entity::Draw(sf::RenderTarget *rt) {
-  sprite->SetPosition(GetPosition());
-  rt->Draw(*sprite);
+  sprite->setPosition(GetPosition());
+  rt->draw(*sprite);
 }
 
 void Entity::Update(float frametime){

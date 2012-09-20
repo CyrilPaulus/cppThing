@@ -27,7 +27,7 @@ void Server::Run() {
     if(ticker->Tick())
       Update(ticker->GetElapsedMilliSeconds());
     else {
-      sf::Sleep(0.01f);
+      sf::sleep(sf::seconds(0.01f));
     }
   }
   printf("Server finished\n");

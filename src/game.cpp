@@ -44,8 +44,8 @@ void Game::Run(int type){
 
 void Game::RunClient() {
   window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
-  window->SetFramerateLimit(GameConstant::FRAMERATE_LIMIT);
-  window->ShowMouseCursor(false);
+  window->setFramerateLimit(GameConstant::FRAMERATE_LIMIT);
+  window->setMouseCursorVisible(false);
   c = new Client(window, imageManager);
   c->SetIp(ip);
   c->SetPort(port);
@@ -84,14 +84,14 @@ void Game::StartServer() {
   serverThread = new sf::Thread(&startServer, s);
   
   s->Init();
-  serverThread->Launch();
+  serverThread->launch();
   serverRunning = true;
 }
 
 void Game::StopServer() {
   if(serverRunning) {
     s->Stop();
-    serverThread->Wait();    
+    serverThread->wait();    
     delete serverThread;
     delete s;
     delete serverImgManager;

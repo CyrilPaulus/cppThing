@@ -33,9 +33,11 @@ void World::Draw(sf::RenderTarget *rt){
       (*c)->Draw(rt);
   
     if(i == 0) {
-      sf::Vector2f origin = rt->ConvertCoords(0,0);
-      sf::Shape fog = sf::Shape::Rectangle(sf::FloatRect(origin.x, origin.y, rt->GetDefaultView().GetSize().x, rt->GetDefaultView().GetSize().y), sf::Color(100, 149, 237, 150));
-      rt->Draw(fog);
+      sf::Vector2f origin = rt->convertCoords(sf::Vector2i(0,0));
+      sf::RectangleShape fog = sf::RectangleShape(sf::Vector2f(rt->getDefaultView().getSize().x, rt->getDefaultView().getSize().y));
+      fog.setPosition(sf::Vector2f(origin.x, origin.y));
+      fog.setFillColor(sf::Color(100, 149, 237, 150));
+      rt->draw(fog);
     }
     if(i == 1){
       std::list<Player*>::iterator p;
@@ -65,14 +67,14 @@ bool World::CanAddCube(sf::Vector2f pos, int layerIndex) {
   std::list<Cube*>::iterator i;
   std::list<Cube*> chunk = quadTrees[layerIndex]->GetList(bbox);
   for(i = chunk.begin(); i != chunk.end(); i++) {
-    if((*i)->GetBbox().Intersects(bbox)) 
+    if((*i)->GetBbox().intersects(bbox)) 
       return false;      
   }
   
   if(layerIndex == 1) {
     std::list<Player*>::iterator p;
     for(p = playerList.begin(); p != playerList.end(); p++)
-      if((*p)->GetBbox().Intersects(bbox))
+      if((*p)->GetBbox().intersects(bbox))
 	return false;
   }
   
@@ -86,7 +88,7 @@ bool World::CanRemoveCube(sf::Vector2f pos, int layerIndex) {
   std::list<Cube*>::iterator i;
     std::list<Cube*> chunk = quadTrees[layerIndex]->GetList(bbox);
     for(i = chunk.begin(); i != chunk.end(); i++) {
-      if((*i)->GetBbox().Intersects(bbox)) 
+      if((*i)->GetBbox().intersects(bbox)) 
 	return true;      
     }
     
@@ -100,7 +102,7 @@ void World::AddCube(sf::Vector2f pos, int type, int layerIndex) {
 void World::RemoveCube(sf::Vector2f pos, int layerIndex) {
   std::list<Cube*>::iterator c;
   for( c = layer[layerIndex].begin(); c != layer[layerIndex].end(); c++) {
-    if((*c)->GetBbox().Contains(pos.x, pos.y)) {
+    if((*c)->GetBbox().contains(pos.x, pos.y)) {
       quadTrees[layerIndex]->Remove((*c));
       delete (*c);
       c = layer[layerIndex].erase(c);      
@@ -121,7 +123,7 @@ Cube* World::GetCollidingCube(sf::FloatRect bbox){
   std::list<Cube*> candidate = quadTrees[1]->GetList(bbox);
   std::list<Cube*>::iterator it;
   for(it = candidate.begin(); it != candidate.end(); it++){
-    if((*it)->GetBbox().Intersects(bbox))
+    if((*it)->GetBbox().intersects(bbox))
       return (*it);
   }
   return NULL;

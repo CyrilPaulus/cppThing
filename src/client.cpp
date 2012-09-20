@@ -10,7 +10,9 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   ticker = new Ticker();
   ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
   worldDisplay = new sf::RenderTexture();
-  worldDisplay->Create(window->GetWidth(), window->GetHeight());
+
+  //TODO define resolution variable in client so we don't need to call window
+  worldDisplay->create(window->getSize().x, window->getSize().y);
   mouse = new Mouse(window, worldDisplay, imageManager);
   world = new World(imageManager, false);
   addCube = false;
@@ -22,8 +24,8 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   //TODO wrap this in a function
   displayCube = new CubeDisplay(imageManager);
   displayCube->SetType(cubeType);
-  sf::Vector2f uiPosition = sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH
-					 ,window->GetHeight() - 10 - Cube::HEIGHT); 
+  sf::Vector2f uiPosition = sf::Vector2f(window->getSize().x - 10 - Cube::WIDTH
+					 ,window->getSize().y - 10 - Cube::HEIGHT); 
   displayCube->SetPosition(uiPosition);
   layerDisplay = new LayerDisplay(imageManager, GameConstant::LAYERNBR);
   layerDisplay->SetPosition(uiPosition + sf::Vector2f(0, - 5 - layerDisplay->GetSize().y));
@@ -48,7 +50,7 @@ int Client::Run(){
   running = true;
   sf::Event event;
   while(running) {
-    while(window->PollEvent(event)) {
+    while(window->pollEvent(event)) {
       HandleEvent(event);
     }
     
@@ -70,7 +72,7 @@ int Client::Run(){
 }
 
 void Client::HandleEvent(sf::Event event) {
-  switch (event.Type) {
+  switch (event.type) {
   case sf::Event::Closed:
     OnClose();
     break;
@@ -98,7 +100,7 @@ void Client::OnClose() {
 }
 
 void Client::OnKeyPressed(sf::Event event) {
-  switch(event.Key.Code) {
+  switch(event.key.code) {
   case sf::Keyboard::A:
     layer = (layer + GameConstant::LAYERNBR - 1) % GameConstant::LAYERNBR;
     layerDisplay->SetLayer(layer);
@@ -116,7 +118,7 @@ void Client::OnKeyPressed(sf::Event event) {
 }
 
 void Client::OnMouseButtonPressed(sf::Event event){
-  switch(event.MouseButton.Button){
+  switch(event.mouseButton.button){
   case sf::Mouse::Left:
     addCube = true;
     break;
@@ -129,7 +131,7 @@ void Client::OnMouseButtonPressed(sf::Event event){
 }
 
 void Client::OnMouseButtonReleased(sf::Event event){
-  switch(event.MouseButton.Button){
+  switch(event.mouseButton.button){
   case sf::Mouse::Left:
     addCube = false;
     break;
@@ -142,22 +144,22 @@ void Client::OnMouseButtonReleased(sf::Event event){
 }
 
 void Client::OnResized(sf::Event event){
-  sf::View newView = sf::View(sf::FloatRect(0, 0, event.Size.Width, event.Size.Height));
-  window->SetView(newView);
+  sf::View newView = sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height));
+  window->setView(newView);
   
-  worldDisplay->Create(event.Size.Width, event.Size.Height);
-  newView = worldDisplay->GetDefaultView();
-  newView.SetCenter(player->GetCenter());
-  newView.Zoom(zoom);
-  worldDisplay->SetView(newView);
+  worldDisplay->create(event.size.width, event.size.height);
+  newView = worldDisplay->getDefaultView();
+  newView.setCenter(player->GetCenter());
+  newView.zoom(zoom);
+  worldDisplay->setView(newView);
   
-  displayCube->SetPosition(sf::Vector2f(window->GetWidth() - 10 - Cube::WIDTH, 
-					window->GetHeight() - 10 - Cube::HEIGHT));
+  displayCube->SetPosition(sf::Vector2f(window->getSize().x - 10 - Cube::WIDTH, 
+					window->getSize().y - 10 - Cube::HEIGHT));
   
 }
 
 void Client::OnMouseWheelMoved(sf::Event event) {
-  if(event.MouseWheel.Delta < 0)
+  if(event.mouseWheel.delta < 0)
     cubeType = (cubeType - 1 + Cube::BLOCKTYPECOUNT) % Cube::BLOCKTYPECOUNT;
   else
     cubeType = (cubeType + 1) % Cube::BLOCKTYPECOUNT;
@@ -178,10 +180,10 @@ void Client::Update(unsigned int frametime) {
   }
 
   Input input;
-  input.Left = sf::Keyboard::IsKeyPressed(sf::Keyboard::Left);
-  input.Right = sf::Keyboard::IsKeyPressed(sf::Keyboard::Right);
-  input.Up = sf::Keyboard::IsKeyPressed(sf::Keyboard::Up);
-  input.Down = sf::Keyboard::IsKeyPressed(sf::Keyboard::Down);
+  input.Left = sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
+  input.Right = sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
+  input.Up = sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
+  input.Down = sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
 
   //TODO send player update
   world->Update();
@@ -195,37 +197,37 @@ void Client::Update(unsigned int frametime) {
 }
 
 void Client::Draw() {
-  window->Clear(GameConstant::BackgroundColor);
+  window->clear(GameConstant::BackgroundColor);
 
-  worldDisplay->Clear(sf::Color(0,0,0,0));
+  worldDisplay->clear(sf::Color(0,0,0,0));
   world->Draw(worldDisplay);
-  worldDisplay->Display();
+  worldDisplay->display();
 
-  window->Draw(sf::Sprite(worldDisplay->GetTexture()));
+  window->draw(sf::Sprite(worldDisplay->getTexture()));
   displayCube->Draw(window);
   layerDisplay->Draw(window);
   mouse->Draw(window);
-  window->Display();
+  window->display();
 }
 
 
 void Client::UpdateView() {
-  sf::View newView = worldDisplay->GetView();
-  float left = newView.GetCenter().x - newView.GetSize().x / 2;
-  float right = newView.GetCenter().x + newView.GetSize().x / 2;
-  if (player->GetBbox().Left - 100 * zoom < left)
-    newView.Move(sf::Vector2f(player->GetBbox().Left - 100 * zoom - left, 0));
-  else if (player->GetBbox().Left + player->GetBbox().Width +100 * zoom > right)
-    newView.Move(sf::Vector2f(player->GetBbox().Left + player->GetBbox().Width + 100 * zoom - right, 0));
+  sf::View newView = worldDisplay->getView();
+  float left = newView.getCenter().x - newView.getSize().x / 2;
+  float right = newView.getCenter().x + newView.getSize().x / 2;
+  if (player->GetBbox().left - 100 * zoom < left)
+    newView.move(sf::Vector2f(player->GetBbox().left - 100 * zoom - left, 0));
+  else if (player->GetBbox().left + player->GetBbox().width +100 * zoom > right)
+    newView.move(sf::Vector2f(player->GetBbox().left + player->GetBbox().width + 100 * zoom - right, 0));
 
-  float top = newView.GetCenter().y - newView.GetSize().y / 2;
-  float bottom = newView.GetCenter().y + newView.GetSize().y / 2;
-  if (player->GetBbox().Top - 100 * zoom < top)
-    newView.Move(sf::Vector2f(0, player->GetBbox().Top - 100 * zoom - top));
-  else if(player->GetBbox().Top + player->GetBbox().Height + 100 * zoom > bottom)
-    newView.Move(sf::Vector2f(0, player->GetBbox().Top + player->GetBbox().Height + 100 * zoom - bottom));
+  float top = newView.getCenter().y - newView.getSize().y / 2;
+  float bottom = newView.getCenter().y + newView.getSize().y / 2;
+  if (player->GetBbox().top - 100 * zoom < top)
+    newView.move(sf::Vector2f(0, player->GetBbox().top - 100 * zoom - top));
+  else if(player->GetBbox().top + player->GetBbox().height + 100 * zoom > bottom)
+    newView.move(sf::Vector2f(0, player->GetBbox().top + player->GetBbox().height + 100 * zoom - bottom));
   
-  worldDisplay->SetView(newView);
+  worldDisplay->setView(newView);
 }
 
 

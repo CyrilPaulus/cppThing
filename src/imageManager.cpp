@@ -13,7 +13,7 @@ const sf::Texture *ImageManager::get(std::string name) {
     return value;
 
   value = new sf::Texture();
-  if(!value->LoadFromFile("res/" + name + ".png")) {
+  if(!value->loadFromFile("res/" + name + ".png")) {
     std::cerr << "Can't load image: " + name << std::endl;
     return NULL;
   }
