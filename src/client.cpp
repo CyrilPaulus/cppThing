@@ -149,7 +149,10 @@ void Client::OnResized(sf::Event event){
   
   worldDisplay->create(event.size.width, event.size.height);
   newView = worldDisplay->getDefaultView();
-  newView.setCenter(player->GetCenter());
+
+  if(player != NULL)
+    newView.setCenter(player->GetCenter());
+  
   newView.zoom(zoom);
   worldDisplay->setView(newView);
   
