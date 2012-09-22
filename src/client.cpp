@@ -48,6 +48,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
     throw std::runtime_error("ENet client initialization failed");
   }
   server = NULL;
+  connected = false;
 }
 
 Client::~Client(){
@@ -76,14 +77,17 @@ int Client::Run(){
     
     if(ticker->Tick()){
       Update(ticker->GetElapsedTime());
-    }     
+    }else {
+      sf::sleep(sf::seconds(0.01));
+    }
     
     mouse->Update();
     
     Draw();
     
   }
-  Disconnect();
+  if(connected)
+    Disconnect();
   return -1;
 }
 
@@ -187,6 +191,25 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 
 
 void Client::Update(sf::Time frametime) {
+
+  if(server != NULL) {
+    ENetEvent event;
+    while(enet_host_service(client, &event, 0) > 0) {
+      switch(event.type) {
+      case ENET_EVENT_TYPE_CONNECT:
+	std::cout << "Connection to server established" << std::endl;
+	this->connected = true;
+	break;
+      case ENET_EVENT_TYPE_DISCONNECT:
+	std::cout << "Connection to server lost" << std::endl;
+	this->connected = false;
+	enet_peer_reset(server);
+	break;
+      default:
+	break;
+      }
+    }
+  }
   
   if (addCube && world->CanAddCube(mouse->GetWorldPosition(), layer)){
     //TODO send cube update pkt
@@ -313,40 +336,37 @@ void Client::Connect() {
   enet_address_set_host(&address, ip.c_str());
   address.port = port;
 
+  std::cout << "Connecting to server\n" << std::endl;
   server = enet_host_connect(client, &address, 2, 0);
   if(server == NULL) {
     throw std::runtime_error("ENet connection creation failed");
   }
 
   ENetEvent event;
-  if(enet_host_service(client, &event, 5000) > 0 
-     && event.type == ENET_EVENT_TYPE_CONNECT) {
-    std::cout << "Connection to server established" << std::endl;
-  } else {
-    std::cout << "Couldn't connect to server" << std::endl;
-    enet_peer_reset(server);
-  }  
+    
 }
 
 void Client::Disconnect() {
+  
+  std::cout << "Disconnecting" << std::endl;
   ENetEvent event;
   enet_peer_disconnect(server, 0);
-  
   while(enet_host_service(client, &event, 3000) > 0) {
     switch(event.type) {
     case ENET_EVENT_TYPE_RECEIVE:
       enet_packet_destroy(event.packet);
       break;
     case ENET_EVENT_TYPE_DISCONNECT:
-      std::cout << "Disconnected to server" << std::endl;
+      std::cout << "Disconnected from server" << std::endl;
       return;
     default:
       break;
     }
   }
 
-  //Force deconnection
+  //Force disconnect
   enet_peer_reset(server);
+  
 }
 
 void Client::SetPort(int port){

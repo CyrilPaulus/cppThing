@@ -62,6 +62,7 @@ class Client : public Screen{
   std::string ip;
   ENetHost* client;
   ENetPeer* server;
+  bool connected;
 };
 
 #endif /* _CLIENT_H_ */

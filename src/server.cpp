@@ -44,16 +44,15 @@ void Server::Run() {
     //Manage network events
     ENetEvent event;
     while(enet_host_service(server, &event, 0) > 0) {
-      std::cout << "Event" << std::endl;
       switch(event.type) {
       case ENET_EVENT_TYPE_CONNECT:
-	std::cout << "Client connected to server\n" << std::endl;
+	std::cout << "Client connected to server" << std::endl;
 	break;
       case ENET_EVENT_TYPE_RECEIVE:
-	std::cout << "Packet recieved\n" << std::endl;
+	std::cout << "Packet recieved" << std::endl;
 	break;
       case ENET_EVENT_TYPE_DISCONNECT:
-	std::cout << "Client disconnected from server\n" << std::endl;
+	std::cout << "Client disconnected from server" << std::endl;
 	break;
       }
     }
