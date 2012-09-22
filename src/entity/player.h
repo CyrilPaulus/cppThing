@@ -15,20 +15,12 @@ class Player : public Entity {
   void Draw(sf::RenderTarget *);
   void SetEyesPosition(sf::Vector2f);
   void Update(sf::Time frametime, Input);
-  void InputUpdate(Input);
-  void PhysicUpdate(sf::Time frametime);
   void SetColor(sf::Color);
   void SetID(int);
   int GetID();
  private:
-  void DoOwner(Input input, unsigned int frametime);
-  void DoProxy();
-  void DoAuth();
   World* world;
   
-  bool moveX;
-  bool moveY;
-
   bool noclip;
   bool isFlying;
   sf::Sprite *pupil;
@@ -43,7 +35,7 @@ class Player : public Entity {
   float maxFallSpeed;
   float jumpForce;
 
-  sf::Vector2f speed;
+  sf::Vector2f velocity;
   sf::Vector2f acceleration;
   
   int id;

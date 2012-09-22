@@ -26,13 +26,11 @@ Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) 
   maxWalkSpeed = 100;
   maxFallSpeed = 200;
 
-  speed = sf::Vector2f(0, 0);
+  velocity = sf::Vector2f(0, 0);
   acceleration = sf::Vector2f(350, 350);
   isFlying = false;
   jumpForce = 200;
 
-  moveX = false;
-  moveY = false;
 }
 
 Player::~Player(){
@@ -64,92 +62,74 @@ void Player::SetEyesPosition(sf::Vector2f target) {
   rpPosition = rpOrigin + (rpDist * rpDir);
 }
 
-void Player::InputUpdate(Input input) {
-  //First update speed x
-  moveX = false;
-  moveY = false;
-  float frameSec = (GameConstant::SIMULATION_TIME_PER_UPDATE / 1000.f);
-  if (input.Left && speed.x > -maxWalkSpeed) {
-    speed.x -= acceleration.x * frameSec;
-    moveX = true;
-  }
-  else if(input.Right && speed.x < maxWalkSpeed) {
-    speed.x +=  acceleration.x * frameSec;
-    moveX = true;
-  }
-  
-  //Update speed Y
-  if(noclip){
-    if (input.Up && speed.y > -maxFallSpeed) {
-      speed.y -= (acceleration.y) * frameSec;
-      moveY = true;
-    }
-    else if(input.Down && speed.y < maxFallSpeed) {
-      speed.y += (acceleration.y) * frameSec;
-      moveY = true;
-    }    
-  }else {
-    if(input.Up && !isFlying){
-      speed.y -= jumpForce;
-      isFlying = true;
-    }  
-  }
+void Player::Update(sf::Time frametime, Input input) {
+  //First update velocity x
 
-}
-
-void Player::PhysicUpdate(sf::Time frametime) {	
   float seconds = frametime.asSeconds();
-  
-  if(speed.x > 0 && !moveX) {
-    speed.x = std::max(0.F, speed.x - (acceleration.x) * seconds);
+
+  //Update velocity X
+  if (input.Left) 
+    velocity.x = std::max(velocity.x - 2 * acceleration.x * seconds, -maxWalkSpeed);
+  else if(input.Right) {
+    velocity.x =  std::min(velocity.x + 2* acceleration.x * seconds, maxWalkSpeed);
   }
-  else if(speed.x < 0 && !moveX){
-    speed.x = std::min(0.F, speed.x + (acceleration.x) * seconds);
-  }    
   
-  if(noclip) {
-    if(speed.y > 0 && !moveY) {
-      speed.y = std::max(0.F, speed.y - (acceleration.y) * seconds);
-      }
-    else if(speed.y < 0 && !moveY){
-      speed.y = std::min(0.F, speed.y + (acceleration.y) * seconds);
-    }
-  }
+  //Update velocity Y
+  if(noclip && input.Up)
+    velocity.y = std::max(velocity.y - 2 * acceleration.y * seconds, -maxFallSpeed);
+  else if(noclip && input.Down) 
+    velocity.y = std::min(velocity.y + 2 * acceleration.y * seconds, maxFallSpeed);
+  else if(input.Up && !isFlying) 
+    velocity.y -= jumpForce;
+  
+
+  //Now we can update position
+
+  //First apply some friction
+  if(velocity.x > 0) 
+    velocity.x = std::max(0.F, velocity.x - (acceleration.x) * seconds);
+  else if(velocity.x < 0)
+    velocity.x = std::min(0.F, velocity.x + (acceleration.x) * seconds);
+  
+  if(noclip && velocity.y > 0) 
+    velocity.y = std::max(0.F, velocity.y - (acceleration.y) * seconds);
+  else if(noclip && velocity.y < 0)
+    velocity.y = std::min(0.F, velocity.y + (acceleration.y) * seconds);
   else
-    speed.y = std::min(speed.y + (acceleration.y) * seconds, maxFallSpeed);
+    velocity.y = std::min(velocity.y + (acceleration.y) * seconds, maxFallSpeed);
     
-  //Update position x and check for collision
-  if(speed.x != 0){
-    position.x += speed.x * seconds;
+  //Update position and check for collision
+  if(velocity.x != 0){
+    position.x += velocity.x * seconds;
     
     Cube *c = world->GetCollidingCube(GetBbox());
     if( c != NULL){
-      if(speed.x < 0)
+      if(velocity.x < 0)
 	position.x = c->GetBbox().left + c->GetBbox().width;
       else
 	position.x = c->GetBbox().left - GetBbox().width;
-      speed.x = 0;
+      velocity.x = 0;
     }
   }
   
-  //Update position with speed and check for collision
-  if(speed.y != 0){
-    position.y += speed.y * seconds;
+  if(velocity.y != 0){
+    position.y += velocity.y * seconds;
     isFlying = true;
     Cube *c = world->GetCollidingCube(GetBbox());
     if( c != NULL){
-      if(speed.y < 0)
+      if(velocity.y < 0)
 	position.y = c->GetBbox().top + c->GetBbox().height;
       else{
 	position.y = c->GetBbox().top - GetBbox().height;
 	isFlying = false;
       }
-      speed.y = 0;
+      velocity.y = 0;
     }
   }
+
 }
 
-void Player::Update(sf::Time frametime, Input input) {
+/*void Player::Update(sf::Time frametime, Input input) {
   InputUpdate(input);
   PhysicUpdate(frametime);
   /*switch (node->getRole()){
@@ -164,9 +144,9 @@ void Player::Update(sf::Time frametime, Input input) {
     break;
   default:
     break;
-    }*/
+    }
     
-}
+}*/
 
 void Player::SetID(int id){
   this->id = id;
