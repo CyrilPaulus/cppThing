@@ -8,6 +8,7 @@
 #include "../utils/quadtree.h"
 #include "player.h"
 #include "../input/input.h"
+#include "../config.h"
 
 class Player;
 

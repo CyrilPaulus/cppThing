@@ -29,6 +29,7 @@ Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) 
   acceleration = sf::Vector2f(350, 350);
   isFlying = false;
   jumpForce = 200;
+  acc = sf::seconds(0);
 }
 
 Player::~Player(){
@@ -63,65 +64,70 @@ void Player::SetEyesPosition(sf::Vector2f target) {
 void Player::Update(sf::Time frametime, Input input) {
   //First update velocity x
 
-  float seconds = frametime.asSeconds();
 
-  //Update velocity X
-  if (input.Left) 
-    velocity.x = std::max(velocity.x - 2 * acceleration.x * seconds, -maxWalkSpeed);
-  else if(input.Right) {
-    velocity.x =  std::min(velocity.x + 2* acceleration.x * seconds, maxWalkSpeed);
-  }
-  
-  //Update velocity Y
-  if(noclip && input.Up)
-    velocity.y = std::max(velocity.y - 2 * acceleration.y * seconds, -maxFallSpeed);
-  else if(noclip && input.Down) 
-    velocity.y = std::min(velocity.y + 2 * acceleration.y * seconds, maxFallSpeed);
-  else if(input.Up && !isFlying) 
-    velocity.y -= jumpForce;
-  
+  acc += frametime;
 
-  //Now we can update position
-
-  //First apply some friction
-  if(velocity.x > 0) 
-    velocity.x = std::max(0.F, velocity.x - (acceleration.x) * seconds);
-  else if(velocity.x < 0)
-    velocity.x = std::min(0.F, velocity.x + (acceleration.x) * seconds);
-  
-  if(noclip && velocity.y > 0) 
-    velocity.y = std::max(0.F, velocity.y - (acceleration.y) * seconds);
-  else if(noclip && velocity.y < 0)
-    velocity.y = std::min(0.F, velocity.y + (acceleration.y) * seconds);
-  else
-    velocity.y = std::min(velocity.y + (acceleration.y) * seconds, maxFallSpeed);
-    
-  //Update position and check for collision
-  if(velocity.x != 0){
-    position.x += velocity.x * seconds;
-    
-    Cube *c = world->GetCollidingCube(GetBbox());
-    if( c != NULL){
-      if(velocity.x < 0)
-	position.x = c->GetBbox().left + c->GetBbox().width;
-      else
-	position.x = c->GetBbox().left - GetBbox().width;
-      velocity.x = 0;
+  while(acc >= sf::milliseconds(GameConstant::SIMULATION_TIME_PER_UPDATE)) {
+    acc -= sf::milliseconds(GameConstant::SIMULATION_TIME_PER_UPDATE);
+    float seconds = GameConstant::SIMULATION_TIME_PER_UPDATE / 1000.0;
+    //Update velocity X
+    if (input.Left) 
+      velocity.x = std::max(velocity.x - 2 * acceleration.x * seconds, -maxWalkSpeed);
+    else if(input.Right) {
+      velocity.x =  std::min(velocity.x + 2* acceleration.x * seconds, maxWalkSpeed);
     }
-  }
   
-  if(velocity.y != 0){
-    position.y += velocity.y * seconds;
-    isFlying = true;
-    Cube *c = world->GetCollidingCube(GetBbox());
-    if( c != NULL){
-      if(velocity.y < 0)
-	position.y = c->GetBbox().top + c->GetBbox().height;
-      else{
-	position.y = c->GetBbox().top - GetBbox().height;
-	isFlying = false;
+    //Update velocity Y
+    if(noclip && input.Up)
+      velocity.y = std::max(velocity.y - 2 * acceleration.y * seconds, -maxFallSpeed);
+    else if(noclip && input.Down) 
+      velocity.y = std::min(velocity.y + 2 * acceleration.y * seconds, maxFallSpeed);
+    else if(input.Up && !isFlying) 
+      velocity.y -= jumpForce;
+  
+
+    //Now we can update position
+
+    //First apply some friction
+    if(velocity.x > 0) 
+      velocity.x = std::max(0.F, velocity.x - (acceleration.x) * seconds);
+    else if(velocity.x < 0)
+      velocity.x = std::min(0.F, velocity.x + (acceleration.x) * seconds);
+  
+    if(noclip && velocity.y > 0) 
+      velocity.y = std::max(0.F, velocity.y - (acceleration.y) * seconds);
+    else if(noclip && velocity.y < 0)
+      velocity.y = std::min(0.F, velocity.y + (acceleration.y) * seconds);
+    else
+      velocity.y = std::min(velocity.y + (acceleration.y) * seconds, maxFallSpeed);
+    
+    //Update position and check for collision
+    if(velocity.x != 0){
+      position.x += velocity.x * seconds;
+    
+      Cube *c = world->GetCollidingCube(GetBbox());
+      if( c != NULL){
+	if(velocity.x < 0)
+	  position.x = c->GetBbox().left + c->GetBbox().width;
+	else
+	  position.x = c->GetBbox().left - GetBbox().width;
+	velocity.x = 0;
       }
-      velocity.y = 0;
+    }
+  
+    if(velocity.y != 0){
+      position.y += velocity.y * seconds;
+      isFlying = true;
+      Cube *c = world->GetCollidingCube(GetBbox());
+      if( c != NULL){
+	if(velocity.y < 0)
+	  position.y = c->GetBbox().top + c->GetBbox().height;
+	else{
+	  position.y = c->GetBbox().top - GetBbox().height;
+	  isFlying = false;
+	}
+	velocity.y = 0;
+      }
     }
   }
 

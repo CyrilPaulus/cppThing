@@ -15,6 +15,7 @@ Server::Server(ImageManager* imageManager) {
   this->ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
   this->port = 50645;
   this->maxClient = 32;
+  this->lastClientID = 0;
 }
 
 Server::~Server() {
@@ -46,13 +47,13 @@ void Server::Run() {
     while(enet_host_service(server, &event, 0) > 0) {
       switch(event.type) {
       case ENET_EVENT_TYPE_CONNECT:
-	std::cout << "Client connected to server" << std::endl;
+	addClient(event.peer->address.host, event.peer->address.port);
 	break;
       case ENET_EVENT_TYPE_RECEIVE:
 	std::cout << "Packet recieved" << std::endl;
 	break;
       case ENET_EVENT_TYPE_DISCONNECT:
-	std::cout << "Client disconnected from server" << std::endl;
+	removeClient(event.peer->address.host, event.peer->address.port);
 	break;
       }
     }
@@ -64,6 +65,24 @@ void Server::Run() {
   enet_host_destroy(server);
   enet_deinitialize();
   printf("Server finished\n");
+}
+
+void Server::addClient(unsigned int ip, unsigned int port) {
+  NetworkClient c(lastClientID, ip, port);
+  clients.push_back(c);
+  std::cout << "Client connected server: " << c.getId() << std::endl;
+  lastClientID++;
+}
+
+void Server::removeClient(unsigned int ip, unsigned int port) {
+  std::list<NetworkClient>::iterator it;
+  for(it = clients.begin(); it != clients.end(); it++) {
+    if((*it).getIp() == ip && (*it).getPort() == port) {
+      std::cout << "Client disconnected from server: " << (*it).getId() << std::endl;
+      clients.erase(it);
+      break;
+    }
+  }
 }
 
 void Server::Stop() {
