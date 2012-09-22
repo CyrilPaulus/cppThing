@@ -9,9 +9,9 @@ class Packet{
   static const sf::Uint8 UserMessage = 1;  
   static const sf::Uint8 CubeUpdate = 2;  
   static const sf::Uint8 ClientConnect = 3;
-  static const sf::Uint8 PlayerAdd = 4;
-  static const sf::Uint8 PlayerRemove = 5;
-  static const sf::Uint8 PlayerUpdate = 6;
+  static const sf::Uint8 AddPlayer = 4;
+  static const sf::Uint8 DeletePlayer = 5;
+  static const sf::Uint8 UpdatePlayer = 6;
   
   virtual sf::Packet encode();
   

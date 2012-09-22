@@ -29,6 +29,7 @@ class World {
   std::list<Cube*> getList(int layer);
   void AddPlayer(Player *);
   void RemovePlayer(Player *);
+  void removePlayerById(int id);
   Cube* GetCollidingCube(sf::FloatRect);
  private:
   ImageManager* imageManager;

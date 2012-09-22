@@ -3,6 +3,7 @@
 NetworkClient::NetworkClient(unsigned int id, ENetPeer* peer) {
   this->peer = peer;
   this->id = id;
+  this->player = NULL;
 }
 
 unsigned int NetworkClient::getId() {

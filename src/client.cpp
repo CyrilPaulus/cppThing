@@ -6,6 +6,8 @@
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 #include "network/ClientConnect.h"
+#include "network/AddPlayer.h"
+#include "network/DeletePlayer.h"
 
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(window, imageManager) {
  
@@ -248,8 +250,8 @@ void Client::Update(sf::Time frametime) {
 
   //TODO send player update
   world->Update();
-  world->UpdatePlayer(frametime, input);
-  
+  //world->UpdatePlayer(frametime, input);
+  player->Update(frametime, input);
   if(player != NULL) {
     player->SetEyesPosition(mouse->GetWorldPosition());
     UpdateView();
@@ -427,6 +429,23 @@ void Client::handlePacket(sf::Packet p) {
     this->id = cc.getId();
     std::cout << "server assigned id:" << id << std::endl;
     break;
+  }
+  case Packet::AddPlayer: {
+    AddPlayer ap;
+    ap.decode(p);
+    if(id != ap.getId()) {
+      Player* p = new Player(imageManager, world);
+      p->SetColor(ap.getColor());
+      p->setPseudo(ap.getPseudo());
+      p->SetID(ap.getId());
+      world->AddPlayer(p);
+    }
+    break;
+  }
+  case Packet::DeletePlayer: {
+    DeletePlayer dp;
+    dp.decode(p);
+    world->removePlayerById(dp.getId());
   }
   default: 
     break;

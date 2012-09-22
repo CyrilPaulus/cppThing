@@ -7,6 +7,8 @@
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 #include "network/ClientConnect.h"
+#include "network/AddPlayer.h"
+#include "network/DeletePlayer.h"
 
 Server::Server(ImageManager* imageManager) {
   this->imageManager = imageManager;
@@ -76,18 +78,22 @@ void Server::Run() {
 }
 
 void Server::addClient(ENetPeer* peer) {
-  NetworkClient c(lastClientID, peer);
+  NetworkClient* c = new NetworkClient(lastClientID, peer);
   clients.push_back(c);
-  std::cout << "Client connected server: " << c.getId() << std::endl;
+  std::cout << "Client connected server: " << c->getId() << std::endl;
   lastClientID++;
   sendFullWorld(peer);
 }
 
 void Server::removeClient(unsigned int ip, unsigned int port) {
-  std::list<NetworkClient>::iterator it;
+  std::list<NetworkClient*>::iterator it;
   for(it = clients.begin(); it != clients.end(); it++) {
-    if((*it).getIp() == ip && (*it).getPort() == port) {
-      std::cout << "Client disconnected from server: " << (*it).getId() << std::endl;
+    if((*it)->getIp() == ip && (*it)->getPort() == port) {
+      std::cout << "Client disconnected from server: " << (*it)->getId() << std::endl;
+      DeletePlayer dp;
+      dp.setId((*it)->getId());
+      broadcastReliable(&dp);
+      delete(*it);
       clients.erase(it);
       break;
     }
@@ -186,9 +192,17 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
   case Packet::ClientConnect: {
     ClientConnect cc;
     cc.decode(p);
-    NetworkClient c = getClientByPeer(peer);
-    cc.setId(c.getId());
+    NetworkClient* c = getClientByPeer(peer);
+    cc.setId(c->getId());
     sendReliable(peer, &cc);
+    c->setPlayer(new Player(imageManager, world));
+    c->getPlayer()->SetColor(cc.getColor());
+    c->getPlayer()->setPseudo(cc.getPseudo());
+    AddPlayer ap;
+    ap.setId(cc.getId());
+    ap.setPseudo(cc.getPseudo());
+    ap.setColor(cc.getColor());
+    broadcastReliable(&ap);
     break;
   }
   default: 
@@ -226,18 +240,28 @@ void Server::sendFullWorld(ENetPeer* peer) {
       sendReliable(peer, &cu);
     }
   }
+
+  std::list<NetworkClient*>::iterator it;
+  for(it = clients.begin(); it != clients.end(); it++) {
+    if((*it)->getPlayer() != NULL) {
+      AddPlayer ap;
+      ap.setColor((*it)->getPlayer()->getColor());
+      ap.setId((*it)->getId());
+      ap.setPseudo((*it)->getPlayer()->getPseudo());
+      sendReliable(peer, &ap);
+    }
+  }
 }
 
-NetworkClient Server::getClientByPeer(ENetPeer* peer) {
-  NetworkClient nc(-1, peer);
+NetworkClient* Server::getClientByPeer(ENetPeer* peer) {
   unsigned int ip = peer->address.host;
   unsigned int port = peer->address.port;
-  std::list<NetworkClient>::iterator it;
+  std::list<NetworkClient*>::iterator it;
   for(it = clients.begin(); it != clients.end(); it++) {
-    if((*it).getIp() == ip && (*it).getPort() == port) {
+    if((*it)->getIp() == ip && (*it)->getPort() == port) {
       return (*it);
       break;
     }
   }
-  return nc;
+  return NULL;
 }

@@ -25,7 +25,7 @@ class Server {
  private:
   void addClient(ENetPeer* peer);
   void removeClient(unsigned int ip, unsigned int port);
-  NetworkClient getClientByPeer(ENetPeer* peer);
+  NetworkClient* getClientByPeer(ENetPeer* peer);
   void handlePacket(sf::Packet p, ENetPeer* peer);
   void broadcastReliable(Packet* p);
   void sendReliable(ENetPeer* peer, Packet *p);
@@ -37,7 +37,7 @@ class Server {
   int port;
   int maxClient;
   int lastClientID;
-  std::list<NetworkClient> clients;
+  std::list<NetworkClient*> clients;
   ENetHost* server;
 };
 

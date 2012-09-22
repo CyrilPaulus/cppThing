@@ -163,3 +163,13 @@ void World::UpdatePlayer(sf::Time frametime, Input input) {
 std::list<Cube*> World::getList(int i) {
   return this->layer[i];
 }
+
+void World::removePlayerById(int id) {
+  std::list<Player*>::iterator p;
+  for(p = playerList.begin(); p != playerList.end(); p++) {
+    if((*p)->GetID() == id){
+      playerList.erase(p);
+      return;
+    } 
+  }
+}

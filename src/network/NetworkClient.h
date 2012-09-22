@@ -18,5 +18,4 @@ class NetworkClient {
   unsigned int id;
   ENetPeer* peer;  
   Player* player;
-  
 };

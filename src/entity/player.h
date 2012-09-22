@@ -19,6 +19,8 @@ class Player : public Entity {
   sf::Color getColor();
   void SetID(int);
   int GetID();
+  void setPseudo(std::string pseudo);
+  std::string getPseudo();
  private:
   World* world;
   
@@ -41,6 +43,7 @@ class Player : public Entity {
   sf::Vector2f acceleration;
   
   int id;
+  std::string pseudo;
 };
 
 #endif /* _PLAYER_H_ */

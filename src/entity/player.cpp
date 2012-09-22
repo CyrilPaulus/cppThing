@@ -310,3 +310,11 @@ void Player::correctionReceived(zFloat *position, zFloat *speed, zFloat *acc, bo
   }
 }
 */
+
+void Player::setPseudo(std::string pseudo) {
+  this->pseudo = pseudo;
+}
+
+std::string Player::getPseudo() {
+  return pseudo;
+}
