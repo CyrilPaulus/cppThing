@@ -2,6 +2,7 @@
 #include "client.h"
 
 #include <iostream>
+#include <stdexcept>
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 
@@ -36,9 +37,22 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   port = 50645;
   ip = "localhost";
   mainMenu = false;
+
+  if(enet_initialize() != 0) {
+    throw std::runtime_error("ENet initialization failed");
+  }
+  
+  client = enet_host_create(NULL, 1, 2, 0, 0);
+  
+  if(client == NULL){
+    throw std::runtime_error("ENet client initialization failed");
+  }
+  server = NULL;
 }
 
 Client::~Client(){
+  enet_host_destroy(client);
+  enet_deinitialize();
   delete displayCube;
   delete layerDisplay;
   delete ticker;
@@ -69,6 +83,7 @@ int Client::Run(){
     Draw();
     
   }
+  Disconnect();
   return -1;
 }
 
@@ -293,12 +308,45 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
 
 void Client::Connect() {
   
-  //TODO connect to server
-  std::stringstream saddress;
-  saddress<<ip;
-  saddress<<":";
-  saddress<<port;
-     
+  //Connect to server
+  ENetAddress address;
+  enet_address_set_host(&address, ip.c_str());
+  address.port = port;
+
+  server = enet_host_connect(client, &address, 2, 0);
+  if(server == NULL) {
+    throw std::runtime_error("ENet connection creation failed");
+  }
+
+  ENetEvent event;
+  if(enet_host_service(client, &event, 5000) > 0 
+     && event.type == ENET_EVENT_TYPE_CONNECT) {
+    std::cout << "Connection to server established" << std::endl;
+  } else {
+    std::cout << "Couldn't connect to server" << std::endl;
+    enet_peer_reset(server);
+  }  
+}
+
+void Client::Disconnect() {
+  ENetEvent event;
+  enet_peer_disconnect(server, 0);
+  
+  while(enet_host_service(client, &event, 3000) > 0) {
+    switch(event.type) {
+    case ENET_EVENT_TYPE_RECEIVE:
+      enet_packet_destroy(event.packet);
+      break;
+    case ENET_EVENT_TYPE_DISCONNECT:
+      std::cout << "Disconnected to server" << std::endl;
+      return;
+    default:
+      break;
+    }
+  }
+
+  //Force deconnection
+  enet_peer_reset(server);
 }
 
 void Client::SetPort(int port){

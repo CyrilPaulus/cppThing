@@ -1,7 +1,9 @@
 #include "config.h"
 #include "server.h"
 #include <stdio.h>
+#include <stdexcept>
 #include <SFML/System.hpp>
+#include <enet/enet.h>
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 
@@ -12,6 +14,7 @@ Server::Server(ImageManager* imageManager) {
   this->ticker = new Ticker();
   this->ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
   this->port = 50645;
+  this->maxClient = 32;
 }
 
 Server::~Server() {
@@ -21,15 +24,46 @@ Server::~Server() {
 
 void Server::Run() {
   running = true;
+
+  if(enet_initialize() != 0) {
+    throw std::runtime_error("ENet initialization failed");
+  }
+
+  ENetAddress address;
+  address.host = ENET_HOST_ANY;
+  address.port = this->port;
+  ENetHost* server = enet_host_create(&address, this->maxClient, 2, 0, 0);
+
+  if(server == NULL) {
+    throw std::runtime_error("ENet server initialization failed");
+  }
+
   printf("Server started\n");
   world->AddCube(sf::Vector2f(0,90), 1, 1);
   while(running) {
+    //Manage network events
+    ENetEvent event;
+    while(enet_host_service(server, &event, 0) > 0) {
+      std::cout << "Event" << std::endl;
+      switch(event.type) {
+      case ENET_EVENT_TYPE_CONNECT:
+	std::cout << "Client connected to server\n" << std::endl;
+	break;
+      case ENET_EVENT_TYPE_RECEIVE:
+	std::cout << "Packet recieved\n" << std::endl;
+	break;
+      case ENET_EVENT_TYPE_DISCONNECT:
+	std::cout << "Client disconnected from server\n" << std::endl;
+	break;
+      }
+    }
+    
     if(ticker->Tick())
       Update(ticker->GetElapsedTime());
-    else {
-      sf::sleep(sf::seconds(0.01f));
-    }
+    sf::sleep(sf::seconds(0.01f));
   }
+  enet_host_destroy(server);
+  enet_deinitialize();
   printf("Server finished\n");
 }
 
@@ -104,7 +138,7 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID id, zU8 requested_level, ZCom_BitSt
 
 void Server::Init(){
   //TODO create TCP socket and other things
-  printf("Socket created\n");
+  //printf("Socket created\n");
 }
 
 void Server::SetPort(int port){

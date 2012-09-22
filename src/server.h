@@ -23,6 +23,7 @@ class Server {
   Ticker *ticker;
   World *world;
   int port;
+  int maxClient;
   
 };
 

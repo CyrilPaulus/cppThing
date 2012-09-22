@@ -2,6 +2,7 @@
 #define _CLIENT_H_
 
 #include <SFML/Graphics.hpp>
+#include <enet/enet.h>
 #include "screen.h"
 
 #include "ticker.h"
@@ -21,6 +22,7 @@ class Client : public Screen{
   ~Client();
   int Run();
   void Connect();
+  void Disconnect();
  
   void SetPort(int);
   void SetIp(std::string);
@@ -58,6 +60,8 @@ class Client : public Screen{
   LayerDisplay * layerDisplay;
   int port;
   std::string ip;
+  ENetHost* client;
+  ENetPeer* server;
 };
 
 #endif /* _CLIENT_H_ */
