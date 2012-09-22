@@ -25,7 +25,6 @@ class Entity {
   
   sf::Sprite *sprite;
   sf::Vector2f position;
-  sf::Vector2f offset;
   sf::Vector2f bbox;
 
 };

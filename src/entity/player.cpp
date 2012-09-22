@@ -8,8 +8,7 @@
 Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) {
   this->world = world;
   sprite->setTexture(*(imageManager->get("player")), true);
-  bbox = sf::Vector2f(sprite->getGlobalBounds().width - 2, sprite->getGlobalBounds().height - 2);
-  offset = sf::Vector2f(-1 , 0);
+  bbox = sf::Vector2f(sprite->getGlobalBounds().width, sprite->getGlobalBounds().height);
   pupil = new sf::Sprite(*(imageManager->get("pupil")));
   colorMask = new sf::Sprite(*(imageManager->get("colorMask")));
 
@@ -30,7 +29,6 @@ Player::Player(ImageManager *imageManager, World* world) : Entity(imageManager) 
   acceleration = sf::Vector2f(350, 350);
   isFlying = false;
   jumpForce = 200;
-
 }
 
 Player::~Player(){

@@ -3,7 +3,6 @@
 
 Entity::Entity(ImageManager *imageManager) {
   sprite = new sf::Sprite(*(imageManager->get("cube")));
-  offset = sf::Vector2f(0, 0);
   position = sf::Vector2f(0, 0);
   bbox = sf::Vector2f(0,0);
   bbox.x = sprite->getGlobalBounds().width;
