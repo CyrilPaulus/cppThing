@@ -68,6 +68,7 @@ class Client : public Screen{
   ENetHost* client;
   ENetPeer* server;
   bool connected;
+  int id;
 };
 
 #endif /* _CLIENT_H_ */

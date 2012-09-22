@@ -200,6 +200,10 @@ void Player::SetColor(sf::Color c){
   colorMask->setColor(c);
 }
 
+sf::Color Player::getColor(){
+  return colorMask->getColor();
+}
+
 /*
 void Player::DoAuth() {
   while (node && node->checkEventWaiting()) {

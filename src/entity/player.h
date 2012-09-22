@@ -16,6 +16,7 @@ class Player : public Entity {
   void SetEyesPosition(sf::Vector2f);
   void Update(sf::Time frametime, Input);
   void SetColor(sf::Color);
+  sf::Color getColor();
   void SetID(int);
   int GetID();
  private:

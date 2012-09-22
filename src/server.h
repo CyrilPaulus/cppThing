@@ -25,7 +25,8 @@ class Server {
  private:
   void addClient(ENetPeer* peer);
   void removeClient(unsigned int ip, unsigned int port);
-  void handlePacket(sf::Packet p);
+  NetworkClient getClientByPeer(ENetPeer* peer);
+  void handlePacket(sf::Packet p, ENetPeer* peer);
   void broadcastReliable(Packet* p);
   void sendReliable(ENetPeer* peer, Packet *p);
   void sendFullWorld(ENetPeer* peer);

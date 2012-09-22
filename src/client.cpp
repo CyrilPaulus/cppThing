@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
+#include "network/ClientConnect.h"
 
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(window, imageManager) {
  
@@ -37,6 +38,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   port = 50645;
   ip = "localhost";
   mainMenu = false;
+  id = -1;
 
   if(enet_initialize() != 0) {
     throw std::runtime_error("ENet initialization failed");
@@ -196,10 +198,15 @@ void Client::Update(sf::Time frametime) {
     ENetEvent event;
     while(enet_host_service(client, &event, 0) > 0) {
       switch(event.type) {
-      case ENET_EVENT_TYPE_CONNECT:
+      case ENET_EVENT_TYPE_CONNECT:{
 	std::cout << "Connection to server established" << std::endl;
 	this->connected = true;
+	ClientConnect cc;
+	cc.setPseudo(pseudo);
+	cc.setColor(player->getColor());
+	sendPacketReliable(&cc);
 	break;
+      }
       case ENET_EVENT_TYPE_DISCONNECT:
 	std::cout << "Connection to server lost" << std::endl;
 	this->connected = false;
@@ -412,6 +419,13 @@ void Client::handlePacket(sf::Packet p) {
     break;
   }
   case Packet::UserMessage:{
+    break;
+  }
+  case Packet::ClientConnect: {
+    ClientConnect cc;
+    cc.decode(p);
+    this->id = cc.getId();
+    std::cout << "server assigned id:" << id << std::endl;
     break;
   }
   default: 

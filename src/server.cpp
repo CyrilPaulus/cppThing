@@ -6,6 +6,7 @@
 
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
+#include "network/ClientConnect.h"
 
 Server::Server(ImageManager* imageManager) {
   this->imageManager = imageManager;
@@ -53,7 +54,7 @@ void Server::Run() {
       case ENET_EVENT_TYPE_RECEIVE:{
 	sf::Packet p;
 	p.append(event.packet->data, event.packet->dataLength);
-	handlePacket(p);
+	handlePacket(p, event.peer);
 	enet_packet_destroy(event.packet);
 	break;
       }
@@ -162,7 +163,7 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID id, zU8 requested_level, ZCom_BitSt
 }
 */
 
-void Server::handlePacket(sf::Packet p) {
+void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
   sf::Uint8 type;
   p >> type;
   switch(type) {
@@ -180,6 +181,14 @@ void Server::handlePacket(sf::Packet p) {
     break;
   }
   case Packet::UserMessage:{
+    break;
+  }
+  case Packet::ClientConnect: {
+    ClientConnect cc;
+    cc.decode(p);
+    NetworkClient c = getClientByPeer(peer);
+    cc.setId(c.getId());
+    sendReliable(peer, &cc);
     break;
   }
   default: 
@@ -217,4 +226,18 @@ void Server::sendFullWorld(ENetPeer* peer) {
       sendReliable(peer, &cu);
     }
   }
+}
+
+NetworkClient Server::getClientByPeer(ENetPeer* peer) {
+  NetworkClient nc(-1, peer);
+  unsigned int ip = peer->address.host;
+  unsigned int port = peer->address.port;
+  std::list<NetworkClient>::iterator it;
+  for(it = clients.begin(); it != clients.end(); it++) {
+    if((*it).getIp() == ip && (*it).getPort() == port) {
+      return (*it);
+      break;
+    }
+  }
+  return nc;
 }
