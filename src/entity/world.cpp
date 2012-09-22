@@ -159,3 +159,7 @@ void World::UpdatePlayer(sf::Time frametime, Input input) {
   for(p = playerList.begin(); p != playerList.end(); p++)
     (*p)->Update(frametime, input);
 }
+
+std::list<Cube*> World::getList(int i) {
+  return this->layer[i];
+}

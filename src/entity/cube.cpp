@@ -26,3 +26,7 @@ void Cube::SetType(int type) {
   int y = (type / 16) * Cube::HEIGHT;
   sprite->setTextureRect(sf::IntRect(x, y, Cube::WIDTH, Cube::HEIGHT));
 }
+
+int Cube::getType() {
+  return this->type;
+}

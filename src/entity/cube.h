@@ -10,7 +10,7 @@ class Cube : public Entity{
 
   Cube(ImageManager*, int);
   void SetType(int);
-
+  int getType();
  private:
   int type;
   ImageManager *imageManager;

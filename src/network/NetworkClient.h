@@ -2,20 +2,21 @@
 
 
 #include "../entity/player.h"
+#include <enet/enet.h>
 
 class NetworkClient {
  public:  
-  NetworkClient(unsigned int id, unsigned int ip, unsigned int port);
+  NetworkClient(unsigned int id, ENetPeer* peer);
   unsigned int getPort();
   unsigned int getId();
   unsigned int getIp();
+  ENetPeer* getPeer();
   Player *getPlayer();
   void setPlayer(Player* p);
   
  private:
   unsigned int id;
-  unsigned int port;
-  unsigned int ip;
+  ENetPeer* peer;  
   Player* player;
   
 };

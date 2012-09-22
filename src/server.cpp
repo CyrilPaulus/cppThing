@@ -48,7 +48,7 @@ void Server::Run() {
     while(enet_host_service(server, &event, 0) > 0) {
       switch(event.type) {
       case ENET_EVENT_TYPE_CONNECT:
-	addClient(event.peer->address.host, event.peer->address.port);
+	addClient(event.peer);
 	break;
       case ENET_EVENT_TYPE_RECEIVE:{
 	sf::Packet p;
@@ -59,6 +59,8 @@ void Server::Run() {
       }
       case ENET_EVENT_TYPE_DISCONNECT:
 	removeClient(event.peer->address.host, event.peer->address.port);
+	break;
+      default:
 	break;
       }
     }
@@ -72,11 +74,12 @@ void Server::Run() {
   printf("Server finished\n");
 }
 
-void Server::addClient(unsigned int ip, unsigned int port) {
-  NetworkClient c(lastClientID, ip, port);
+void Server::addClient(ENetPeer* peer) {
+  NetworkClient c(lastClientID, peer);
   clients.push_back(c);
   std::cout << "Client connected server: " << c.getId() << std::endl;
   lastClientID++;
+  sendFullWorld(peer);
 }
 
 void Server::removeClient(unsigned int ip, unsigned int port) {
@@ -199,3 +202,19 @@ void Server::broadcastReliable(Packet *p) {
   enet_host_broadcast(server, 0, packet);
 }
 
+void Server::sendReliable(ENetPeer* peer, Packet *p) {
+  sf::Packet data = p->encode();
+  ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
+  enet_peer_send(peer, 0, packet);
+}
+
+void Server::sendFullWorld(ENetPeer* peer) {
+  for(int i = 0; i < GameConstant::LAYERNBR; i++) {
+    std::list<Cube*> layer = world->getList(i);
+    std::list<Cube*>::iterator it;
+    for(it = layer.begin(); it != layer.end(); it++) {
+      CubeUpdate cu((*it)->getType(), (*it)->GetPosition(), true, i);
+      sendReliable(peer, &cu);
+    }
+  }
+}

@@ -26,6 +26,7 @@ class World {
   bool CanAddCube(sf::Vector2f, int);
   bool CanRemoveCube(sf::Vector2f, int);
 
+  std::list<Cube*> getList(int layer);
   void AddPlayer(Player *);
   void RemovePlayer(Player *);
   Cube* GetCollidingCube(sf::FloatRect);

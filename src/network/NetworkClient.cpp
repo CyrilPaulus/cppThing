@@ -1,9 +1,8 @@
 #include "NetworkClient.h"
 
-NetworkClient::NetworkClient(unsigned int id, unsigned int ip, unsigned int port) {
+NetworkClient::NetworkClient(unsigned int id, ENetPeer* peer) {
+  this->peer = peer;
   this->id = id;
-  this->ip = ip;
-  this->port = port;
 }
 
 unsigned int NetworkClient::getId() {
@@ -11,11 +10,15 @@ unsigned int NetworkClient::getId() {
 }
 
 unsigned int NetworkClient::getIp() {
-  return this->ip;
+  return this->peer->address.host;
 }
 
 unsigned int NetworkClient::getPort() {
-  return this->port;
+  return this->peer->address.port;
+}
+
+ENetPeer* NetworkClient::getPeer() {
+  return this->peer;
 }
 
 void NetworkClient::setPlayer(Player* p) {

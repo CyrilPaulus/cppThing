@@ -15,7 +15,6 @@ class Entity {
   sf::Vector2f GetPosition();
   void SetPosition(sf::Vector2f);
   sf::Vector2f GetCenter();
-  
 
   bool CanRemove();
 
