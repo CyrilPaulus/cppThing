@@ -30,6 +30,7 @@ class World {
   void AddPlayer(Player *);
   void RemovePlayer(Player *);
   void removePlayerById(int id);
+  Player* getPlayerById(int id);
   Cube* GetCollidingCube(sf::FloatRect);
  private:
   ImageManager* imageManager;

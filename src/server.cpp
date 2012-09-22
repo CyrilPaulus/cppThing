@@ -9,6 +9,7 @@
 #include "network/ClientConnect.h"
 #include "network/AddPlayer.h"
 #include "network/DeletePlayer.h"
+#include "network/UpdatePlayer.h"
 
 Server::Server(ImageManager* imageManager) {
   this->imageManager = imageManager;
@@ -205,6 +206,11 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     broadcastReliable(&ap);
     break;
   }
+  case Packet::UpdatePlayer:{
+    UpdatePlayer up;
+    up.decode(p);
+    broadcast(&up);
+  }
   default: 
     break;
   }
@@ -223,6 +229,12 @@ void Server::broadcastReliable(Packet *p) {
   sf::Packet data = p->encode();
   ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
   enet_host_broadcast(server, 0, packet);
+}
+
+void Server::broadcast(Packet *p) {
+  sf::Packet data = p->encode();
+  ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), 0);
+  enet_host_broadcast(server, 1, packet);
 }
 
 void Server::sendReliable(ENetPeer* peer, Packet *p) {

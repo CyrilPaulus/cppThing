@@ -28,6 +28,7 @@ class Server {
   NetworkClient* getClientByPeer(ENetPeer* peer);
   void handlePacket(sf::Packet p, ENetPeer* peer);
   void broadcastReliable(Packet* p);
+  void broadcast(Packet* p);
   void sendReliable(ENetPeer* peer, Packet *p);
   void sendFullWorld(ENetPeer* peer);
   bool running;

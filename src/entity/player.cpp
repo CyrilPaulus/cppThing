@@ -63,10 +63,8 @@ void Player::SetEyesPosition(sf::Vector2f target) {
 
 void Player::Update(sf::Time frametime, Input input) {
   //First update velocity x
-
-
+  
   acc += frametime;
-
   while(acc >= sf::milliseconds(GameConstant::SIMULATION_TIME_PER_UPDATE)) {
     acc -= sf::milliseconds(GameConstant::SIMULATION_TIME_PER_UPDATE);
     float seconds = GameConstant::SIMULATION_TIME_PER_UPDATE / 1000.0;

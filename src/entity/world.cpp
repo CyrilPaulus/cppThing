@@ -173,3 +173,13 @@ void World::removePlayerById(int id) {
     } 
   }
 }
+
+Player* World::getPlayerById(int id) {
+  std::list<Player*>::iterator p;
+  for(p = playerList.begin(); p != playerList.end(); p++) {
+    if((*p)->GetID() == id){
+      return(*p);
+    } 
+  }
+  return NULL;
+}

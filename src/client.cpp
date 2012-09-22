@@ -8,6 +8,7 @@
 #include "network/ClientConnect.h"
 #include "network/AddPlayer.h"
 #include "network/DeletePlayer.h"
+#include "network/UpdatePlayer.h"
 
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(window, imageManager) {
  
@@ -256,7 +257,11 @@ void Client::Update(sf::Time frametime) {
     player->SetEyesPosition(mouse->GetWorldPosition());
     UpdateView();
   }
-  
+  UpdatePlayer up;
+  up.setPosition(player->GetPosition());
+  up.setEyePosition(mouse->GetWorldPosition());
+  up.setId(id);
+  sendPacket(&up);  
 }
 
 void Client::Draw() {
@@ -446,6 +451,18 @@ void Client::handlePacket(sf::Packet p) {
     DeletePlayer dp;
     dp.decode(p);
     world->removePlayerById(dp.getId());
+  }
+  case Packet::UpdatePlayer: {
+    UpdatePlayer up;
+    up.decode(p);
+    if(up.getId() != id) {
+      std::cout << up.getPosition().x << std::endl;
+      Player* p = world->getPlayerById(up.getId());
+      if(p != NULL) {
+	p->SetPosition(up.getPosition());
+	p->SetEyesPosition(up.getEyePosition());
+      }
+    }
   }
   default: 
     break;
