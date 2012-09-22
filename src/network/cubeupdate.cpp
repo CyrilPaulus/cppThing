@@ -1,6 +1,14 @@
 #include "../config.h"
 #include "cubeupdate.h"
 
+CubeUpdate::CubeUpdate() {
+  this->type = Packet::CubeUpdate;
+  this->cubeType = 0;
+  this->position = sf::Vector2f(0,0); 
+  this->added = true;
+  this->layer = 0;
+}
+
 CubeUpdate::CubeUpdate(int cubeType, sf::Vector2f position, bool added, int layer){
   this->type = Packet::CubeUpdate;
   this->cubeType = cubeType;
@@ -9,31 +17,22 @@ CubeUpdate::CubeUpdate(int cubeType, sf::Vector2f position, bool added, int laye
   this->layer = layer;
 }
 
-/*
-void CubeUpdate::Encode(ZCom_BitStream *message){
-  message->addInt(Packet::CubeUpdate, 8);
-  message->addInt(cubeType, 32);
-  message->addFloat(position.x, 23);
-  message->addFloat(position.y, 23);
-  message->addBool(added);
-  message->addInt(layer, 8);
+sf::Packet CubeUpdate::encode() {
+  sf::Packet rslt = Packet::encode();
+  rslt << cubeType;
+  rslt << position.x;
+  rslt << position.y;
+  rslt << added;
+  rslt << layer;
+  return rslt;
 }
 
-CubeUpdate* CubeUpdate::Decode(ZCom_BitStream &message){
-  if((int) message.getInt(8) != Packet::CubeUpdate)
-   return NULL;
-  int cubeType = (int) message.getInt(32);
-  float x = message.getFloat(23);
-  float y = message.getFloat(23);
-  sf::Vector2f position(x, y);
-  bool added = message.getBool();
-  int layer = message.getInt(8);
-  return new CubeUpdate(cubeType, position, added, layer);
+void CubeUpdate::decode(sf::Packet p) {
+  p  >> cubeType >> position.x >> position.y >> added >> layer; 
 }
-*/
 
 int CubeUpdate::GetCubeType() {
-  return cubeType;
+  return (int)cubeType;
 }
 
 sf::Vector2f CubeUpdate::GetPosition() {
@@ -45,5 +44,5 @@ bool CubeUpdate::GetAdded() {
 }
 
 int CubeUpdate::GetLayer() {
-  return layer;
+  return (int)layer;
 }

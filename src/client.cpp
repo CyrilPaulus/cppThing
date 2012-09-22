@@ -205,6 +205,13 @@ void Client::Update(sf::Time frametime) {
 	this->connected = false;
 	enet_peer_reset(server);
 	break;
+      case ENET_EVENT_TYPE_RECEIVE:{
+	sf::Packet p;
+	p.append(event.packet->data, event.packet->dataLength);
+	handlePacket(p);
+	enet_packet_destroy(event.packet);
+	break;
+      }
       default:
 	break;
       }
@@ -214,12 +221,14 @@ void Client::Update(sf::Time frametime) {
   if (addCube && world->CanAddCube(mouse->GetWorldPosition(), layer)){
     //TODO send cube update pkt
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true, layer);
-    world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
+    sendPacketReliable(&cu);
+    //world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
   }
     
   if (removeCube && world->CanRemoveCube(mouse->GetWorldPosition(), layer)){
     CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false, layer);
-    world->RemoveCube(cu.GetPosition(), cu.GetLayer());
+    sendPacketReliable(&cu);
+    //world->RemoveCube(cu.GetPosition(), cu.GetLayer());
 
     //TODO send cube update pkt;	
   }
@@ -273,6 +282,18 @@ void Client::UpdateView() {
     newView.move(sf::Vector2f(0, player->GetBbox().top + player->GetBbox().height + 100 * zoom - bottom));
   
   worldDisplay->setView(newView);
+}
+
+void Client::sendPacketReliable(Packet* p) {
+  sf::Packet data = p->encode();
+  ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
+  enet_peer_send(server, 0, packet);
+}
+
+void Client::sendPacket(Packet* p) {
+  sf::Packet data = p->encode();
+  ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), 0);
+  enet_peer_send(server, 1, packet);
 }
 
 
@@ -375,4 +396,25 @@ void Client::SetPort(int port){
 
 void Client::SetIp(std::string ip){
   this->ip = ip;
+}
+
+void Client::handlePacket(sf::Packet p) {
+  sf::Uint8 type;
+  p >> type;
+  switch(type) {
+  case Packet::CubeUpdate:{
+    CubeUpdate cu;
+    cu.decode(p);
+    if(cu.GetAdded())
+      world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
+    else
+      world->RemoveCube(cu.GetPosition(), cu.GetLayer());
+    break;
+  }
+  case Packet::UserMessage:{
+    break;
+  }
+  default: 
+    break;
+  }
 }

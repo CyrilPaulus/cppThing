@@ -1,14 +1,22 @@
 #ifndef _PACKET_H_
 #define _PACKET_H_
 
+#include <SFML/Network.hpp>
 
 class Packet{
  public:
-  static const int Default = 0;
-  static const int CubeUpdate = 1;
-  static const int UserMessage = 2;
+  static const sf::Uint8 Default = 0;
+  static const sf::Uint8 UserMessage = 1;  
+  static const sf::Uint8 CubeUpdate = 2;  
+  static const sf::Uint8 ClientConnect = 3;
+  static const sf::Uint8 PlayerAdd = 4;
+  static const sf::Uint8 PlayerRemove = 5;
+  static const sf::Uint8 PlayerUpdate = 6;
+  
+  virtual sf::Packet encode();
+  
  protected:
-  int type;
+  sf::Uint8 type;
 };
 
 #endif /* _PACKET_H_ */

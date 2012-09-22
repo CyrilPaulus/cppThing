@@ -6,10 +6,13 @@
 
 class CubeUpdate : public Packet{
  public:
+  CubeUpdate();
   CubeUpdate(int, sf::Vector2f, bool, int);
   //  void Encode(ZCom_BitStream *);
   //  static CubeUpdate *Decode(ZCom_BitStream &);
 
+  virtual sf::Packet encode();
+  void decode(sf::Packet p);
   sf::Vector2f GetPosition();
   bool GetAdded();
   int GetCubeType();

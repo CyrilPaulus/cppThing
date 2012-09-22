@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdexcept>
 #include <SFML/System.hpp>
-#include <enet/enet.h>
+
 #include "network/cubeupdate.h"
 #include "network/usermessage.h"
 
@@ -16,6 +16,7 @@ Server::Server(ImageManager* imageManager) {
   this->port = 50645;
   this->maxClient = 32;
   this->lastClientID = 0;
+  this->server = NULL;
 }
 
 Server::~Server() {
@@ -33,7 +34,7 @@ void Server::Run() {
   ENetAddress address;
   address.host = ENET_HOST_ANY;
   address.port = this->port;
-  ENetHost* server = enet_host_create(&address, this->maxClient, 2, 0, 0);
+  server = enet_host_create(&address, this->maxClient, 2, 0, 0);
 
   if(server == NULL) {
     throw std::runtime_error("ENet server initialization failed");
@@ -49,9 +50,13 @@ void Server::Run() {
       case ENET_EVENT_TYPE_CONNECT:
 	addClient(event.peer->address.host, event.peer->address.port);
 	break;
-      case ENET_EVENT_TYPE_RECEIVE:
-	std::cout << "Packet recieved" << std::endl;
+      case ENET_EVENT_TYPE_RECEIVE:{
+	sf::Packet p;
+	p.append(event.packet->data, event.packet->dataLength);
+	handlePacket(p);
+	enet_packet_destroy(event.packet);
 	break;
+      }
       case ENET_EVENT_TYPE_DISCONNECT:
 	removeClient(event.peer->address.host, event.peer->address.port);
 	break;
@@ -154,6 +159,31 @@ bool Server::ZCom_cbZoidRequest( ZCom_ConnID id, zU8 requested_level, ZCom_BitSt
 }
 */
 
+void Server::handlePacket(sf::Packet p) {
+  sf::Uint8 type;
+  p >> type;
+  switch(type) {
+  case Packet::CubeUpdate:{
+    CubeUpdate cu;
+    cu.decode(p);
+    if(cu.GetAdded() && world->CanAddCube(cu.GetPosition(), cu.GetLayer())) {
+      world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
+      broadcastReliable(&cu);
+    }
+    else if(!cu.GetAdded() && world->CanRemoveCube(cu.GetPosition(), cu.GetLayer())) {
+      world->RemoveCube(cu.GetPosition(), cu.GetLayer());
+      broadcastReliable(&cu);
+    }
+    break;
+  }
+  case Packet::UserMessage:{
+    break;
+  }
+  default: 
+    break;
+  }
+}
+
 void Server::Init(){
   //TODO create TCP socket and other things
   //printf("Socket created\n");
@@ -162,3 +192,10 @@ void Server::Init(){
 void Server::SetPort(int port){
   this->port = port;
 }
+
+void Server::broadcastReliable(Packet *p) {
+  sf::Packet data = p->encode();
+  ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
+  enet_host_broadcast(server, 0, packet);
+}
+

@@ -16,6 +16,7 @@
 #include "ui/layerDisplay.h"
 #include "ui/cubeDisplay.h"
 
+#include "network/packet.h"
 class Client : public Screen{
  public:
   Client(sf::RenderWindow *window, ImageManager *imageManager);
@@ -39,12 +40,16 @@ class Client : public Screen{
   bool running;
 
   void HandleEvent(sf::Event event);
+  void handlePacket(sf::Packet p);
   void OnClose();
   void OnMouseButtonPressed(sf::Event event);
   void OnMouseButtonReleased(sf::Event event);
   void OnMouseWheelMoved(sf::Event event);
   void OnResized(sf::Event event);
   void OnKeyPressed(sf::Event event);
+
+  void sendPacketReliable(Packet* p);
+  void sendPacket(Packet* p);
 
   void UpdateView();
   float zoom;

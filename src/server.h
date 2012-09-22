@@ -3,12 +3,14 @@
 
 #include <SFML/Graphics.hpp>
 
+
 #include <list>
 #include "ticker.h"
 #include "imageManager.h"
 #include "entity/world.h"
 #include "network/NetworkClient.h"
-
+#include "network/packet.h"
+#include <enet/enet.h>
 
 class Server {
  public:
@@ -23,6 +25,8 @@ class Server {
  private:
   void addClient(unsigned int ip, unsigned int port);
   void removeClient(unsigned int ip, unsigned int port);
+  void handlePacket(sf::Packet p);
+  void broadcastReliable(Packet* p);
   bool running;
   ImageManager *imageManager;
   Ticker *ticker;
@@ -31,6 +35,7 @@ class Server {
   int maxClient;
   int lastClientID;
   std::list<NetworkClient> clients;
+  ENetHost* server;
 };
 
 #endif /* _SERVER_H_ */
