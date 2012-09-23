@@ -26,18 +26,18 @@ void PlayerAdd::setPseudo(std::string pseudo) {
   this->pseudo = pseudo;
 }
 
-void PlayerAdd::setColor(sf::Color color) {
-  this->r = color.r;
-  this->g = color.g;
-  this->b = color.b;
+void PlayerAdd::setColor(sf::Vector3i color) {
+  this->r = color.x;
+  this->g = color.y;
+  this->b = color.z;
 }
 
 void PlayerAdd::setId(int id) {
   this->id = (sf::Uint8)id;
 }
 
-sf::Color PlayerAdd::getColor() {
-  return sf::Color(r, g ,b);
+sf::Vector3i PlayerAdd::getColor() {
+  return sf::Vector3i(r, g ,b);
 }
 
 int PlayerAdd::getId() {

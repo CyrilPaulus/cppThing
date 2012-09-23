@@ -1,7 +1,7 @@
 #pragma once
 
 #include "packet.h"
-#include <SFML/Graphics.hpp>
+
 
 class PlayerAdd : public Packet{
  public:
@@ -12,8 +12,8 @@ class PlayerAdd : public Packet{
 
   void setPseudo(std::string pseudo);
   void setId(int id);
-  void setColor(sf::Color color);
-  sf::Color getColor();
+  void setColor(sf::Vector3i color);
+  sf::Vector3i getColor();
   int getId();
   std::string getPseudo();
 

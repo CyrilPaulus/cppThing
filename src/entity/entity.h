@@ -6,10 +6,9 @@
 
 class Entity {
  public:
-  Entity(ImageManager *);
+  Entity();
   virtual ~Entity();
 
-  virtual void draw(sf::RenderTarget *);
   virtual void update(float);
   sf::FloatRect getBbox();
   sf::Vector2f getPosition();
@@ -19,10 +18,7 @@ class Entity {
   bool canRemove();
 
  protected:
-
   bool remove;
-  
-  sf::Sprite *sprite;
   sf::Vector2f position;
   sf::Vector2f bbox;
 

@@ -1,12 +1,15 @@
 #include "cubeDisplay.h"
 #include "../config.h"
 
+
 CubeDisplay::CubeDisplay(ImageManager* imageManager) : UiElement(imageManager) {
-  this->cube = new Cube(imageManager, 0);
+  this->cube = new Cube(0);
+  this->r = new Renderer(imageManager);
 }
 
 CubeDisplay::~CubeDisplay() {
 	delete cube;
+        delete r;
 }
 
 void CubeDisplay::SetType(int type) {
@@ -19,7 +22,7 @@ void CubeDisplay::SetPosition(sf::Vector2f pos) {
 }
 
 void CubeDisplay::Draw(sf::RenderTarget *rt) {
-	cube->draw(rt);
+        r->renderCube(cube, rt);
 }
 
 sf::Vector2f CubeDisplay::GetSize() {

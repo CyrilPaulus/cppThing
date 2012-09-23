@@ -12,7 +12,7 @@ class GameConstant{
   static const unsigned int UPDATE_RATE = 50;
   static const unsigned int SIMULATION_TIME_PER_UPDATE = 1000 / UPDATE_RATE;
   static const int LAYERNBR = 3;
-  static const sf::Color BackgroundColor;
+  static const sf::Vector3i BackgroundColor;
 };
 
 #endif

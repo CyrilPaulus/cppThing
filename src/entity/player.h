@@ -10,24 +10,27 @@ class World;
 
 class Player : public Entity {
  public:
-  Player(ImageManager*, World*);
+  Player(World*);
   virtual ~Player();
-  virtual void draw(sf::RenderTarget *);
+ 
   void setEyesPosition(sf::Vector2f);
   void update(sf::Time frametime, Input);
-  void setColor(sf::Color);
-  sf::Color getColor();
+  void setColor(sf::Vector3i);
+  sf::Vector3i getColor();
+  
   void setId(int);
   int getId();
+  
   void setPseudo(std::string pseudo);
   std::string getPseudo();
+  
+  sf::Vector2f getLeftPupilPosition();
+  sf::Vector2f getRightPupilPosition();
  private:
   World* world;
   
   bool noclip;
   bool isFlying;
-  sf::Sprite *pupil;
-  sf::Sprite *colorMask;
 
   sf::Vector2f lpOrigin;
   sf::Vector2f lpPosition;
@@ -41,6 +44,7 @@ class Player : public Entity {
 
   sf::Vector2f velocity;
   sf::Vector2f acceleration;
+  sf::Vector3i color;
   
   int id;
   std::string pseudo;

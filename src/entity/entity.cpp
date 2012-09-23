@@ -1,22 +1,14 @@
 #include "../config.h"
 #include "entity.h"
 
-Entity::Entity(ImageManager *imageManager) {
-  sprite = new sf::Sprite(*(imageManager->get("cube")));
+Entity::Entity() {
+
   position = sf::Vector2f(0, 0);
   bbox = sf::Vector2f(0,0);
-  bbox.x = sprite->getGlobalBounds().width;
-  bbox.y = sprite->getGlobalBounds().height;
   remove = false;
 }
 
 Entity::~Entity() {
-  delete sprite;
-}
-
-void Entity::draw(sf::RenderTarget *rt) {
-  sprite->setPosition(getPosition());
-  rt->draw(*sprite);
 }
 
 void Entity::update(float frametime){

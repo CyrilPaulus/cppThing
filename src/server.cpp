@@ -11,9 +11,8 @@
 #include "network/PlayerDelete.h"
 #include "network/PlayerUpdate.h"
 
-Server::Server(ImageManager* imageManager) {
-  this->imageManager = imageManager;
-  this->world = new World(imageManager, true);
+Server::Server() {
+  this->world = new World(true);
   this->running = false;
   this->ticker = new Ticker();
   this->ticker->setUpdateRate(GameConstant::UPDATE_RATE);
@@ -197,7 +196,7 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
       PlayerAdd pa;
       pa.decode(p);
       NetworkClient *c = getClientByPeer(peer);
-      Player* p = new Player(imageManager, world);
+      Player* p = new Player(world);
       p->setColor(pa.getColor());
       p->setPseudo(pa.getPseudo());
       p->setId(pa.getId());

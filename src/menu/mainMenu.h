@@ -6,6 +6,7 @@
 #include "../game.h"
 #include "../entity/player.h"
 #include "../ui/menuItem.h"
+#include "../Renderer.h"
 
 class MainMenu : public Screen {
  public:
@@ -32,6 +33,9 @@ class MainMenu : public Screen {
   sf::Color nextColor;
   
   void updateColor();
+  
+  //TODO Remove
+  Renderer* r;
 };
 
 #endif /* _MAINMENU_H_ */

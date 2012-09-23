@@ -14,10 +14,9 @@ class Player;
 
 class World {
  public:
-  World(ImageManager *, bool);
+  World(bool server);
   ~World();
   
-  void draw(sf::RenderTarget *);
   void update();
   void updatePlayer(sf::Time frametime, Input);
   void addCube(sf::Vector2f, int, int);
@@ -27,13 +26,13 @@ class World {
   bool canRemoveCube(sf::Vector2f, int);
 
   std::list<Cube*> getList(int layer);
+  std::list<Player*> getPlayerList();
   void addPlayer(Player *);
   void removePlayer(Player *);
   void removePlayerById(int id);
   Player* getPlayerById(int id);
   Cube* getCollidingCube(sf::FloatRect);
  private:
-  ImageManager* imageManager;
   bool server;
   std::list<Cube*> layer[GameConstant::LAYERNBR];
   std::list<Player*> playerList;

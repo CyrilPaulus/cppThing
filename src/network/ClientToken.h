@@ -1,7 +1,6 @@
 #pragma once
 
 #include "packet.h"
-#include <SFML/Graphics.hpp>
 
 class ClientToken : public Packet{
  public:

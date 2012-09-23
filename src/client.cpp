@@ -19,13 +19,15 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   //TODO define resolution variable in client so we don't need to call window
   worldDisplay->create(window->getSize().x, window->getSize().y);
   mouse = new Mouse(window, worldDisplay, imageManager);
-  world = new World(imageManager, false);
+  world = new World(false);
   addCube = false;
   removeCube = false;
-  player = new Player(imageManager, world);
+  player = new Player(world);
   world->addPlayer(player);
   zoom = 1;
   cubeType = 0;
+  
+  renderer = new Renderer(imageManager);
   
   //TODO wrap this in a function
   displayCube = new CubeDisplay(imageManager);
@@ -59,6 +61,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
 Client::~Client(){
   enet_host_destroy(client);
   enet_deinitialize();
+  delete renderer;
   delete displayCube;
   delete layerDisplay;
   delete ticker;
@@ -261,10 +264,11 @@ void Client::update(sf::Time frametime) {
 }
 
 void Client::draw() {
-  window->clear(GameConstant::BackgroundColor);
+    sf::Color clearC(GameConstant::BackgroundColor.x, GameConstant::BackgroundColor.y, GameConstant::BackgroundColor.z);
+  window->clear(clearC);
 
   worldDisplay->clear(sf::Color(0,0,0,0));
-  world->draw(worldDisplay);
+  renderer->renderWorld(world, worldDisplay);
   worldDisplay->display();
 
   window->draw(sf::Sprite(worldDisplay->getTexture()));
@@ -440,7 +444,7 @@ void Client::handlePacket(sf::Packet p) {
     PlayerAdd ap;
     ap.decode(p);
     if(id != ap.getId()) {
-      Player* p = new Player(imageManager, world);
+      Player* p = new Player(world);
       p->setColor(ap.getColor());
       p->setPseudo(ap.getPseudo());
       p->setId(ap.getId());

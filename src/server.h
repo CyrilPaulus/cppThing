@@ -14,7 +14,7 @@
 
 class Server {
  public:
-  Server(ImageManager *);
+  Server();
   ~Server();
   void run();
   void stop();
@@ -33,7 +33,6 @@ class Server {
   void sendFullWorldUpdate(ENetPeer* peer);
   
   bool running;
-  ImageManager *imageManager;
   Ticker *ticker;
   World *world;
   int port;

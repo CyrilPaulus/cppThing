@@ -78,7 +78,7 @@ void Game::runServer() {
 
 void Game::startServer() {
   serverImgManager = new ImageManager();
-  s = new Server(serverImgManager);
+  s = new Server();
  
   serverThread = new sf::Thread(&startServerThread, s);
   

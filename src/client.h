@@ -17,6 +17,8 @@
 #include "ui/cubeDisplay.h"
 
 #include "network/packet.h"
+#include "Renderer.h"
+
 class Client : public Screen{
  public:
   Client(sf::RenderWindow *window, ImageManager *imageManager);
@@ -55,8 +57,9 @@ class Client : public Screen{
   float zoom;
   int cubeType;
   CubeDisplay* displayCube;
+  Renderer* renderer;
 
-  World *world;
+  World *world;  
 
   bool addCube;
   bool removeCube;

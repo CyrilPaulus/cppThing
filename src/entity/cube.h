@@ -8,12 +8,11 @@ class Cube : public Entity{
   static const int HEIGHT = 32;
   static const int BLOCKTYPECOUNT = 48;
 
-  Cube(ImageManager*, int);
+  Cube(int);
   void setType(int);
   int getType();
  private:
   int type;
-  ImageManager *imageManager;
 };
 
 #endif /* _CUBE_H_ */

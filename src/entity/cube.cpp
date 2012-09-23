@@ -1,9 +1,9 @@
 #include "../config.h"
 #include "cube.h"
 
-Cube::Cube(ImageManager* imageManager, int type) : Entity(imageManager) {
-  this->imageManager = imageManager;
-  sprite->setTexture(*(imageManager->get("tileset")), true);
+Cube::Cube(int type) : Entity() {
+    this->bbox.x = Cube::WIDTH;
+    this->bbox.y = Cube::HEIGHT;
   setType(type);
 }
 
@@ -21,10 +21,7 @@ void Cube::RegisterZCom(ZCom_Control *control, bool server, int layer) {
 }
 */
 void Cube::setType(int type) {
-  this->type = type;
-  int x = (type % 16) * Cube::WIDTH;
-  int y = (type / 16) * Cube::HEIGHT;
-  sprite->setTextureRect(sf::IntRect(x, y, Cube::WIDTH, Cube::HEIGHT));
+  this->type = type;  
 }
 
 int Cube::getType() {

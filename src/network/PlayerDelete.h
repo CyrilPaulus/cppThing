@@ -1,7 +1,6 @@
 #pragma once
 
 #include "packet.h"
-#include <SFML/Graphics.hpp>
 
 class PlayerDelete : public Packet{
  public:

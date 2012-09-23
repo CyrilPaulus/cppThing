@@ -2,8 +2,7 @@
 #include "world.h"
 #include "math.h"
 
-World::World(ImageManager *imageManager, bool server){
-  this->imageManager = imageManager;
+World::World(bool server){
   for(int i = 0; i < GameConstant::LAYERNBR; i++){
     this->quadTrees[i] = new QuadTree(10, sf::Vector2f(90, 90));
   }  
@@ -26,34 +25,11 @@ World::~World() {
     delete (*p);
 }
 
-void World::draw(sf::RenderTarget *rt){
-  for(int i = 0; i < GameConstant::LAYERNBR; i++) {
-    std::list<Cube*>::iterator c;
-    for(c = layer[i].begin(); c != layer[i].end(); c++)
-      (*c)->draw(rt);
-  
-    if(i == 0) {
-      sf::Vector2f origin = rt->convertCoords(sf::Vector2i(0,0));
-      sf::RectangleShape fog = sf::RectangleShape(sf::Vector2f(rt->getDefaultView().getSize().x, rt->getDefaultView().getSize().y));
-      fog.setPosition(sf::Vector2f(origin.x, origin.y));
-      fog.setFillColor(sf::Color(100, 149, 237, 150));
-      rt->draw(fog);
-    }
-    if(i == 1){
-      std::list<Player*>::iterator p;
-      for(p = playerList.begin(); p != playerList.end(); p++)
-	(*p)->draw(rt);
-    }
-  }
-
- 
-}
-
 void World::addCube(sf::Vector2f pos, int type, int layerIndex, bool force){
   sf::Vector2f gridPos = sf::Vector2f(floor(pos.x / Cube::WIDTH) * Cube::WIDTH, floor(pos.y / Cube::HEIGHT) * Cube::HEIGHT);  
   
   if(force || canAddCube(pos, layerIndex)) {
-    Cube* cube = new Cube(imageManager, type);
+    Cube* cube = new Cube(type);
     cube->setPosition(gridPos);
     layer[layerIndex].push_back(cube);
     quadTrees[layerIndex]->Add(cube);
@@ -182,4 +158,8 @@ Player* World::getPlayerById(int id) {
     } 
   }
   return NULL;
+}
+
+std::list<Player*> World::getPlayerList() {
+    return playerList;
 }

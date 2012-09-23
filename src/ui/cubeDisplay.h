@@ -3,6 +3,7 @@
 
 #include "uiElement.h"
 #include "../entity/cube.h"
+#include "../Renderer.h"
 
 class CubeDisplay : public UiElement {
  public:
@@ -15,7 +16,9 @@ class CubeDisplay : public UiElement {
   sf::Vector2f GetSize();
   
  private:
-  Cube* cube;  
+  Cube* cube;
+  //Todo remove
+  Renderer* r;
 };
 
 #endif /* _CUBEDISPLAY_H_ */
