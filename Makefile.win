@@ -1,23 +1,27 @@
-CC := mingw32-g++
+CC := i486-mingw32-g++
+LD := i486-mingw32-ld
+AR := i486-mingw32-ar
 
-CFLAGS := -Iinclude -g -Wall -DSFML_DYNAMIC  -fexceptions
-LDFLAGS := -Llib/windows -lsfml-graphics -lsfml-window -lsfml-system  
-
-EXEC:= cppThing.exe
+CFLAGS := -I/usr/i486-mingw32/include -g -Wall
+LDFLAGS :=  -lsfml-window -lsfml-network -lsfml-graphics -lsfml-system -lenet -lwsock32 -lws2_32 -lwinmm -static-libgcc -static-libstdc++
+DSLDFLAGS := -lsfml-network -lsfml-system -lenet -lwsock32 -lws2_32 -lwinmm -static-libgcc -static-libstdc++
+EXEC:= a.exe
+DS:=ds.exe
 EXPORT := export.tar.gz
 DIST = $(wildcard *)
 
 all: src_all
-	copy "$(src_EXEC)" $(EXEC)
+	cp -a $(src_EXEC) $(EXEC)
+	cp -a $(src_DS) $(DS)
 
 clean: src_clean
-	del $(EXEC)
+	rm -rf $(EXEC)
 
 distclean: clean src_distclean
-	del $(EXPORT)
+	rm -rf $(EXPORT)
 
 dist: distclean
 	tar czf $(EXPORT) $(DIST)
 
 DIR:= src
-include src/Rules.mk.win
+include src/Rules.mk

@@ -8,5 +8,5 @@ There is no goal in this game, just build and have fun online.
 
 What do I need?
 ---------------
-cppThing needs SFML2 and zoidcom for networking.
+cppThing needs SFML2 and elen for networking.
 

@@ -8,10 +8,10 @@ src_OBJS := $(src_SRCS:.cpp=.o)
 src_all: $(src_EXEC) $(src_DS)
 
 $(src_EXEC): $(src_OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(src_OBJS) -o $(src_EXEC)
+	$(CC) $(CFLAGS) $(src_OBJS) $(LDFLAGS) -o $(src_EXEC)
 
 $(src_DS): $(src_OBJS)
-	$(CC) $(CFLAGS) $(DIR)/dedi/dedi.cpp $(DIR)/config.o $(DIR)/server.o $(DIR)/ticker.o $(DIR)/network/*.o $(DIR)/entity/*.o $(DIR)/utils/*.o -lsfml-network -lsfml-system -lenet -o $(src_DS)
+	$(CC) $(CFLAGS) $(DIR)/dedi/dedi.cpp $(DIR)/config.o $(DIR)/server.o $(DIR)/ticker.o $(DIR)/network/*.o $(DIR)/entity/*.o $(DIR)/utils/*.o $(DSLDFLAGS) -o $(src_DS)
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $^ -o $@

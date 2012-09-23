@@ -1,8 +1,8 @@
 CC := g++
 
 CFLAGS := -g -Wall
-LDFLAGS := -lm -lsfml-window -lsfml-network -lsfml-graphics -lsfml-system -lenet
-
+LDFLAGS :=  -lsfml-window -lsfml-network -lsfml-graphics -lsfml-system -lenet
+DSLDFLAGS := -lsfml-network -lsfml-system -lenet
 EXEC:= a.out
 DS:=ds
 EXPORT := export.tar.gz
