@@ -6,7 +6,7 @@
 
 #include "network/CubeUpdate.h"
 #include "network/UserMessage.h"
-#include "network/ClientConnect.h"
+#include "network/ClientToken.h"
 #include "network/PlayerAdd.h"
 #include "network/PlayerDelete.h"
 #include "network/PlayerUpdate.h"
@@ -83,7 +83,9 @@ void Server::addClient(ENetPeer* peer) {
   clients.push_back(c);
   std::cout << "Client connected server: " << c->getId() << std::endl;
   lastClientID++;
-  sendFullWorldUpdate(peer);
+  ClientToken ct;
+  ct.setId(c->getId());
+  sendReliable(peer, &ct);
 }
 
 void Server::removeClient(unsigned int ip, unsigned int port) {
@@ -190,20 +192,18 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
   case Packet::UserMessage:{
     break;
   }
-  case Packet::ClientConnect: {
-    ClientConnect cc;
-    cc.decode(p);
-    NetworkClient* c = getClientByPeer(peer);
-    cc.setId(c->getId());
-    sendReliable(peer, &cc);
-    c->setPlayer(new Player(imageManager, world));
-    c->getPlayer()->setColor(cc.getColor());
-    c->getPlayer()->setPseudo(cc.getPseudo());
-    PlayerAdd ap;
-    ap.setId(cc.getId());
-    ap.setPseudo(cc.getPseudo());
-    ap.setColor(cc.getColor());
-    broadcastReliable(&ap);
+  //Used to validate client connection
+  case Packet::AddPlayer: {
+      PlayerAdd pa;
+      pa.decode(p);
+      NetworkClient *c = getClientByPeer(peer);
+      Player* p = new Player(imageManager, world);
+      p->setColor(pa.getColor());
+      p->setPseudo(pa.getPseudo());
+      p->setId(pa.getId());
+      c->setPlayer(p);
+      sendFullWorldUpdate(peer);
+      broadcastReliable(&pa);
     break;
   }
   case Packet::UpdatePlayer:{
@@ -253,9 +253,10 @@ void Server::sendFullWorldUpdate(ENetPeer* peer) {
     }
   }
 
+  NetworkClient *c = getClientByPeer(peer);
   std::list<NetworkClient*>::iterator it;
   for(it = clients.begin(); it != clients.end(); it++) {
-    if((*it)->getPlayer() != NULL) {
+    if((*it)->getPlayer() != NULL && (*it) != c) {
       PlayerAdd ap;
       ap.setColor((*it)->getPlayer()->getColor());
       ap.setId((*it)->getId());

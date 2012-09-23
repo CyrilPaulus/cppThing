@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include "network/CubeUpdate.h"
 #include "network/UserMessage.h"
-#include "network/ClientConnect.h"
+#include "network/ClientToken.h"
 #include "network/PlayerAdd.h"
 #include "network/PlayerDelete.h"
 #include "network/PlayerUpdate.h"
@@ -204,10 +204,6 @@ void Client::update(sf::Time frametime) {
       case ENET_EVENT_TYPE_CONNECT:{
 	std::cout << "Connection to server established" << std::endl;
 	this->connected = true;
-	ClientConnect cc;
-	cc.setPseudo(pseudo);
-	cc.setColor(player->getColor());
-	sendPacketReliable(&cc);
 	break;
       }
       case ENET_EVENT_TYPE_DISCONNECT:
@@ -231,13 +227,13 @@ void Client::update(sf::Time frametime) {
   if (addCube && world->canAddCube(mouse->getWorldPosition(), layer)){
     //TODO send cube update pkt
     CubeUpdate cu(cubeType, mouse->getWorldPosition(), true, layer);
-    sendPacketReliable(&cu);
+    sendReliable(&cu);
     //world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
   }
     
   if (removeCube && world->canRemoveCube(mouse->getWorldPosition(), layer)){
     CubeUpdate cu(cubeType, mouse->getWorldPosition(), false, layer);
-    sendPacketReliable(&cu);
+    sendReliable(&cu);
     //world->RemoveCube(cu.GetPosition(), cu.GetLayer());
 
     //TODO send cube update pkt;	
@@ -261,7 +257,7 @@ void Client::update(sf::Time frametime) {
   up.setPosition(player->getPosition());
   up.setEyePosition(mouse->getWorldPosition());
   up.setId(id);
-  sendPacket(&up);  
+  send(&up);  
 }
 
 void Client::draw() {
@@ -298,13 +294,13 @@ void Client::updateView() {
   worldDisplay->setView(newView);
 }
 
-void Client::sendPacketReliable(Packet* p) {
+void Client::sendReliable(Packet* p) {
   sf::Packet data = p->encode();
   ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
   enet_peer_send(server, 0, packet);
 }
 
-void Client::sendPacket(Packet* p) {
+void Client::send(Packet* p) {
   sf::Packet data = p->encode();
   ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), 0);
   enet_peer_send(server, 1, packet);
@@ -417,7 +413,7 @@ void Client::handlePacket(sf::Packet p) {
     CubeUpdate cu;
     cu.decode(p);
     if(cu.GetAdded())
-      world->addCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
+      world->addCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer(), true);
     else
       world->removeCube(cu.GetPosition(), cu.GetLayer());
     break;
@@ -426,10 +422,18 @@ void Client::handlePacket(sf::Packet p) {
     break;
   }
   case Packet::ClientConnect: {
-    ClientConnect cc;
+    ClientToken cc;
     cc.decode(p);
     this->id = cc.getId();
+    player->setId(id);
     std::cout << "server assigned id:" << id << std::endl;
+    
+    //Now we can send the client info
+    PlayerAdd pa;
+    pa.setColor(player->getColor());
+    pa.setPseudo(player->getPseudo());
+    pa.setId(id);
+    sendReliable(&pa);
     break;
   }
   case Packet::AddPlayer: {
@@ -453,8 +457,7 @@ void Client::handlePacket(sf::Packet p) {
     PlayerUpdate up;
     up.decode(p);
     if(up.getId() != id) {
-      std::cout << up.getPosition().x << std::endl;
-      Player* p = world->getPlayerById(up.getId());
+     Player* p = world->getPlayerById(up.getId());
       if(p != NULL) {
 	p->setPosition(up.getPosition());
 	p->setEyesPosition(up.getEyePosition());

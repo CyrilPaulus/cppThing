@@ -43,5 +43,5 @@ void PlayerUpdate::setPosition(sf::Vector2f position) {
 }
 
 void PlayerUpdate::setEyePosition(sf::Vector2f eyePosition) {
-  this->eyePosition = position;
+  this->eyePosition = eyePosition;
 }

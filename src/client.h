@@ -48,8 +48,8 @@ class Client : public Screen{
   void onResized(sf::Event event);
   void onKeyPressed(sf::Event event);
 
-  void sendPacketReliable(Packet* p);
-  void sendPacket(Packet* p);
+  void sendReliable(Packet* p);
+  void send(Packet* p);
 
   void updateView();
   float zoom;
