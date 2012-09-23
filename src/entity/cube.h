@@ -9,7 +9,7 @@ class Cube : public Entity{
   static const int BLOCKTYPECOUNT = 48;
 
   Cube(ImageManager*, int);
-  void SetType(int);
+  void setType(int);
   int getType();
  private:
   int type;

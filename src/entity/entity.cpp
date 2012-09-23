@@ -14,31 +14,31 @@ Entity::~Entity() {
   delete sprite;
 }
 
-void Entity::Draw(sf::RenderTarget *rt) {
-  sprite->setPosition(GetPosition());
+void Entity::draw(sf::RenderTarget *rt) {
+  sprite->setPosition(getPosition());
   rt->draw(*sprite);
 }
 
-void Entity::Update(float frametime){
+void Entity::update(float frametime){
 }
 
-sf::FloatRect Entity::GetBbox() {
+sf::FloatRect Entity::getBbox() {
   return sf::FloatRect(position.x, position.y, bbox.x, bbox.y);
 }
 
-sf::Vector2f Entity::GetPosition() {
+sf::Vector2f Entity::getPosition() {
   return position;
 }
 
-sf::Vector2f Entity::GetCenter() {
+sf::Vector2f Entity::getCenter() {
   sf::Vector2f hbbox = sf::Vector2f(bbox.x / 2, bbox.y / 2);
-  return GetPosition() + hbbox;
+  return getPosition() + hbbox;
 }
 
-void Entity::SetPosition(sf::Vector2f position){
+void Entity::setPosition(sf::Vector2f position){
   this->position = position;
 }
 
-bool Entity::CanRemove(){
+bool Entity::canRemove(){
   return remove;
 }

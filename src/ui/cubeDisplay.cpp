@@ -10,16 +10,16 @@ CubeDisplay::~CubeDisplay() {
 }
 
 void CubeDisplay::SetType(int type) {
-	cube->SetType(type);
+	cube->setType(type);
 }
 
 void CubeDisplay::SetPosition(sf::Vector2f pos) {
 	UiElement::SetPosition(pos);
-	cube->SetPosition(pos);
+	cube->setPosition(pos);
 }
 
 void CubeDisplay::Draw(sf::RenderTarget *rt) {
-	cube->Draw(rt);
+	cube->draw(rt);
 }
 
 sf::Vector2f CubeDisplay::GetSize() {

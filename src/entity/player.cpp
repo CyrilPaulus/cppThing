@@ -39,29 +39,29 @@ Player::~Player(){
     delete colorMask;
 }
 
-void Player::Draw(sf::RenderTarget * rt) {
-  Entity::Draw(rt);
-  pupil->setPosition(GetPosition() + lpPosition);
+void Player::draw(sf::RenderTarget * rt) {
+  Entity::draw(rt);
+  pupil->setPosition(getPosition() + lpPosition);
   rt->draw(*(pupil));
-  pupil->setPosition(GetPosition() + rpPosition);
+  pupil->setPosition(getPosition() + rpPosition);
   rt->draw(*(pupil));
-  colorMask->setPosition(GetPosition());
+  colorMask->setPosition(getPosition());
   rt->draw(*(colorMask));
 }
 
-void Player::SetEyesPosition(sf::Vector2f target) {
-  float lpDist = std::min(VectorUtils::Distance(target, GetPosition() + lpOrigin) / 50, 2.F);
-  sf::Vector2f lpDir = target - (GetPosition() + lpOrigin);
+void Player::setEyesPosition(sf::Vector2f target) {
+  float lpDist = std::min(VectorUtils::Distance(target, getPosition() + lpOrigin) / 50, 2.F);
+  sf::Vector2f lpDir = target - (getPosition() + lpOrigin);
   lpDir = VectorUtils::Normalize(lpDir);
   lpPosition = lpOrigin + (lpDist * lpDir);
 
-  float rpDist = std::min(VectorUtils::Distance(target, GetPosition() + rpOrigin) / 50, 2.F);
-  sf::Vector2f rpDir = target - (GetPosition() + rpOrigin);
+  float rpDist = std::min(VectorUtils::Distance(target, getPosition() + rpOrigin) / 50, 2.F);
+  sf::Vector2f rpDir = target - (getPosition() + rpOrigin);
   rpDir = VectorUtils::Normalize(rpDir);
   rpPosition = rpOrigin + (rpDist * rpDir);
 }
 
-void Player::Update(sf::Time frametime, Input input) {
+void Player::update(sf::Time frametime, Input input) {
   //First update velocity x
   
   acc += frametime;
@@ -103,12 +103,12 @@ void Player::Update(sf::Time frametime, Input input) {
     if(velocity.x != 0){
       position.x += velocity.x * seconds;
     
-      Cube *c = world->GetCollidingCube(GetBbox());
+      Cube *c = world->getCollidingCube(getBbox());
       if( c != NULL){
 	if(velocity.x < 0)
-	  position.x = c->GetBbox().left + c->GetBbox().width;
+	  position.x = c->getBbox().left + c->getBbox().width;
 	else
-	  position.x = c->GetBbox().left - GetBbox().width;
+	  position.x = c->getBbox().left - getBbox().width;
 	velocity.x = 0;
       }
     }
@@ -116,12 +116,12 @@ void Player::Update(sf::Time frametime, Input input) {
     if(velocity.y != 0){
       position.y += velocity.y * seconds;
       isFlying = true;
-      Cube *c = world->GetCollidingCube(GetBbox());
+      Cube *c = world->getCollidingCube(getBbox());
       if( c != NULL){
 	if(velocity.y < 0)
-	  position.y = c->GetBbox().top + c->GetBbox().height;
+	  position.y = c->getBbox().top + c->getBbox().height;
 	else{
-	  position.y = c->GetBbox().top - GetBbox().height;
+	  position.y = c->getBbox().top - getBbox().height;
 	  isFlying = false;
 	}
 	velocity.y = 0;
@@ -134,7 +134,7 @@ void Player::Update(sf::Time frametime, Input input) {
 /*void Player::Update(sf::Time frametime, Input input) {
   InputUpdate(input);
   PhysicUpdate(frametime);
-  /*switch (node->getRole()){
+  switch (node->getRole()){
   case eZCom_RoleOwner:
     DoOwner(input, frametime);
     break;
@@ -150,11 +150,11 @@ void Player::Update(sf::Time frametime, Input input) {
     
 }*/
 
-void Player::SetID(int id){
+void Player::setId(int id){
   this->id = id;
 }
 
-int Player::GetID(){
+int Player::getId(){
   return id;
 }
 
@@ -194,7 +194,7 @@ void Player::RegisterZCom(ZCom_Control *control, bool server) {
 }
 */
 
-void Player::SetColor(sf::Color c){
+void Player::setColor(sf::Color c){
   colorMask->setColor(c);
 }
 

@@ -41,7 +41,7 @@ void QuadTreeNode::Add(Cube *b) {
   if(!children.empty()){
     std::list<QuadTreeNode*>::iterator i;
     for (i = children.begin(); i != children.end(); i++)
-      if ((*i)->range.intersects(b->GetBbox()))
+      if ((*i)->range.intersects(b->getBbox()))
 	(*i)->Add(b);	  
   } else if ((int)cubeList.size() < capacity || (range.width <= minSize.x || range.height <= minSize.y)) {
     cubeList.push_back(b);
@@ -73,7 +73,7 @@ void QuadTreeNode::Remove(Cube *b) {
   if(!children.empty()) {
     std::list<QuadTreeNode*>::iterator i;
     for (i = children.begin(); i != children.end(); i++)
-      if((*i)->range.intersects(b->GetBbox()))
+      if((*i)->range.intersects(b->getBbox()))
 	(*i)->Remove(b);
   }
   else

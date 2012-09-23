@@ -7,16 +7,16 @@
 class Entity {
  public:
   Entity(ImageManager *);
-  ~Entity();
+  virtual ~Entity();
 
-  void Draw(sf::RenderTarget *);
-  void Update(float);
-  sf::FloatRect GetBbox();
-  sf::Vector2f GetPosition();
-  void SetPosition(sf::Vector2f);
-  sf::Vector2f GetCenter();
+  virtual void draw(sf::RenderTarget *);
+  virtual void update(float);
+  sf::FloatRect getBbox();
+  sf::Vector2f getPosition();
+  void setPosition(sf::Vector2f);
+  sf::Vector2f getCenter();
 
-  bool CanRemove();
+  bool canRemove();
 
  protected:
 

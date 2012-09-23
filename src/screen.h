@@ -8,7 +8,7 @@ class Screen {
 	public:
 		Screen(sf::RenderWindow *window, ImageManager *imageManager);
 		virtual ~Screen();
-		virtual int Run() =0;
+		virtual int run() =0;
 		static const int NONE = -2;
 		static const int EXIT = -1;
 		static const int MAINMENU = 0;

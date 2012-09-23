@@ -16,11 +16,11 @@ class Server {
  public:
   Server(ImageManager *);
   ~Server();
-  void Run();
-  void Stop();
-  void Update(sf::Time frametime);
-  void Init();
-  void SetPort(int port);
+  void run();
+  void stop();
+  void update(sf::Time frametime);
+  void init();
+  void setPort(int port);
 
  private:
   void addClient(ENetPeer* peer);
@@ -30,7 +30,8 @@ class Server {
   void broadcastReliable(Packet* p);
   void broadcast(Packet* p);
   void sendReliable(ENetPeer* peer, Packet *p);
-  void sendFullWorld(ENetPeer* peer);
+  void sendFullWorldUpdate(ENetPeer* peer);
+  
   bool running;
   ImageManager *imageManager;
   Ticker *ticker;

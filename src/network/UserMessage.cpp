@@ -1,5 +1,5 @@
 #include "../config.h"
-#include "usermessage.h"
+#include "UserMessage.h"
 
 UserMessage::UserMessage(unsigned int frametime, Input input, sf::Vector2f lookdir){
   this->type = Packet::UserMessage;
@@ -33,14 +33,14 @@ UserMessage* UserMessage::Decode(ZCom_BitStream &message){
   return new UserMessage(frametime, input, sf::Vector2f(x, y));
   }*/
 
-unsigned int UserMessage::GetFrametime(){
+unsigned int UserMessage::getFrametime(){
   return frametime;
 }
 
-Input UserMessage::GetInput(){
+Input UserMessage::getInput(){
   return input;
 }
 
-sf::Vector2f UserMessage::GetLookDir(){
+sf::Vector2f UserMessage::getLookDir(){
   return lookdir;
 }

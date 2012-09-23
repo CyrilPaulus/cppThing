@@ -4,19 +4,19 @@
 #include <stdexcept>
 #include <SFML/System.hpp>
 
-#include "network/cubeupdate.h"
-#include "network/usermessage.h"
+#include "network/CubeUpdate.h"
+#include "network/UserMessage.h"
 #include "network/ClientConnect.h"
-#include "network/AddPlayer.h"
-#include "network/DeletePlayer.h"
-#include "network/UpdatePlayer.h"
+#include "network/PlayerAdd.h"
+#include "network/PlayerDelete.h"
+#include "network/PlayerUpdate.h"
 
 Server::Server(ImageManager* imageManager) {
   this->imageManager = imageManager;
   this->world = new World(imageManager, true);
   this->running = false;
   this->ticker = new Ticker();
-  this->ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
+  this->ticker->setUpdateRate(GameConstant::UPDATE_RATE);
   this->port = 50645;
   this->maxClient = 32;
   this->lastClientID = 0;
@@ -28,7 +28,7 @@ Server::~Server() {
   delete ticker;
 }
 
-void Server::Run() {
+void Server::run() {
   running = true;
 
   if(enet_initialize() != 0) {
@@ -45,7 +45,7 @@ void Server::Run() {
   }
 
   printf("Server started\n");
-  world->AddCube(sf::Vector2f(0,90), 1, 1);
+  world->addCube(sf::Vector2f(0,90), 1, 1);
   while(running) {
     //Manage network events
     ENetEvent event;
@@ -69,8 +69,8 @@ void Server::Run() {
       }
     }
     
-    if(ticker->Tick())
-      Update(ticker->GetElapsedTime());
+    if(ticker->tick())
+      update(ticker->getElapsedTime());
     sf::sleep(sf::seconds(0.01f));
   }
   enet_host_destroy(server);
@@ -83,7 +83,7 @@ void Server::addClient(ENetPeer* peer) {
   clients.push_back(c);
   std::cout << "Client connected server: " << c->getId() << std::endl;
   lastClientID++;
-  sendFullWorld(peer);
+  sendFullWorldUpdate(peer);
 }
 
 void Server::removeClient(unsigned int ip, unsigned int port) {
@@ -91,7 +91,7 @@ void Server::removeClient(unsigned int ip, unsigned int port) {
   for(it = clients.begin(); it != clients.end(); it++) {
     if((*it)->getIp() == ip && (*it)->getPort() == port) {
       std::cout << "Client disconnected from server: " << (*it)->getId() << std::endl;
-      DeletePlayer dp;
+      PlayerDelete dp;
       dp.setId((*it)->getId());
       broadcastReliable(&dp);
       delete(*it);
@@ -101,13 +101,13 @@ void Server::removeClient(unsigned int ip, unsigned int port) {
   }
 }
 
-void Server::Stop() {
+void Server::stop() {
   printf("Closing server...\n");
   running = false;
 }
 
-void Server::Update(sf::Time frametime) {
-  world->UpdatePlayer(frametime, Input());
+void Server::update(sf::Time frametime) {
+  world->updatePlayer(frametime, Input());
 }
 
 //zoidcom handling
@@ -177,12 +177,12 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
   case Packet::CubeUpdate:{
     CubeUpdate cu;
     cu.decode(p);
-    if(cu.GetAdded() && world->CanAddCube(cu.GetPosition(), cu.GetLayer())) {
-      world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
+    if(cu.GetAdded() && world->canAddCube(cu.GetPosition(), cu.GetLayer())) {
+      world->addCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
       broadcastReliable(&cu);
     }
-    else if(!cu.GetAdded() && world->CanRemoveCube(cu.GetPosition(), cu.GetLayer())) {
-      world->RemoveCube(cu.GetPosition(), cu.GetLayer());
+    else if(!cu.GetAdded() && world->canRemoveCube(cu.GetPosition(), cu.GetLayer())) {
+      world->removeCube(cu.GetPosition(), cu.GetLayer());
       broadcastReliable(&cu);
     }
     break;
@@ -197,9 +197,9 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     cc.setId(c->getId());
     sendReliable(peer, &cc);
     c->setPlayer(new Player(imageManager, world));
-    c->getPlayer()->SetColor(cc.getColor());
+    c->getPlayer()->setColor(cc.getColor());
     c->getPlayer()->setPseudo(cc.getPseudo());
-    AddPlayer ap;
+    PlayerAdd ap;
     ap.setId(cc.getId());
     ap.setPseudo(cc.getPseudo());
     ap.setColor(cc.getColor());
@@ -207,7 +207,7 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     break;
   }
   case Packet::UpdatePlayer:{
-    UpdatePlayer up;
+    PlayerUpdate up;
     up.decode(p);
     broadcast(&up);
   }
@@ -216,12 +216,12 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
   }
 }
 
-void Server::Init(){
+void Server::init(){
   //TODO create TCP socket and other things
   //printf("Socket created\n");
 }
 
-void Server::SetPort(int port){
+void Server::setPort(int port){
   this->port = port;
 }
 
@@ -243,12 +243,12 @@ void Server::sendReliable(ENetPeer* peer, Packet *p) {
   enet_peer_send(peer, 0, packet);
 }
 
-void Server::sendFullWorld(ENetPeer* peer) {
+void Server::sendFullWorldUpdate(ENetPeer* peer) {
   for(int i = 0; i < GameConstant::LAYERNBR; i++) {
     std::list<Cube*> layer = world->getList(i);
     std::list<Cube*>::iterator it;
     for(it = layer.begin(); it != layer.end(); it++) {
-      CubeUpdate cu((*it)->getType(), (*it)->GetPosition(), true, i);
+      CubeUpdate cu((*it)->getType(), (*it)->getPosition(), true, i);
       sendReliable(peer, &cu);
     }
   }
@@ -256,7 +256,7 @@ void Server::sendFullWorld(ENetPeer* peer) {
   std::list<NetworkClient*>::iterator it;
   for(it = clients.begin(); it != clients.end(); it++) {
     if((*it)->getPlayer() != NULL) {
-      AddPlayer ap;
+      PlayerAdd ap;
       ap.setColor((*it)->getPlayer()->getColor());
       ap.setId((*it)->getId());
       ap.setPseudo((*it)->getPlayer()->getPseudo());

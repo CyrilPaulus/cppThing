@@ -11,8 +11,8 @@ class MainMenu : public Screen {
  public:
   MainMenu(sf::RenderWindow* , ImageManager* , Game*);
   ~MainMenu();
-  int Run();
-  void Resize(int, int);
+  int run();
+  void resize(int, int);
  private:
   Mouse* mouse;
   Game* game;
@@ -20,10 +20,10 @@ class MainMenu : public Screen {
   int selectedItem;
   int itemCount;
   MenuItem** items;
-  int HandleEvent(sf::Event e);
-  int OnKeyPressed(sf::Event e);
-  void OnMouseMoved(sf::Event e);
-  int OnMouseButtonReleased(sf::Event e);
+  int handleEvent(sf::Event e);
+  int onKeyPressed(sf::Event e);
+  void onMouseMoved(sf::Event e);
+  int onMouseButtonReleased(sf::Event e);
   
   //Candyeye stuff
   sf::RenderTexture* pImage;
@@ -31,7 +31,7 @@ class MainMenu : public Screen {
   sf::Color background;
   sf::Color nextColor;
   
-  void UpdateColor();
+  void updateColor();
 };
 
 #endif /* _MAINMENU_H_ */

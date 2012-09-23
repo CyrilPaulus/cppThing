@@ -3,9 +3,9 @@
 #include "packet.h"
 #include <SFML/Graphics.hpp>
 
-class AddPlayer : public Packet{
+class PlayerAdd : public Packet{
  public:
-  AddPlayer();
+  PlayerAdd();
   
   virtual sf::Packet encode();
   void decode(sf::Packet p);

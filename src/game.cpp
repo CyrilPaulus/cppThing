@@ -9,7 +9,7 @@
 #include "entity/cube.h"
 #include "menu/mainMenu.h"
 
-void startServer(void* server);
+void startServerThread(void* server);
 
 Game::Game(){
   imageManager = new ImageManager();
@@ -27,30 +27,30 @@ Game::~Game(){
   delete imageManager;  
 }
 
-void Game::Run(int type){
+void Game::run(int type){
   
   srand(time(NULL));
   if(type == Game::LOCAL){
-    this->RunLocal();       
+    this->runLocal();       
   }
   else if(type == Game::CLIENT) {
-    this->RunClient();
+    this->runClient();
   }
   else if(type == Game::SERVER) {
-    this->RunServer();
+    this->runServer();
   }
 
 }
 
-void Game::RunClient() {
+void Game::runClient() {
   window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
   window->setFramerateLimit(GameConstant::FRAMERATE_LIMIT);
   window->setMouseCursorVisible(false);
   c = new Client(window, imageManager);
-  c->SetIp(ip);
-  c->SetPort(port);
+  c->setIp(ip);
+  c->setPort(port);
   
-  c->Connect();
+  c->connect();
 
   MainMenu* main = new MainMenu(window, imageManager, this);
   Screen* screens[6];
@@ -58,39 +58,38 @@ void Game::RunClient() {
   screens[Screen::GAME] = c;
   screens[Screen::MAINMENU] = main;
   while (screen != Screen::EXIT) {
-    int prevScreen = screen;
-    screen = screens[screen]->Run();
+    screen = screens[screen]->run();
   }
   delete c;
   delete main;
 }
 
-void Game::RunLocal() {
-  this->StartServer();
-  this->RunClient();
-  this->StopServer();
+void Game::runLocal() {
+  this->startServer();
+  this->runClient();
+  this->stopServer();
 }
 
-void Game::RunServer() {
-  this->StartServer();
+void Game::runServer() {
+  this->startServer();
   scanf("\n");
-  this->StopServer();
+  this->stopServer();
 }
 
-void Game::StartServer() {
+void Game::startServer() {
   serverImgManager = new ImageManager();
   s = new Server(serverImgManager);
  
-  serverThread = new sf::Thread(&startServer, s);
+  serverThread = new sf::Thread(&startServerThread, s);
   
-  s->Init();
+  s->init();
   serverThread->launch();
   serverRunning = true;
 }
 
-void Game::StopServer() {
+void Game::stopServer() {
   if(serverRunning) {
-    s->Stop();
+    s->stop();
     serverThread->wait();    
     delete serverThread;
     delete s;
@@ -99,22 +98,22 @@ void Game::StopServer() {
   }
 }
 
-void startServer(void* server){
-  (static_cast<Server*>(server))->Run();
+void startServerThread(void* server){
+  (static_cast<Server*>(server))->run();
 }
 
-void Game::SetIp(std::string ip){
+void Game::setIp(std::string ip){
   this->ip = ip;
 }
 
-void Game::SetPort(int port){
+void Game::setPort(int port){
   this->port = port;
 }
 
-Client* Game::GetClient() {
+Client* Game::getClient() {
   return c;
 }
 
-Server* Game::GetServer() {
+Server* Game::getServer() {
   return s;
 }

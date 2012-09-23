@@ -3,17 +3,17 @@
 
 #include <iostream>
 #include <stdexcept>
-#include "network/cubeupdate.h"
-#include "network/usermessage.h"
+#include "network/CubeUpdate.h"
+#include "network/UserMessage.h"
 #include "network/ClientConnect.h"
-#include "network/AddPlayer.h"
-#include "network/DeletePlayer.h"
-#include "network/UpdatePlayer.h"
+#include "network/PlayerAdd.h"
+#include "network/PlayerDelete.h"
+#include "network/PlayerUpdate.h"
 
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(window, imageManager) {
  
   ticker = new Ticker();
-  ticker->SetUpdateRate(GameConstant::UPDATE_RATE);
+  ticker->setUpdateRate(GameConstant::UPDATE_RATE);
   worldDisplay = new sf::RenderTexture();
 
   //TODO define resolution variable in client so we don't need to call window
@@ -23,7 +23,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   addCube = false;
   removeCube = false;
   player = new Player(imageManager, world);
-  world->AddPlayer(player);
+  world->addPlayer(player);
   zoom = 1;
   cubeType = 0;
   
@@ -67,12 +67,12 @@ Client::~Client(){
   delete world;
 }
 
-int Client::Run(){
+int Client::run(){
   running = true;
   sf::Event event;
   while(running) {
     while(window->pollEvent(event)) {
-      HandleEvent(event);
+      handleEvent(event);
     }
     
     if(mainMenu){
@@ -80,51 +80,51 @@ int Client::Run(){
       return Screen::MAINMENU;
     }
     
-    if(ticker->Tick()){
-      Update(ticker->GetElapsedTime());
+    if(ticker->tick()){
+      update(ticker->getElapsedTime());
     }else {
       sf::sleep(sf::seconds(0.01));
     }
     
-    mouse->Update();
+    mouse->update();
     
-    Draw();
+    draw();
     
   }
   if(connected)
-    Disconnect();
+    disconnect();
   return -1;
 }
 
-void Client::HandleEvent(sf::Event event) {
+void Client::handleEvent(sf::Event event) {
   switch (event.type) {
   case sf::Event::Closed:
-    OnClose();
+    onClose();
     break;
   case sf::Event::MouseButtonPressed:
-    OnMouseButtonPressed(event);
+    onMouseButtonPressed(event);
     break;
   case sf::Event::MouseButtonReleased:
-    OnMouseButtonReleased(event);
+    onMouseButtonReleased(event);
     break;
   case sf::Event::MouseWheelMoved:
-    OnMouseWheelMoved(event);
+    onMouseWheelMoved(event);
     break;
   case sf::Event::KeyPressed:
-    OnKeyPressed(event);
+    onKeyPressed(event);
     break;
   case sf::Event::Resized:
-    OnResized(event);
+    onResized(event);
   default:
     break;
   }
 }
 
-void Client::OnClose() {
+void Client::onClose() {
   running = false;
 }
 
-void Client::OnKeyPressed(sf::Event event) {
+void Client::onKeyPressed(sf::Event event) {
   switch(event.key.code) {
   case sf::Keyboard::A:
     layer = (layer + GameConstant::LAYERNBR - 1) % GameConstant::LAYERNBR;
@@ -142,7 +142,7 @@ void Client::OnKeyPressed(sf::Event event) {
   }
 }
 
-void Client::OnMouseButtonPressed(sf::Event event){
+void Client::onMouseButtonPressed(sf::Event event){
   switch(event.mouseButton.button){
   case sf::Mouse::Left:
     addCube = true;
@@ -155,7 +155,7 @@ void Client::OnMouseButtonPressed(sf::Event event){
   }
 }
 
-void Client::OnMouseButtonReleased(sf::Event event){
+void Client::onMouseButtonReleased(sf::Event event){
   switch(event.mouseButton.button){
   case sf::Mouse::Left:
     addCube = false;
@@ -168,7 +168,7 @@ void Client::OnMouseButtonReleased(sf::Event event){
   }
 }
 
-void Client::OnResized(sf::Event event){
+void Client::onResized(sf::Event event){
   sf::View newView = sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height));
   window->setView(newView);
   
@@ -176,7 +176,7 @@ void Client::OnResized(sf::Event event){
   newView = worldDisplay->getDefaultView();
 
   if(player != NULL)
-    newView.setCenter(player->GetCenter());
+    newView.setCenter(player->getCenter());
   
   newView.zoom(zoom);
   worldDisplay->setView(newView);
@@ -186,7 +186,7 @@ void Client::OnResized(sf::Event event){
   
 }
 
-void Client::OnMouseWheelMoved(sf::Event event) {
+void Client::onMouseWheelMoved(sf::Event event) {
   if(event.mouseWheel.delta < 0)
     cubeType = (cubeType - 1 + Cube::BLOCKTYPECOUNT) % Cube::BLOCKTYPECOUNT;
   else
@@ -195,7 +195,7 @@ void Client::OnMouseWheelMoved(sf::Event event) {
 }
 
 
-void Client::Update(sf::Time frametime) {
+void Client::update(sf::Time frametime) {
 
   if(server != NULL) {
     ENetEvent event;
@@ -228,15 +228,15 @@ void Client::Update(sf::Time frametime) {
     }
   }
   
-  if (addCube && world->CanAddCube(mouse->GetWorldPosition(), layer)){
+  if (addCube && world->canAddCube(mouse->getWorldPosition(), layer)){
     //TODO send cube update pkt
-    CubeUpdate cu(cubeType, mouse->GetWorldPosition(), true, layer);
+    CubeUpdate cu(cubeType, mouse->getWorldPosition(), true, layer);
     sendPacketReliable(&cu);
     //world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
   }
     
-  if (removeCube && world->CanRemoveCube(mouse->GetWorldPosition(), layer)){
-    CubeUpdate cu(cubeType, mouse->GetWorldPosition(), false, layer);
+  if (removeCube && world->canRemoveCube(mouse->getWorldPosition(), layer)){
+    CubeUpdate cu(cubeType, mouse->getWorldPosition(), false, layer);
     sendPacketReliable(&cu);
     //world->RemoveCube(cu.GetPosition(), cu.GetLayer());
 
@@ -250,50 +250,50 @@ void Client::Update(sf::Time frametime) {
   input.Down = sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
 
   //TODO send player update
-  world->Update();
+  world->update();
   //world->UpdatePlayer(frametime, input);
-  player->Update(frametime, input);
+  player->update(frametime, input);
   if(player != NULL) {
-    player->SetEyesPosition(mouse->GetWorldPosition());
-    UpdateView();
+    player->setEyesPosition(mouse->getWorldPosition());
+    updateView();
   }
-  UpdatePlayer up;
-  up.setPosition(player->GetPosition());
-  up.setEyePosition(mouse->GetWorldPosition());
+  PlayerUpdate up;
+  up.setPosition(player->getPosition());
+  up.setEyePosition(mouse->getWorldPosition());
   up.setId(id);
   sendPacket(&up);  
 }
 
-void Client::Draw() {
+void Client::draw() {
   window->clear(GameConstant::BackgroundColor);
 
   worldDisplay->clear(sf::Color(0,0,0,0));
-  world->Draw(worldDisplay);
+  world->draw(worldDisplay);
   worldDisplay->display();
 
   window->draw(sf::Sprite(worldDisplay->getTexture()));
   displayCube->Draw(window);
   layerDisplay->Draw(window);
-  mouse->Draw(window);
+  mouse->draw(window);
   window->display();
 }
 
 
-void Client::UpdateView() {
+void Client::updateView() {
   sf::View newView = worldDisplay->getView();
   float left = newView.getCenter().x - newView.getSize().x / 2;
   float right = newView.getCenter().x + newView.getSize().x / 2;
-  if (player->GetBbox().left - 100 * zoom < left)
-    newView.move(sf::Vector2f(player->GetBbox().left - 100 * zoom - left, 0));
-  else if (player->GetBbox().left + player->GetBbox().width +100 * zoom > right)
-    newView.move(sf::Vector2f(player->GetBbox().left + player->GetBbox().width + 100 * zoom - right, 0));
+  if (player->getBbox().left - 100 * zoom < left)
+    newView.move(sf::Vector2f(player->getBbox().left - 100 * zoom - left, 0));
+  else if (player->getBbox().left + player->getBbox().width +100 * zoom > right)
+    newView.move(sf::Vector2f(player->getBbox().left + player->getBbox().width + 100 * zoom - right, 0));
 
   float top = newView.getCenter().y - newView.getSize().y / 2;
   float bottom = newView.getCenter().y + newView.getSize().y / 2;
-  if (player->GetBbox().top - 100 * zoom < top)
-    newView.move(sf::Vector2f(0, player->GetBbox().top - 100 * zoom - top));
-  else if(player->GetBbox().top + player->GetBbox().height + 100 * zoom > bottom)
-    newView.move(sf::Vector2f(0, player->GetBbox().top + player->GetBbox().height + 100 * zoom - bottom));
+  if (player->getBbox().top - 100 * zoom < top)
+    newView.move(sf::Vector2f(0, player->getBbox().top - 100 * zoom - top));
+  else if(player->getBbox().top + player->getBbox().height + 100 * zoom > bottom)
+    newView.move(sf::Vector2f(0, player->getBbox().top + player->getBbox().height + 100 * zoom - bottom));
   
   worldDisplay->setView(newView);
 }
@@ -364,7 +364,7 @@ void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_
 }
 */
 
-void Client::Connect() {
+void Client::connect() {
   
   //Connect to server
   ENetAddress address;
@@ -376,12 +376,9 @@ void Client::Connect() {
   if(server == NULL) {
     throw std::runtime_error("ENet connection creation failed");
   }
-
-  ENetEvent event;
-    
 }
 
-void Client::Disconnect() {
+void Client::disconnect() {
   
   std::cout << "Disconnecting" << std::endl;
   ENetEvent event;
@@ -404,11 +401,11 @@ void Client::Disconnect() {
   
 }
 
-void Client::SetPort(int port){
+void Client::setPort(int port){
   this->port = port;
 }
 
-void Client::SetIp(std::string ip){
+void Client::setIp(std::string ip){
   this->ip = ip;
 }
 
@@ -420,9 +417,9 @@ void Client::handlePacket(sf::Packet p) {
     CubeUpdate cu;
     cu.decode(p);
     if(cu.GetAdded())
-      world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
+      world->addCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
     else
-      world->RemoveCube(cu.GetPosition(), cu.GetLayer());
+      world->removeCube(cu.GetPosition(), cu.GetLayer());
     break;
   }
   case Packet::UserMessage:{
@@ -436,31 +433,31 @@ void Client::handlePacket(sf::Packet p) {
     break;
   }
   case Packet::AddPlayer: {
-    AddPlayer ap;
+    PlayerAdd ap;
     ap.decode(p);
     if(id != ap.getId()) {
       Player* p = new Player(imageManager, world);
-      p->SetColor(ap.getColor());
+      p->setColor(ap.getColor());
       p->setPseudo(ap.getPseudo());
-      p->SetID(ap.getId());
-      world->AddPlayer(p);
+      p->setId(ap.getId());
+      world->addPlayer(p);
     }
     break;
   }
   case Packet::DeletePlayer: {
-    DeletePlayer dp;
+    PlayerDelete dp;
     dp.decode(p);
     world->removePlayerById(dp.getId());
   }
   case Packet::UpdatePlayer: {
-    UpdatePlayer up;
+    PlayerUpdate up;
     up.decode(p);
     if(up.getId() != id) {
       std::cout << up.getPosition().x << std::endl;
       Player* p = world->getPlayerById(up.getId());
       if(p != NULL) {
-	p->SetPosition(up.getPosition());
-	p->SetEyesPosition(up.getEyePosition());
+	p->setPosition(up.getPosition());
+	p->setEyesPosition(up.getEyePosition());
       }
     }
   }

@@ -9,9 +9,9 @@ class UserMessage : public Packet{
   //  void Encode(ZCom_BitStream *);
   //   static UserMessage *Decode(ZCom_BitStream &);
 
-  unsigned int GetFrametime();
-  Input GetInput();
-  sf::Vector2f GetLookDir();
+  unsigned int getFrametime();
+  Input getInput();
+  sf::Vector2f getLookDir();
  private:
   float frametime;
   Input input;

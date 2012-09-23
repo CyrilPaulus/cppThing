@@ -17,21 +17,21 @@ class World {
   World(ImageManager *, bool);
   ~World();
   
-  void Draw(sf::RenderTarget *);
-  void Update();
-  void UpdatePlayer(sf::Time frametime, Input);
-  void AddCube(sf::Vector2f, int, int);
-  void AddCube(sf::Vector2f, int, int, bool);
-  void RemoveCube(sf::Vector2f, int);
-  bool CanAddCube(sf::Vector2f, int);
-  bool CanRemoveCube(sf::Vector2f, int);
+  void draw(sf::RenderTarget *);
+  void update();
+  void updatePlayer(sf::Time frametime, Input);
+  void addCube(sf::Vector2f, int, int);
+  void addCube(sf::Vector2f, int, int, bool);
+  void removeCube(sf::Vector2f, int);
+  bool canAddCube(sf::Vector2f, int);
+  bool canRemoveCube(sf::Vector2f, int);
 
   std::list<Cube*> getList(int layer);
-  void AddPlayer(Player *);
-  void RemovePlayer(Player *);
+  void addPlayer(Player *);
+  void removePlayer(Player *);
   void removePlayerById(int id);
   Player* getPlayerById(int id);
-  Cube* GetCollidingCube(sf::FloatRect);
+  Cube* getCollidingCube(sf::FloatRect);
  private:
   ImageManager* imageManager;
   bool server;

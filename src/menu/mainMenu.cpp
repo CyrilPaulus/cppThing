@@ -46,7 +46,7 @@ MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(
   pImage->create(window->getSize().x, window->getSize().y);
   sf::View v = pImage->getDefaultView();
   v.zoom(0.08);
-  v.setCenter(p->GetCenter() + sf::Vector2f(0, -30));
+  v.setCenter(p->getCenter() + sf::Vector2f(0, -30));
   pImage->setView(v);
   running = true;
 
@@ -63,23 +63,23 @@ MainMenu::~MainMenu() {
   delete items;
 }
 
-int MainMenu::Run() {
-  p->SetColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
-  Resize(window->getSize().x, window->getSize().y);
+int MainMenu::run() {
+  p->setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+  resize(window->getSize().x, window->getSize().y);
   sf::Event event;
   while(running) {
     while(window->pollEvent(event)) {
-      int rtn = HandleEvent(event);
+      int rtn = handleEvent(event);
       if(rtn != Screen::NONE)
 	return rtn;
     }
     
-    UpdateColor();
-    mouse->Update();
+    updateColor();
+    mouse->update();
 
     window->clear(background);
     pImage->clear(background);
-    p->Draw(pImage);
+    p->draw(pImage);
     pImage->display();
 
     sf::Sprite pSprite(pImage->getTexture());
@@ -89,7 +89,7 @@ int MainMenu::Run() {
     for(int i = 0; i < itemCount; i++) {
       items[i]->Draw(window, i == selectedItem);
     }
-    mouse->Draw(window);
+    mouse->draw(window);
     window->display();
     sf::sleep(sf::seconds(0.01));
   }
@@ -98,24 +98,24 @@ int MainMenu::Run() {
 }
 
 
-int MainMenu::HandleEvent(sf::Event event) {
+int MainMenu::handleEvent(sf::Event event) {
   switch (event.type) {
   case sf::Event::Closed:
     return Screen::EXIT;
     break;
   case sf::Event::KeyPressed:
-    return OnKeyPressed(event);
+    return onKeyPressed(event);
     break;
   case sf::Event::Resized:
-    this->Resize(event.size.width, event.size.height);
+    this->resize(event.size.width, event.size.height);
     return Screen::NONE;
     break;
   case sf::Event::MouseMoved:
-    OnMouseMoved(event);
+    onMouseMoved(event);
     return Screen::NONE;
     break;
   case sf::Event::MouseButtonReleased:
-    return OnMouseButtonReleased(event);
+    return onMouseButtonReleased(event);
     break;    
   default:
     return Screen::NONE;
@@ -123,7 +123,7 @@ int MainMenu::HandleEvent(sf::Event event) {
   }
 }
 
-int MainMenu::OnKeyPressed(sf::Event event) {
+int MainMenu::onKeyPressed(sf::Event event) {
   switch(event.key.code) {
   case sf::Keyboard::Up:
     selectedItem = (selectedItem + itemCount - 1) % itemCount;
@@ -145,17 +145,17 @@ int MainMenu::OnKeyPressed(sf::Event event) {
   }
 }
 
-void MainMenu::Resize(int width, int height) {
+void MainMenu::resize(int width, int height) {
   window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
   for(int i = 0; i < itemCount; i++)
     items[i]->CenterX(width);
 }
 
-void MainMenu::OnMouseMoved(sf::Event event) {
+void MainMenu::onMouseMoved(sf::Event event) {
   int x = event.mouseMove.x;
   int y = event.mouseMove.y;
 
-  p->SetEyesPosition(pImage->convertCoords(sf::Vector2i(x, y)));
+  p->setEyesPosition(pImage->convertCoords(sf::Vector2i(x, y)));
   for(int i = 0; i < itemCount; i++) {
     if(items[i]->GetBbox().contains(x, y)) {
 	selectedItem = i;
@@ -164,10 +164,10 @@ void MainMenu::OnMouseMoved(sf::Event event) {
   }
 }
 
-int MainMenu::OnMouseButtonReleased(sf::Event event) {
+int MainMenu::onMouseButtonReleased(sf::Event event) {
   if(event.mouseButton.button == sf::Mouse::Left) {
     for(int i = 0; i < itemCount; i++) {
-      if(items[i]->GetBbox().contains(mouse->GetPosition().x, mouse->GetPosition().y)) {
+      if(items[i]->GetBbox().contains(mouse->getPosition().x, mouse->getPosition().y)) {
 	return items[i]->DoAction();
       }
     }
@@ -175,7 +175,7 @@ int MainMenu::OnMouseButtonReleased(sf::Event event) {
   return Screen::NONE;
 }
 
-void MainMenu::UpdateColor() {
+void MainMenu::updateColor() {
 
   if(background == nextColor) {
     nextColor = sf::Color(rand() % 255, rand() % 255, rand() % 255);

@@ -7,9 +7,9 @@ class Ticker{
  public:
   Ticker();
   Ticker(sf::Time tickTime);
-  bool Tick();
-  sf::Time GetElapsedTime();
-  void SetUpdateRate(int);
+  bool tick();
+  sf::Time getElapsedTime();
+  void setUpdateRate(int);
 
  private:
   sf::Clock clock;

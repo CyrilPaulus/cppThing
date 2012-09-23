@@ -1,13 +1,13 @@
-#include "UpdatePlayer.h"
+#include "PlayerUpdate.h"
 
-UpdatePlayer::UpdatePlayer() {
+PlayerUpdate::PlayerUpdate() {
   type = Packet::UpdatePlayer;
   position = sf::Vector2f(0,0);
   eyePosition = sf::Vector2f(0,0);
   id = 0;
 }
 
-sf::Packet UpdatePlayer::encode() {
+sf::Packet PlayerUpdate::encode() {
   sf::Packet rslt = Packet::encode();
   rslt << position.x;
   rslt << position.y;
@@ -18,30 +18,30 @@ sf::Packet UpdatePlayer::encode() {
 }
 
 
-void UpdatePlayer::decode(sf::Packet p) {
+void PlayerUpdate::decode(sf::Packet p) {
   p >> position.x >> position.y >> eyePosition.x >> eyePosition.y >> id;
 }
 
-void UpdatePlayer::setId(int id) {
+void PlayerUpdate::setId(int id) {
   this->id = (sf::Uint8)id;
 }
 
-int UpdatePlayer::getId() {
+int PlayerUpdate::getId() {
   return id;
 }
 
-sf::Vector2f UpdatePlayer::getPosition() {
+sf::Vector2f PlayerUpdate::getPosition() {
   return position;
 }
 
-sf::Vector2f UpdatePlayer::getEyePosition() {
+sf::Vector2f PlayerUpdate::getEyePosition() {
   return eyePosition;
 }
 
-void UpdatePlayer::setPosition(sf::Vector2f position) {
+void PlayerUpdate::setPosition(sf::Vector2f position) {
   this->position = position;
 }
 
-void UpdatePlayer::setEyePosition(sf::Vector2f eyePosition) {
+void PlayerUpdate::setEyePosition(sf::Vector2f eyePosition) {
   this->eyePosition = position;
 }

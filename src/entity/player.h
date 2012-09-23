@@ -11,14 +11,14 @@ class World;
 class Player : public Entity {
  public:
   Player(ImageManager*, World*);
-  ~Player();
-  void Draw(sf::RenderTarget *);
-  void SetEyesPosition(sf::Vector2f);
-  void Update(sf::Time frametime, Input);
-  void SetColor(sf::Color);
+  virtual ~Player();
+  virtual void draw(sf::RenderTarget *);
+  void setEyesPosition(sf::Vector2f);
+  void update(sf::Time frametime, Input);
+  void setColor(sf::Color);
   sf::Color getColor();
-  void SetID(int);
-  int GetID();
+  void setId(int);
+  int getId();
   void setPseudo(std::string pseudo);
   std::string getPseudo();
  private:

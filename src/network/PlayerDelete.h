@@ -3,9 +3,9 @@
 #include "packet.h"
 #include <SFML/Graphics.hpp>
 
-class DeletePlayer : public Packet{
+class PlayerDelete : public Packet{
  public:
-  DeletePlayer();
+  PlayerDelete();
   
   virtual sf::Packet encode();
   void decode(sf::Packet p);

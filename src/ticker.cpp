@@ -10,11 +10,11 @@ Ticker::Ticker(sf::Time tickTime) {
   this->tickTime = tickTime;    
 }
 
-void Ticker::SetUpdateRate(int updateRate){
+void Ticker::setUpdateRate(int updateRate){
   tickTime = sf::milliseconds(1000 / updateRate);
 }
 
-bool Ticker::Tick() {
+bool Ticker::tick() {
   elapsedTime = clock.getElapsedTime();
   if(elapsedTime >= tickTime){
     clock.restart();
@@ -24,6 +24,6 @@ bool Ticker::Tick() {
   return false;
 }
 
-sf::Time Ticker::GetElapsedTime(){
+sf::Time Ticker::getElapsedTime(){
   return elapsedTime;
 }

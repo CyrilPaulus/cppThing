@@ -21,17 +21,17 @@ class Client : public Screen{
  public:
   Client(sf::RenderWindow *window, ImageManager *imageManager);
   ~Client();
-  int Run();
-  void Connect();
-  void Disconnect();
+  int run();
+  void connect();
+  void disconnect();
  
-  void SetPort(int);
-  void SetIp(std::string);
+  void setPort(int);
+  void setIp(std::string);
 
  private:
   int layer;
-  void Update(sf::Time frametime);
-  void Draw();
+  void update(sf::Time frametime);
+  void draw();
 
   std::string pseudo;  
   sf::RenderTexture *worldDisplay;
@@ -39,19 +39,19 @@ class Client : public Screen{
   Ticker *ticker;
   bool running;
 
-  void HandleEvent(sf::Event event);
+  void handleEvent(sf::Event event);
   void handlePacket(sf::Packet p);
-  void OnClose();
-  void OnMouseButtonPressed(sf::Event event);
-  void OnMouseButtonReleased(sf::Event event);
-  void OnMouseWheelMoved(sf::Event event);
-  void OnResized(sf::Event event);
-  void OnKeyPressed(sf::Event event);
+  void onClose();
+  void onMouseButtonPressed(sf::Event event);
+  void onMouseButtonReleased(sf::Event event);
+  void onMouseWheelMoved(sf::Event event);
+  void onResized(sf::Event event);
+  void onKeyPressed(sf::Event event);
 
   void sendPacketReliable(Packet* p);
   void sendPacket(Packet* p);
 
-  void UpdateView();
+  void updateView();
   float zoom;
   int cubeType;
   CubeDisplay* displayCube;

@@ -4,7 +4,7 @@
 Cube::Cube(ImageManager* imageManager, int type) : Entity(imageManager) {
   this->imageManager = imageManager;
   sprite->setTexture(*(imageManager->get("tileset")), true);
-  SetType(type);
+  setType(type);
 }
 
 /*
@@ -20,7 +20,7 @@ void Cube::RegisterZCom(ZCom_Control *control, bool server, int layer) {
   }
 }
 */
-void Cube::SetType(int type) {
+void Cube::setType(int type) {
   this->type = type;
   int x = (type % 16) * Cube::WIDTH;
   int y = (type / 16) * Cube::HEIGHT;

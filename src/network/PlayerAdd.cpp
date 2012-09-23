@@ -1,6 +1,6 @@
-#include "AddPlayer.h"
+#include "PlayerAdd.h"
 
-AddPlayer::AddPlayer() {
+PlayerAdd::PlayerAdd() {
   type = Packet::AddPlayer;
   r = 0;
   g = 0;
@@ -8,7 +8,7 @@ AddPlayer::AddPlayer() {
   id = 0;
 }
 
-sf::Packet AddPlayer::encode() {
+sf::Packet PlayerAdd::encode() {
   sf::Packet rslt = Packet::encode();
   rslt << r;
   rslt << g;
@@ -18,32 +18,32 @@ sf::Packet AddPlayer::encode() {
 }
 
 
-void AddPlayer::decode(sf::Packet p) {
+void PlayerAdd::decode(sf::Packet p) {
   p >> r >> g >> b >> id;
 }
 
-void AddPlayer::setPseudo(std::string pseudo) {
+void PlayerAdd::setPseudo(std::string pseudo) {
   this->pseudo = pseudo;
 }
 
-void AddPlayer::setColor(sf::Color color) {
+void PlayerAdd::setColor(sf::Color color) {
   this->r = color.r;
   this->g = color.g;
   this->b = color.b;
 }
 
-void AddPlayer::setId(int id) {
+void PlayerAdd::setId(int id) {
   this->id = (sf::Uint8)id;
 }
 
-sf::Color AddPlayer::getColor() {
+sf::Color PlayerAdd::getColor() {
   return sf::Color(r, g ,b);
 }
 
-int AddPlayer::getId() {
+int PlayerAdd::getId() {
   return id;
 }
 
-std::string AddPlayer::getPseudo() {
+std::string PlayerAdd::getPseudo() {
   return pseudo;
 }

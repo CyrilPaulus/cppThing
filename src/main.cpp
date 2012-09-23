@@ -11,13 +11,13 @@ int main (int argc, char *argv[]) {
       gameType = Game::SERVER;
     else if (strcmp(argv[i], "-connect") == 0){
       gameType = Game::CLIENT;
-      game.SetIp(argv[i+1]);
+      game.setIp(argv[i+1]);
     }
     else if(strcmp(argv[i], "-port") == 0){
-      game.SetPort(atoi(argv[i+1]));
+      game.setPort(atoi(argv[i+1]));
     }
   }
   printf("GAMETYPE : %d\n", gameType);
-  game.Run(gameType);
-  return 0;
+  game.run(gameType);
+  return EXIT_SUCCESS;
 }

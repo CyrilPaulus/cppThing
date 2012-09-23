@@ -14,11 +14,11 @@ class Game {
   static const int SERVER = 2;
   Game();
   ~Game();
-  Client* GetClient();
-  Server* GetServer();
-  void Run(int type);
-  void SetIp(std::string ip);
-  void SetPort(int port);
+  Client* getClient();
+  Server* getServer();
+  void run(int type);
+  void setIp(std::string ip);
+  void setPort(int port);
  private:
   sf::Thread* serverThread;
   Server* s;
@@ -32,11 +32,11 @@ class Game {
   ImageManager* serverImgManager;
   std::string ip;
   int port;
-  void RunClient();
-  void RunServer();
-  void StartServer();
-  void StopServer();
-  void RunLocal();
+  void runClient();
+  void runServer();
+  void startServer();
+  void stopServer();
+  void runLocal();
 };
 
 #endif /* _GAME_H_ */

@@ -1,5 +1,5 @@
 #include "../config.h"
-#include "cubeupdate.h"
+#include "CubeUpdate.h"
 
 CubeUpdate::CubeUpdate() {
   this->type = Packet::CubeUpdate;
