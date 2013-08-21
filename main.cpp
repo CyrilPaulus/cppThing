@@ -21,6 +21,7 @@ int main (int argc, char *argv[]) {
       return EXIT_SUCCESS;
     }
   }
+
   printf("GAMETYPE : %d\n", gameType);
   game.run(gameType);
   return EXIT_SUCCESS;

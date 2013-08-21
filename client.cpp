@@ -56,6 +56,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   }
   server = NULL;
   connected = false;
+  _has_focus = true;
 }
 
 Client::~Client(){
@@ -118,6 +119,13 @@ void Client::handleEvent(sf::Event event) {
     break;
   case sf::Event::Resized:
     onResized(event);
+    break;
+  case sf::Event::GainedFocus:
+    _has_focus = true;
+    break;
+  case sf::Event::LostFocus:
+    _has_focus = false;
+    break;
   default:
     break;
   }
@@ -243,10 +251,10 @@ void Client::update(sf::Time frametime) {
   }
 
   Input input;
-  input.Left = sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
-  input.Right = sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
-  input.Up = sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
-  input.Down = sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
+  input.Left = sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && _has_focus;
+  input.Right = sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && _has_focus;
+  input.Up = sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && _has_focus;
+  input.Down = sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && _has_focus;
 
   //TODO send player update
   world->update();

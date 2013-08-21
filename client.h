@@ -72,6 +72,8 @@ class Client : public Screen{
   ENetPeer* server;
   bool connected;
   int id;
+
+  bool _has_focus;
 };
 
 #endif /* _CLIENT_H_ */
