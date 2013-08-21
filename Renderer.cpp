@@ -20,7 +20,7 @@ void Renderer::renderWorld(World* world, sf::RenderTarget* rt) {
             renderCube((*c), rt);
 
         if (i == 0) {
-            sf::Vector2f origin = rt->convertCoords(sf::Vector2i(0, 0));
+            sf::Vector2f origin = rt->mapPixelToCoords(sf::Vector2i(0, 0));
             sf::RectangleShape fog = sf::RectangleShape(sf::Vector2f(rt->getDefaultView().getSize().x, rt->getDefaultView().getSize().y));
             fog.setPosition(sf::Vector2f(origin.x, origin.y));
             fog.setFillColor(sf::Color(100, 149, 237, 150));

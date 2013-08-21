@@ -17,7 +17,7 @@ sf::Vector2f Mouse::getPosition() {
 }
 
 sf::Vector2f Mouse::getWorldPosition() {
-  return world->convertCoords(sf::Vector2i(sprite->getPosition().x, sprite->getPosition().y));
+  return world->mapPixelToCoords(sf::Vector2i(sprite->getPosition().x, sprite->getPosition().y));
 }
 
 void Mouse::update() {

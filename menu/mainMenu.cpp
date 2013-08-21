@@ -156,7 +156,7 @@ void MainMenu::onMouseMoved(sf::Event event) {
     int x = event.mouseMove.x;
     int y = event.mouseMove.y;
 
-    p->setEyesPosition(pImage->convertCoords(sf::Vector2i(x, y)));
+    p->setEyesPosition(pImage->mapPixelToCoords(sf::Vector2i(x, y)));
     for (int i = 0; i < itemCount; i++) {
         if (items[i]->GetBbox().contains(x, y)) {
             selectedItem = i;
