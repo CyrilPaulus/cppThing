@@ -1,6 +1,7 @@
 #ifndef _MAINMENU_H_
 #define _MAINMENU_H_
 
+#include <vector>
 
 #include "../screen.h"
 #include "../game.h"
@@ -18,9 +19,8 @@ class MainMenu : public Screen {
   Mouse* mouse;
   Game* game;
   bool running;
-  int selectedItem;
-  int itemCount;
-  MenuItem** items;
+  unsigned int selectedItem;
+  std::vector<MenuItem*> items;
   int handleEvent(sf::Event e);
   int onKeyPressed(sf::Event e);
   void onMouseMoved(sf::Event e);

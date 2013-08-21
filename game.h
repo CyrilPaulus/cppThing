@@ -12,6 +12,7 @@ class Game {
   static const int LOCAL = 0;
   static const int CLIENT = 1;
   static const int SERVER = 2;
+
   Game();
   ~Game();
   Client* getClient();
@@ -19,6 +20,9 @@ class Game {
   void run(int type);
   void setIp(std::string ip);
   void setPort(int port);
+  void setPseudo(std::string pseudo);
+
+  int getType();
  private:
   sf::Thread* serverThread;
   Server* s;
@@ -31,7 +35,9 @@ class Game {
   ImageManager* imageManager;
   ImageManager* serverImgManager;
   std::string ip;
+  std::string pseudo;
   int port;
+  int _type;
   void runClient();
   void runServer();
   void startServer();

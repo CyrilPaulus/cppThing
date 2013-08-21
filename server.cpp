@@ -10,6 +10,7 @@
 #include "network/PlayerAdd.h"
 #include "network/PlayerDelete.h"
 #include "network/PlayerUpdate.h"
+#include "network/TextMessage.h"
 
 Server::Server() {
   this->world = new World(true);
@@ -209,6 +210,15 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     PlayerUpdate up;
     up.decode(p);
     broadcast(&up);
+    break;
+  }
+  case Packet::TextMessage:{
+    NetworkClient *c = getClientByPeer(peer);
+    TextMessage tm;
+    tm.decode(p);
+    tm.setMessage(c->getPlayer()->getPseudo() + ": " + tm.getMessage());
+    broadcast(&tm);
+    break;
   }
   default: 
     break;

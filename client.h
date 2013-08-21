@@ -15,6 +15,7 @@
 
 #include "ui/layerDisplay.h"
 #include "ui/cubeDisplay.h"
+#include "ui/ChatBox.h"
 
 #include "network/packet.h"
 #include "Renderer.h"
@@ -29,7 +30,8 @@ class Client : public Screen{
  
   void setPort(int);
   void setIp(std::string);
-
+  void setPseudo(std::string pseudo);
+  
  private:
   int layer;
   void update(sf::Time frametime);
@@ -57,8 +59,9 @@ class Client : public Screen{
   float zoom;
   int cubeType;
   CubeDisplay* displayCube;
+  ChatBox* _chat_box;
   Renderer* renderer;
-
+  
   World *world;  
 
   bool addCube;

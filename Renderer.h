@@ -27,7 +27,7 @@ public:
     
 private:
     ImageManager* imgManager;
-
+    sf::Font _textFont;
 };
 
 #endif	/* RENDERER_H */

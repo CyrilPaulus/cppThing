@@ -14,12 +14,13 @@ sf::Packet PlayerAdd::encode() {
   rslt << g;
   rslt << b;
   rslt << id;
+  rslt << pseudo;
   return rslt;
 }
 
 
 void PlayerAdd::decode(sf::Packet p) {
-  p >> r >> g >> b >> id;
+  p >> r >> g >> b >> id >> pseudo;
 }
 
 void PlayerAdd::setPseudo(std::string pseudo) {

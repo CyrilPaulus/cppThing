@@ -7,6 +7,7 @@
 class UiElement{
  public:
   UiElement(ImageManager*);
+  UiElement();
   ~UiElement();
   
   void Draw(sf::RenderTarget *);

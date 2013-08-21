@@ -28,18 +28,19 @@ int Exit() {
 MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(w, img) {
     r = new Renderer(img);
     mouse = new Mouse(w, w, img);
-    itemCount = 6;
-    //TODO Use a vector...
-    items = (MenuItem**) malloc(itemCount * sizeof (MenuItem*));
-    items[0] = new MenuItem("Local Game", sf::Vector2f(0, 100), &LocalGame);
-    items[1] = new MenuItem("Connect", sf::Vector2f(0, 130), &Connect);
-    items[2] = new MenuItem("Options", sf::Vector2f(0, 160), &Option);
-    items[3] = new MenuItem("Load Map", sf::Vector2f(0, 190), &LoadMap);
-    items[4] = new MenuItem("Save Map", sf::Vector2f(0, 220), &SaveMap);
-    items[5] = new MenuItem("Exit", sf::Vector2f(0, 280), &Exit);
+    items.push_back(new MenuItem("Local Game", sf::Vector2f(0, 100), &LocalGame));
+    items.push_back(new MenuItem("Connect", sf::Vector2f(0, 130), &Connect));
+    items.push_back(new MenuItem("Options", sf::Vector2f(0, 160), &Option));
+
+    if(game->getType() == Game::LOCAL) {
+      items.push_back(new MenuItem("Load Map", sf::Vector2f(0, 190), &LoadMap));
+      items.push_back(new MenuItem("Save Map", sf::Vector2f(0, 220), &SaveMap));
+    }
+
+    items.push_back(new MenuItem("Exit", sf::Vector2f(0, 280), &Exit));
     selectedItem = 0;
 
-    for (int i = 0; i < itemCount; i++)
+    for (unsigned int i = 0; i < items.size(); i++)
         items[i]->CenterX(window->getSize().x);
 
     p = new Player(NULL);
@@ -56,13 +57,12 @@ MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(
 }
 
 MainMenu::~MainMenu() {
-    for (int i = 0; i < itemCount; i++)
-        delete items[i];
-    delete p;
-    delete pImage;
-    delete mouse;
-    delete items;
-    delete r;
+  for(unsigned int i = 0; i < items.size(); i++)
+    delete items[i];
+  delete p;
+  delete pImage;
+  delete mouse;
+  delete r;
 }
 
 int MainMenu::run() {
@@ -88,7 +88,7 @@ int MainMenu::run() {
         pSprite.setPosition(sf::Vector2f((window->getSize().x - pImage->getSize().x) / 2
                 , window->getSize().y - pImage->getSize().y));
         window->draw(pSprite);
-        for (int i = 0; i < itemCount; i++) {
+        for (unsigned int i = 0; i < items.size(); i++) {
             items[i]->Draw(window, i == selectedItem);
         }
         mouse->draw(window);
@@ -125,30 +125,30 @@ int MainMenu::handleEvent(sf::Event event) {
 }
 
 int MainMenu::onKeyPressed(sf::Event event) {
-    switch (event.key.code) {
-        case sf::Keyboard::Up:
-            selectedItem = (selectedItem + itemCount - 1) % itemCount;
-            return Screen::NONE;
-            break;
-        case sf::Keyboard::Down:
-            selectedItem = (selectedItem + 1) % itemCount;
-            return Screen::NONE;
-            break;
-        case sf::Keyboard::Return:
-            return items[selectedItem]->DoAction();
-            break;
-        case sf::Keyboard::Escape:
-            return Screen::GAME;
-            break;
-        default:
-            return Screen::NONE;
-            break;
-    }
+  switch (event.key.code) {
+  case sf::Keyboard::Up:
+    selectedItem = (selectedItem + items.size() -1) % items.size();
+    return Screen::NONE;
+    break;
+  case sf::Keyboard::Down:
+    selectedItem = (selectedItem + 1) % items.size();
+    return Screen::NONE;
+    break;
+  case sf::Keyboard::Return:
+    return items[selectedItem]->DoAction();
+    break;
+  case sf::Keyboard::Escape:
+    return Screen::GAME;
+    break;
+  default:
+    return Screen::NONE;
+    break;
+  }
 }
 
 void MainMenu::resize(int width, int height) {
     window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
-    for (int i = 0; i < itemCount; i++)
+    for (unsigned int i = 0; i < items.size(); i++)
         items[i]->CenterX(width);
 }
 
@@ -157,7 +157,7 @@ void MainMenu::onMouseMoved(sf::Event event) {
     int y = event.mouseMove.y;
 
     p->setEyesPosition(pImage->mapPixelToCoords(sf::Vector2i(x, y)));
-    for (int i = 0; i < itemCount; i++) {
+    for (unsigned int i = 0; i < items.size(); i++) {
         if (items[i]->GetBbox().contains(x, y)) {
             selectedItem = i;
             break;
@@ -167,11 +167,11 @@ void MainMenu::onMouseMoved(sf::Event event) {
 
 int MainMenu::onMouseButtonReleased(sf::Event event) {
     if (event.mouseButton.button == sf::Mouse::Left) {
-        for (int i = 0; i < itemCount; i++) {
-            if (items[i]->GetBbox().contains(mouse->getPosition().x, mouse->getPosition().y)) {
-                return items[i]->DoAction();
-            }
-        }
+      for (unsigned int i = 0; i < items.size(); i++) {
+	if (items[i]->GetBbox().contains(mouse->getPosition().x, mouse->getPosition().y)) {
+	  return items[i]->DoAction();
+	}
+      }
     }
     return Screen::NONE;
 }

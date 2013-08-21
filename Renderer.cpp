@@ -10,6 +10,7 @@
 
 Renderer::Renderer(ImageManager* imgManager) {
     this->imgManager = imgManager;
+    _textFont.loadFromFile("res/arial.ttf");
 }
 
 void Renderer::renderWorld(World* world, sf::RenderTarget* rt) {
@@ -62,7 +63,14 @@ void Renderer::renderPlayer(Player* p, sf::RenderTarget* rt) {
     colorMask.setPosition(p->getPosition());
     sf::Vector3i color = p->getColor();
     colorMask.setColor(sf::Color(color.x, color.y, color.z));
-    rt->draw(colorMask);    
+    rt->draw(colorMask);
+
+    //Time to draw pseudo bitches
+    sf::Text text = sf::Text(p->getPseudo(), _textFont, 15);
+    text.setPosition(p->getPosition() 
+		     - sf::Vector2f(-(p->getBbox().width - text.getLocalBounds().width) / 2
+				    , _textFont.getLineSpacing(15)));
+    rt->draw(text);
 }
 
 Renderer::Renderer(const Renderer& orig) {

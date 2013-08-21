@@ -1,6 +1,10 @@
 #include "uiElement.h"
 #include "../config.h"
 
+UiElement::UiElement() {
+  position = sf::Vector2f(0, 0);
+}
+
 UiElement::UiElement(ImageManager *imageManager) {
   position = sf::Vector2f(0, 0);
 }

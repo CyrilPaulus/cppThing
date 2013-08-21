@@ -14,12 +14,15 @@ int main (int argc, char *argv[]) {
       game.setIp(argv[i+1]);
     } else if(strcmp(argv[i], "--port") == 0) {
       game.setPort(atoi(argv[i+1]));
+    } else if(strcmp(argv[i], "--pseudo") == 0) {
+      game.setPseudo(argv[i+1]);
     } else if(strcmp(argv[i], "--help") == 0) {
       std::cout << "\t --server \t : Create a server" << std::endl;
       std::cout << "\t --connect ip \t : Connect to ip" << std::endl;
       std::cout << "\t --port port \t : Specify port" << std::endl;
+      std::cout << "\t --pseudo pseudo\t : Specify pseudo" << std::endl;
       return EXIT_SUCCESS;
-    }
+    } 
   }
 
   printf("GAMETYPE : %d\n", gameType);

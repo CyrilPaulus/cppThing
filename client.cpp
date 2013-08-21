@@ -9,6 +9,7 @@
 #include "network/PlayerAdd.h"
 #include "network/PlayerDelete.h"
 #include "network/PlayerUpdate.h"
+#include "network/TextMessage.h"
 
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(window, imageManager) {
  
@@ -35,9 +36,15 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   sf::Vector2f uiPosition = sf::Vector2f(window->getSize().x - 10 - Cube::WIDTH
 					 ,window->getSize().y - 10 - Cube::HEIGHT); 
   displayCube->SetPosition(uiPosition);
+
+  _chat_box = new ChatBox();
+  _chat_box->SetPosition(sf::Vector2f(10, window->getSize().y - 10));
+
   layerDisplay = new LayerDisplay(imageManager, GameConstant::LAYERNBR);
   layerDisplay->SetPosition(uiPosition + sf::Vector2f(0, - 5 - layerDisplay->GetSize().y));
+
   pseudo = "Anon";
+  player->setPseudo(pseudo);
   layer = 1;
   layerDisplay->SetLayer(layer);
   port = 50645;
@@ -64,6 +71,7 @@ Client::~Client(){
   enet_deinitialize();
   delete renderer;
   delete displayCube;
+  delete _chat_box;
   delete layerDisplay;
   delete ticker;
   delete mouse;
@@ -129,6 +137,7 @@ void Client::handleEvent(sf::Event event) {
   default:
     break;
   }
+  _chat_box->handleEvent(event);
 }
 
 void Client::onClose() {
@@ -192,9 +201,11 @@ void Client::onResized(sf::Event event){
   newView.zoom(zoom);
   worldDisplay->setView(newView);
   
-  displayCube->SetPosition(sf::Vector2f(window->getSize().x - 10 - Cube::WIDTH, 
-					window->getSize().y - 10 - Cube::HEIGHT));
-  
+  sf::Vector2f uiPosition = sf::Vector2f(window->getSize().x - 10 - Cube::WIDTH
+					 ,window->getSize().y - 10 - Cube::HEIGHT);
+  displayCube->SetPosition(uiPosition);
+  layerDisplay->SetPosition(uiPosition + sf::Vector2f(-5, - 5 - layerDisplay->GetSize().y));
+  _chat_box->SetPosition(sf::Vector2f(10, window->getSize().y - 10));
 }
 
 void Client::onMouseWheelMoved(sf::Event event) {
@@ -269,6 +280,12 @@ void Client::update(sf::Time frametime) {
   up.setEyePosition(mouse->getWorldPosition());
   up.setId(id);
   send(&up);  
+
+  while(_chat_box->getPendingCount() > 0) {
+    TextMessage tm;
+    tm.setMessage(_chat_box->popPendingMsg());
+    sendReliable(&tm);
+  }
 }
 
 void Client::draw() {
@@ -281,6 +298,7 @@ void Client::draw() {
 
   window->draw(sf::Sprite(worldDisplay->getTexture()));
   displayCube->Draw(window);
+  _chat_box->Draw(window);
   layerDisplay->Draw(window);
   mouse->draw(window);
   window->display();
@@ -475,8 +493,20 @@ void Client::handlePacket(sf::Packet p) {
 	p->setEyesPosition(up.getEyePosition());
       }
     }
+    break;
   }
+  case Packet::TextMessage: {
+    TextMessage tm;
+    tm.decode(p);
+    _chat_box->addMessage(tm.getMessage());
+    break;
+  }    
   default: 
     break;
   }
+}
+
+void Client::setPseudo(std::string p) {
+  pseudo = p;
+  player->setPseudo(p);
 }

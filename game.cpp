@@ -19,6 +19,7 @@ Game::Game(){
   s = NULL;
   c = NULL;
   serverThread = NULL;
+  _type = Game::LOCAL;
 }
 
 Game::~Game(){
@@ -28,7 +29,7 @@ Game::~Game(){
 }
 
 void Game::run(int type){
-  
+  _type = type;
   srand(time(NULL));
   if(type == Game::LOCAL){
     this->runLocal();       
@@ -42,6 +43,10 @@ void Game::run(int type){
 
 }
 
+int Game::getType() {
+  return _type;
+}
+
 void Game::runClient() {
   window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
   window->setFramerateLimit(GameConstant::FRAMERATE_LIMIT);
@@ -49,6 +54,7 @@ void Game::runClient() {
   c = new Client(window, imageManager);
   c->setIp(ip);
   c->setPort(port);
+  c->setPseudo(pseudo);
   
   c->connect();
 
@@ -116,4 +122,8 @@ Client* Game::getClient() {
 
 Server* Game::getServer() {
   return s;
+}
+
+void Game::setPseudo(std::string p) {
+  pseudo = p;
 }
