@@ -41,7 +41,7 @@ Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(wi
   _chat_box->SetPosition(sf::Vector2f(10, window->getSize().y - 10));
 
   layerDisplay = new LayerDisplay(imageManager, GameConstant::LAYERNBR);
-  layerDisplay->SetPosition(uiPosition + sf::Vector2f(0, - 5 - layerDisplay->GetSize().y));
+  layerDisplay->SetPosition(uiPosition + sf::Vector2f(-5, - 5 - layerDisplay->GetSize().y));
 
   pseudo = "Anon";
   player->setPseudo(pseudo);
@@ -475,6 +475,8 @@ void Client::handlePacket(sf::Packet p) {
       p->setPseudo(ap.getPseudo());
       p->setId(ap.getId());
       world->addPlayer(p);
+    } else {
+      setPseudo(ap.getPseudo());
     }
     break;
   }

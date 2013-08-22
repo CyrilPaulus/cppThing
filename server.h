@@ -5,6 +5,7 @@
 
 
 #include <list>
+#include <set>
 #include "ticker.h"
 #include "imageManager.h"
 #include "entity/world.h"
@@ -31,6 +32,7 @@ class Server {
   void broadcast(Packet* p);
   void sendReliable(ENetPeer* peer, Packet *p);
   void sendFullWorldUpdate(ENetPeer* peer);
+  std::string getUniquePseudo(std::string p);
   
   bool running;
   Ticker *ticker;
@@ -40,6 +42,7 @@ class Server {
   int lastClientID;
   std::list<NetworkClient*> clients;
   ENetHost* server;
+  std::set<std::string> _client_names;
 };
 
 #endif /* _SERVER_H_ */

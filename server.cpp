@@ -93,6 +93,7 @@ void Server::removeClient(unsigned int ip, unsigned int port) {
   for(it = clients.begin(); it != clients.end(); it++) {
     if((*it)->getIp() == ip && (*it)->getPort() == port) {
       std::cout << "Client disconnected from server: " << (*it)->getId() << std::endl;
+      _client_names.erase((*it)->getPlayer()->getPseudo());
       PlayerDelete dp;
       dp.setId((*it)->getId());
       broadcastReliable(&dp);
@@ -109,6 +110,7 @@ void Server::stop() {
 }
 
 void Server::update(sf::Time frametime) {
+  
   world->updatePlayer(frametime, Input());
 }
 
@@ -199,10 +201,11 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
       NetworkClient *c = getClientByPeer(peer);
       Player* p = new Player(world);
       p->setColor(pa.getColor());
-      p->setPseudo(pa.getPseudo());
+      p->setPseudo(getUniquePseudo(pa.getPseudo()));
       p->setId(pa.getId());
       c->setPlayer(p);
       sendFullWorldUpdate(peer);
+      pa.setPseudo(p->getPseudo());
       broadcastReliable(&pa);
     break;
   }
@@ -286,4 +289,20 @@ NetworkClient* Server::getClientByPeer(ENetPeer* peer) {
     }
   }
   return NULL;
+}
+
+std::string Server::getUniquePseudo(std::string pseudo) {
+  if(pseudo.compare("") == 0)
+    pseudo = "Anon";
+
+  int i = 0;
+  std::string candidate = pseudo;
+  while(_client_names.find(candidate) != _client_names.end()) {;
+    std::stringstream ss;
+    ss << pseudo << " (" << i << ")";
+    candidate = ss.str();
+    i++;
+  }
+  _client_names.insert(candidate);
+  return candidate;
 }
