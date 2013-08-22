@@ -11,6 +11,8 @@
 #include "network/PlayerUpdate.h"
 #include "network/TextMessage.h"
 
+#include <glog/logging.h>
+
 Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(window, imageManager) {
  
   ticker = new Ticker();
@@ -224,12 +226,12 @@ void Client::update(sf::Time frametime) {
     while(enet_host_service(client, &event, 0) > 0) {
       switch(event.type) {
       case ENET_EVENT_TYPE_CONNECT:{
-	std::cout << "Connection to server established" << std::endl;
+	LOG(INFO) << "Connection to server established";
 	this->connected = true;
 	break;
       }
       case ENET_EVENT_TYPE_DISCONNECT:
-	std::cout << "Connection to server lost" << std::endl;
+	LOG(INFO) << "Connection to server lost";
 	this->connected = false;
 	enet_peer_reset(server);
 	break;
@@ -336,60 +338,6 @@ void Client::send(Packet* p) {
   enet_peer_send(server, 1, packet);
 }
 
-
-/*
-void Client::ZCom_cbConnectResult(ZCom_ConnID id, eZCom_ConnectResult result, ZCom_BitStream &reply) {
-  if (result == eZCom_ConnAccepted){
-    printf("Connection established, launching...\n");
-    clientId = reply.getInt(32);
-    std::string newPseudo(reply.getStringStatic());
-    pseudo = newPseudo;
-    ZCom_requestZoidMode(serverId, 1);
-  }
-  else
-    printf("Connection failed");
-}
-
-void Client::ZCom_cbConnectionClosed(ZCom_ConnID id, eZCom_CloseReason reason, ZCom_BitStream &reasondada) {
-  printf("Disconnected from server\n");
-  running = false;
-}
-
-void Client::ZCom_cbZoidResult( ZCom_ConnID id, eZCom_ZoidResult result, zU8 new_level, ZCom_BitStream &reason ) {
-  if(result == eZCom_ZoidEnabled)
-    printf("[CLIENT] %d level entered", new_level);
-  else
-    printf("[CLIENT] access refused to %d level", new_level);
-}
-
-void Client::ZCom_cbNodeRequest_Dynamic( ZCom_ConnID id, ZCom_ClassID requested_class, ZCom_BitStream *announcedata, eZCom_NodeRole role, ZCom_NodeID net_id ) {
-
-  if(requested_class == Cube::GetClass(false)){
-    int type = announcedata->getInt(32);
-    float x = announcedata->getFloat(23);
-    float y = announcedata->getFloat(23);
-    int layerIndex = announcedata->getInt(8);
-    world->AddCube(sf::Vector2f(x,y), type, layerIndex, true);
-  }
-  else if (requested_class == Player::GetClass(false)) {
-    ZCom_ConnID idIn = announcedata->getInt(32);
-    float x = announcedata->getFloat(23);
-    float y = announcedata->getFloat(23);
-    int r = announcedata->getInt(8);
-    int g = announcedata->getInt(8);
-    int b = announcedata->getInt(8);
-    Player* p = new Player(imageManager, world);
-    //p->SetPosition(sf::Vector2f(x, y));
-    p->SetColor(sf::Color(r, g, b));
-    p->RegisterZCom(this, false);
-    
-    if(role == eZCom_RoleOwner)
-      player = p;
-    world->AddPlayer(p);
-  }
-}
-*/
-
 void Client::connect() {
   
   //Connect to server
@@ -397,7 +345,7 @@ void Client::connect() {
   enet_address_set_host(&address, ip.c_str());
   address.port = port;
 
-  std::cout << "Connecting to server\n" << std::endl;
+  LOG(INFO) << "Connecting to server\n";
   server = enet_host_connect(client, &address, 2, 0);
   if(server == NULL) {
     throw std::runtime_error("ENet connection creation failed");
@@ -406,7 +354,7 @@ void Client::connect() {
 
 void Client::disconnect() {
   
-  std::cout << "Disconnecting" << std::endl;
+  LOG(INFO) << "Disconnecting";
   ENetEvent event;
   enet_peer_disconnect(server, 0);
   while(enet_host_service(client, &event, 3000) > 0) {
@@ -415,7 +363,7 @@ void Client::disconnect() {
       enet_packet_destroy(event.packet);
       break;
     case ENET_EVENT_TYPE_DISCONNECT:
-      std::cout << "Disconnected from server" << std::endl;
+      LOG(INFO) << "Disconnected from server";
       return;
     default:
       break;
@@ -456,7 +404,7 @@ void Client::handlePacket(sf::Packet p) {
     cc.decode(p);
     this->id = cc.getId();
     player->setId(id);
-    std::cout << "server assigned id:" << id << std::endl;
+    LOG(INFO) << "server assigned id:" << id;
     
     //Now we can send the client info
     PlayerAdd pa;

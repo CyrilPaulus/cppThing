@@ -1,8 +1,15 @@
 #include "game.h"
+#include <glog/logging.h>
 
 #include <string.h>
 
 int main (int argc, char *argv[]) {
+
+  // Initialize Google's logging library.
+  FLAGS_logtostderr = true;
+  FLAGS_minloglevel = 0;
+  FLAGS_v = 0;
+  google::InitGoogleLogging(argv[0]);
   Game game;
   int gameType = Game::LOCAL;
 
@@ -25,7 +32,7 @@ int main (int argc, char *argv[]) {
     } 
   }
 
-  printf("GAMETYPE : %d\n", gameType);
+  LOG(INFO) << "GAMETYPE :" << gameType;
   game.run(gameType);
   return EXIT_SUCCESS;
 }
