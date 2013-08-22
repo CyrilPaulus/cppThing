@@ -45,7 +45,10 @@ void Server::run() {
   }
 
   printf("Server started\n");
-  world->addCube(sf::Vector2f(0,90), 1, 1);
+
+  if(!world->load("world.map"))
+    world->addCube(sf::Vector2f(0,90), 1, 1);
+  
   while(running) {
     //Manage network events
     ENetEvent event;
@@ -73,6 +76,7 @@ void Server::run() {
       update(ticker->getElapsedTime());
     sf::sleep(sf::seconds(0.01f));
   }
+  world->save("world.map");
   enet_host_destroy(server);
   enet_deinitialize();
   printf("Server finished\n");
@@ -294,7 +298,7 @@ NetworkClient* Server::getClientByPeer(ENetPeer* peer) {
 std::string Server::getUniquePseudo(std::string pseudo) {
   if(pseudo.compare("") == 0)
     pseudo = "Anon";
-
+  
   int i = 0;
   std::string candidate = pseudo;
   while(_client_names.find(candidate) != _client_names.end()) {;

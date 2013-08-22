@@ -32,6 +32,10 @@ class World {
   void removePlayerById(int id);
   Player* getPlayerById(int id);
   Cube* getCollidingCube(sf::FloatRect);
+
+  bool save(std::string filename);
+  bool load(std::string filename);
+
  private:
   bool server;
   std::list<Cube*> layer[GameConstant::LAYERNBR];

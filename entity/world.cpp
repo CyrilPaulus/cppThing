@@ -2,6 +2,11 @@
 #include "world.h"
 #include "math.h"
 
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
 World::World(bool server){
   for(int i = 0; i < GameConstant::LAYERNBR; i++){
     this->quadTrees[i] = new QuadTree(10, sf::Vector2f(90, 90));
@@ -162,4 +167,60 @@ Player* World::getPlayerById(int id) {
 
 std::list<Player*> World::getPlayerList() {
     return playerList;
+}
+
+bool World::save(std::string filename) {
+  ofstream file(filename.c_str(), ios::out | ios::binary);
+  
+  if (!file.is_open()) {
+    std::cerr << "Error opening file: " << filename << std::endl;
+    return false;
+  }
+    
+  int layer_nbr = GameConstant::LAYERNBR;
+  file.write((char*)&layer_nbr, sizeof(int));
+  for(int i = 0; i < GameConstant::LAYERNBR; i++) {
+    int size = layer[i].size();
+    file.write((char*)&size, sizeof(int));
+    std::list<Cube*>::iterator b;
+    for(b = layer[i].begin(); b != layer[i].end(); b++) {
+      int type = (*b)->getType();
+      float x = (*b)->getPosition().x;
+      float y = (*b)->getPosition().y;
+      file.write((char*)&type, sizeof(int));
+      file.write((char*)&x, sizeof(float));
+      file.write((char*)&y, sizeof(float));
+    }
+  }  
+ 
+  file.close();
+  return true;
+}
+
+bool World::load(std::string filename) {
+  ifstream file(filename.c_str(), ios::in | ios::binary);
+  
+  if (!file.is_open()) {
+    std::cerr << "Error opening file: " << filename << std::endl;
+    return false;
+  }
+ 
+  int nbr_layers = 0;;
+  file.read((char*)&nbr_layers, sizeof(int));
+  for(int i = 0; i < nbr_layers; i++) {
+    int nbr_cubes = 0;
+    file.read((char*)&nbr_cubes, sizeof(int));
+    for(int j = 0; j < nbr_cubes; j++) {
+      int type = 0;
+      float x = 0;
+      float y = 0;
+      file.read((char*)&type, sizeof(int));
+      file.read((char*)&x, sizeof(float));
+      file.read((char*)&y, sizeof(float));
+      addCube(sf::Vector2f(x, y), type, i, true);
+    }
+  }
+  
+  file.close();
+  return true;
 }
