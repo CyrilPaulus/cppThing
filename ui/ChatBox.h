@@ -18,8 +18,9 @@ class ChatBox : public UiElement {
   void handleEvent(sf::Event event);
   std::string popPendingMsg();
   int getPendingCount();
- void addMessage(std::string msg);
- 
+  void addMessage(std::string msg);
+  bool isActive();
+  
 private:
   sf::Font _textFont;
   std::vector<std::string> _msg;

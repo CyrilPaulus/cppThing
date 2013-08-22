@@ -34,13 +34,12 @@ void ChatBox::handleEvent(sf::Event event) {
     if(!_active && event.key.code == sf::Keyboard::Y) {
       _active = true;
       _first = true;
-      std::cout << "chat activated" << std::endl;
       _typing_msg = "";
       
     } else if(_active && event.key.code == sf::Keyboard::Return) {
       _active = false;
-      std::cout << "chat deactivated" << std::endl;
-      _pending_msg.push_back(_typing_msg);
+      if(_typing_msg.getSize() > 0)
+	_pending_msg.push_back(_typing_msg);
       _typing_msg = "";
     } else if(_active && event.key.code == sf::Keyboard::BackSpace) {
       if(_typing_msg.getSize() > 0)
@@ -69,4 +68,8 @@ std::string ChatBox::popPendingMsg() {
 void ChatBox::addMessage(std::string msg) {
   _clock.restart();
   _msg.push_back(msg);
+}
+
+bool ChatBox::isActive() {
+  return _active;
 }

@@ -125,7 +125,8 @@ void Client::handleEvent(sf::Event event) {
     onMouseWheelMoved(event);
     break;
   case sf::Event::KeyPressed:
-    onKeyPressed(event);
+    if(!_chat_box->isActive())
+      onKeyPressed(event);
     break;
   case sf::Event::Resized:
     onResized(event);
