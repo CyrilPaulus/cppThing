@@ -6,7 +6,7 @@ int LocalGame() {
 }
 
 int Connect() {
-    return Screen::NONE;
+  return Screen::CONNECT;
 }
 
 int Option() {

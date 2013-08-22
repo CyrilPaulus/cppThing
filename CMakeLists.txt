@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
+#add_definitions(
+#  -DSFML_STATIC
+#)
+
 project(cppThing)
 include(CheckIncludeFiles)
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -15,13 +19,6 @@ if(ENet_FOUND)
 endif()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/res DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-if (${CMAKE_COMPILER_IS_GNUCXX})
-  set(CMAKE_C_FLAGS "-Wall -Wno-long-long -Wno-implicit-function-declaration")  
-  # --std=c99 makes libcurl not to compile
-  # -pedantic gives a lot of warnings on OpenSSL 
-  set(CMAKE_CXX_FLAGS "-Wall -pedantic -Wno-long-long -Wno-variadic-macros")
-endif()
 
 add_library(Core
   network/ClientToken.cpp
@@ -43,6 +40,7 @@ add_library(Core
   ui/uiElement.cpp
   ui/ChatBox.cpp
   menu/mainMenu.cpp
+  menu/connectMenu.cpp
   mouse.cpp
   config.cpp
   screen.cpp
@@ -64,5 +62,5 @@ add_executable(ds
   dedi/dedi.cpp
 )
 
-TARGET_LINK_LIBRARIES(cppThing ${SFML_WINDOW_LIBRARY} ${SFML_NETWORK_LIBRARY} ${SFML_GRAPHICS_LIBRARY} ${SFML_SYSTEM_LIBRARY} ${ENet_LIBRARY} Core)
-TARGET_LINK_LIBRARIES(ds ${SFML_NETWORK_LIBRARY} ${SFML_SYSTEM_LIBRARY} ${ENet_LIBRARY} Core)
+TARGET_LINK_LIBRARIES(cppThing Core ${SFML_WINDOW_LIBRARY} ${SFML_NETWORK_LIBRARY} ${SFML_GRAPHICS_LIBRARY} ${SFML_SYSTEM_LIBRARY} ${ENet_LIBRARY})
+TARGET_LINK_LIBRARIES(ds Core ${SFML_NETWORK_LIBRARY} ${SFML_SYSTEM_LIBRARY} ${ENet_LIBRARY})

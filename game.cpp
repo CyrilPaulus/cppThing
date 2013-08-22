@@ -8,6 +8,9 @@
 #include "server.h"
 #include "entity/cube.h"
 #include "menu/mainMenu.h"
+#include "menu/connectMenu.h"
+
+#include <map>
 
 void startServerThread(void* server);
 
@@ -59,10 +62,12 @@ void Game::runClient() {
   c->connect();
 
   MainMenu* main = new MainMenu(window, imageManager, this);
+  ConnectMenu* connect = new ConnectMenu(window, imageManager, this);
   Screen* screens[6];
   int screen = 1;
   screens[Screen::GAME] = c;
   screens[Screen::MAINMENU] = main;
+  screens[Screen::CONNECT] = connect;
   while (screen != Screen::EXIT) {
     screen = screens[screen]->run();
   }
