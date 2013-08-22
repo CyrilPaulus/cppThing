@@ -1,7 +1,7 @@
 #include "TextMessage.h"
 
 TextMessage::TextMessage() {
-  type = Packet::TextMessage;
+  _type = Packet::TextMessage;
 }
 
 sf::Packet TextMessage::encode() {

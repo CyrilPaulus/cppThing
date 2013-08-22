@@ -13,99 +13,99 @@
 
 #include <glog/logging.h>
 
-Client::Client(sf::RenderWindow *window, ImageManager *imageManager) : Screen(window, imageManager) {
- 
-  ticker = new Ticker();
-  ticker->setUpdateRate(GameConstant::UPDATE_RATE);
-  worldDisplay = new sf::RenderTexture();
-
-  //TODO define resolution variable in client so we don't need to call window
-  worldDisplay->create(window->getSize().x, window->getSize().y);
-  mouse = new Mouse(window, worldDisplay, imageManager);
-  world = new World(false);
-  addCube = false;
-  removeCube = false;
-  player = new Player(world);
-  world->addPlayer(player);
-  zoom = 1;
-  cubeType = 0;
+Client::Client(sf::RenderWindow *window, ImageManager *image_manager) : Screen(window, image_manager) {
   
-  renderer = new Renderer(imageManager);
+  _ticker = new Ticker();
+  _ticker->setUpdateRate(GameConstant::UPDATE_RATE);
+  _world_display = new sf::RenderTexture();
+  
+  //TODO define resolution variable in client so we don't need to call window
+  _world_display->create(window->getSize().x, window->getSize().y);
+  _mouse = new Mouse(window, _world_display, _image_manager);
+  _world = new World(false);
+  _add_cube = false;
+  _remove_cube = false;
+  _player = new Player(_world);
+  _world->addPlayer(_player);
+  _zoom = 1;
+  _cube_type = 0;
+  
+  _renderer = new Renderer(_image_manager);
   
   //TODO wrap this in a function
-  displayCube = new CubeDisplay(imageManager);
-  displayCube->SetType(cubeType);
-  sf::Vector2f uiPosition = sf::Vector2f(window->getSize().x - 10 - Cube::WIDTH
-					 ,window->getSize().y - 10 - Cube::HEIGHT); 
-  displayCube->SetPosition(uiPosition);
-
+  _display_cube = new CubeDisplay(_image_manager);
+  _display_cube->SetType(_cube_type);
+  sf::Vector2f ui_position = sf::Vector2f(_window->getSize().x - 10 - Cube::WIDTH
+					 ,_window->getSize().y - 10 - Cube::HEIGHT); 
+  _display_cube->SetPosition(ui_position);
+  
   _chat_box = new ChatBox();
-  _chat_box->SetPosition(sf::Vector2f(10, window->getSize().y - 10));
-
-  layerDisplay = new LayerDisplay(imageManager, GameConstant::LAYERNBR);
-  layerDisplay->SetPosition(uiPosition + sf::Vector2f(-5, - 5 - layerDisplay->GetSize().y));
-
-  pseudo = "Anon";
-  player->setPseudo(pseudo);
-  layer = 1;
-  layerDisplay->SetLayer(layer);
-  port = 50645;
-  ip = "localhost";
-  mainMenu = false;
-  id = -1;
-
+  _chat_box->SetPosition(sf::Vector2f(10, _window->getSize().y - 10));
+  
+  _layer_display = new LayerDisplay(_image_manager, GameConstant::LAYERNBR);
+  _layer_display->SetPosition(ui_position + sf::Vector2f(-5, - 5 - _layer_display->GetSize().y));
+  
+  _pseudo = "Anon";
+  _player->setPseudo(_pseudo);
+  _layer = 1;
+  _layer_display->SetLayer(_layer);
+  _port = 50645;
+  _ip = "localhost";
+  _main_menu = false;
+  _id = -1;
+  
   if(enet_initialize() != 0) {
     throw std::runtime_error("ENet initialization failed");
   }
   
-  client = enet_host_create(NULL, 1, 2, 0, 0);
+  _client = enet_host_create(NULL, 1, 2, 0, 0);
   
-  if(client == NULL){
+  if(_client == NULL){
     throw std::runtime_error("ENet client initialization failed");
   }
-  server = NULL;
-  connected = false;
+  _server = NULL;
+  _connected = false;
   _has_focus = true;
 }
 
 Client::~Client(){
-  enet_host_destroy(client);
+  enet_host_destroy(_client);
   enet_deinitialize();
-  delete renderer;
-  delete displayCube;
+  delete _renderer;
+  delete _display_cube;
   delete _chat_box;
-  delete layerDisplay;
-  delete ticker;
-  delete mouse;
-  delete worldDisplay;
-  delete world;
+  delete _layer_display;
+  delete _ticker;
+  delete _mouse;
+  delete _world_display;
+  delete _world;
 }
 
 int Client::run(){
-  running = true;
+  _running = true;
   sf::Event event;
-  while(running) {
-    while(window->pollEvent(event)) {
+  while(_running) {
+    while(_window->pollEvent(event)) {
       handleEvent(event);
     }
     
-    if(mainMenu){
-      mainMenu = false;
+    if(_main_menu){
+      _main_menu = false;
       return Screen::MAINMENU;
     }
     
-    if(ticker->tick()){
-      update(ticker->getElapsedTime());
+    if(_ticker->tick()){
+      update(_ticker->getElapsedTime());
     }else {
       sf::sleep(sf::seconds(0.01));
     }
     
-    mouse->update();
+    _mouse->update();
     
     draw();
     
   }
-  if(connected)
+  if(_connected)
     disconnect();
   return -1;
 }
@@ -144,21 +144,21 @@ void Client::handleEvent(sf::Event event) {
 }
 
 void Client::onClose() {
-  running = false;
+  _running = false;
 }
 
 void Client::onKeyPressed(sf::Event event) {
   switch(event.key.code) {
   case sf::Keyboard::A:
-    layer = (layer + GameConstant::LAYERNBR - 1) % GameConstant::LAYERNBR;
-    layerDisplay->SetLayer(layer);
+    _layer = (_layer + GameConstant::LAYERNBR - 1) % GameConstant::LAYERNBR;
+    _layer_display->SetLayer(_layer);
     break;
   case sf::Keyboard::Z:
-    layer = (layer + 1) % GameConstant::LAYERNBR;
-    layerDisplay->SetLayer(layer);
+    _layer = (_layer + 1) % GameConstant::LAYERNBR;
+    _layer_display->SetLayer(_layer);
     break;
   case sf::Keyboard::Escape:
-    mainMenu = true;
+    _main_menu = true;
     break;
   default:
     break;
@@ -168,10 +168,10 @@ void Client::onKeyPressed(sf::Event event) {
 void Client::onMouseButtonPressed(sf::Event event){
   switch(event.mouseButton.button){
   case sf::Mouse::Left:
-    addCube = true;
+    _add_cube = true;
     break;
   case sf::Mouse::Right:
-    removeCube = true;
+    _remove_cube = true;
     break;
   default:
     break;
@@ -181,10 +181,10 @@ void Client::onMouseButtonPressed(sf::Event event){
 void Client::onMouseButtonReleased(sf::Event event){
   switch(event.mouseButton.button){
   case sf::Mouse::Left:
-    addCube = false;
+    _add_cube = false;
     break;
   case sf::Mouse::Right:
-    removeCube = false;
+    _remove_cube = false;
     break;
   default:
     break;
@@ -193,48 +193,48 @@ void Client::onMouseButtonReleased(sf::Event event){
 
 void Client::onResized(sf::Event event){
   sf::View newView = sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height));
-  window->setView(newView);
+  _window->setView(newView);
   
-  worldDisplay->create(event.size.width, event.size.height);
-  newView = worldDisplay->getDefaultView();
-
-  if(player != NULL)
-    newView.setCenter(player->getCenter());
+  _world_display->create(event.size.width, event.size.height);
+  newView = _world_display->getDefaultView();
   
-  newView.zoom(zoom);
-  worldDisplay->setView(newView);
+  if(_player != NULL)
+    newView.setCenter(_player->getCenter());
   
-  sf::Vector2f uiPosition = sf::Vector2f(window->getSize().x - 10 - Cube::WIDTH
-					 ,window->getSize().y - 10 - Cube::HEIGHT);
-  displayCube->SetPosition(uiPosition);
-  layerDisplay->SetPosition(uiPosition + sf::Vector2f(-5, - 5 - layerDisplay->GetSize().y));
-  _chat_box->SetPosition(sf::Vector2f(10, window->getSize().y - 10));
+  newView.zoom(_zoom);
+  _world_display->setView(newView);
+  
+  sf::Vector2f ui_position = sf::Vector2f(_window->getSize().x - 10 - Cube::WIDTH
+					 ,_window->getSize().y - 10 - Cube::HEIGHT);
+  _display_cube->SetPosition(ui_position);
+  _layer_display->SetPosition(ui_position + sf::Vector2f(-5, - 5 - _layer_display->GetSize().y));
+  _chat_box->SetPosition(sf::Vector2f(10, _window->getSize().y - 10));
 }
 
 void Client::onMouseWheelMoved(sf::Event event) {
   if(event.mouseWheel.delta < 0)
-    cubeType = (cubeType - 1 + Cube::BLOCKTYPECOUNT) % Cube::BLOCKTYPECOUNT;
+    _cube_type = (_cube_type - 1 + Cube::BLOCKTYPECOUNT) % Cube::BLOCKTYPECOUNT;
   else
-    cubeType = (cubeType + 1) % Cube::BLOCKTYPECOUNT;
-  displayCube->SetType(cubeType);
+    _cube_type = (_cube_type + 1) % Cube::BLOCKTYPECOUNT;
+  _display_cube->SetType(_cube_type);
 }
 
 
 void Client::update(sf::Time frametime) {
-
-  if(server != NULL) {
+  
+  if(_server != NULL) {
     ENetEvent event;
-    while(enet_host_service(client, &event, 0) > 0) {
+    while(enet_host_service(_client, &event, 0) > 0) {
       switch(event.type) {
       case ENET_EVENT_TYPE_CONNECT:{
 	LOG(INFO) << "Connection to server established";
-	this->connected = true;
+	_connected = true;
 	break;
       }
       case ENET_EVENT_TYPE_DISCONNECT:
 	LOG(INFO) << "Connection to server lost";
-	this->connected = false;
-	enet_peer_reset(server);
+	_connected = false;
+	enet_peer_reset(_server);
 	break;
       case ENET_EVENT_TYPE_RECEIVE:{
 	sf::Packet p;
@@ -249,41 +249,35 @@ void Client::update(sf::Time frametime) {
     }
   }
   
-  if (addCube && world->canAddCube(mouse->getWorldPosition(), layer)){
-    //TODO send cube update pkt
-    CubeUpdate cu(cubeType, mouse->getWorldPosition(), true, layer);
+  if (_add_cube && _world->canAddCube(_mouse->getWorldPosition(), _layer)){
+    CubeUpdate cu(_cube_type, _mouse->getWorldPosition(), true, _layer);
     sendReliable(&cu);
-    //world->AddCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
   }
-    
-  if (removeCube && world->canRemoveCube(mouse->getWorldPosition(), layer)){
-    CubeUpdate cu(cubeType, mouse->getWorldPosition(), false, layer);
+  
+  if (_remove_cube && _world->canRemoveCube(_mouse->getWorldPosition(), _layer)){
+    CubeUpdate cu(_cube_type, _mouse->getWorldPosition(), false, _layer);
     sendReliable(&cu);
-    //world->RemoveCube(cu.GetPosition(), cu.GetLayer());
-
-    //TODO send cube update pkt;	
   }
-
+  
   Input input;
   input.Left = sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && _has_focus;
   input.Right = sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && _has_focus;
   input.Up = sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && _has_focus;
   input.Down = sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && _has_focus;
-
-  //TODO send player update
-  world->update();
-  //world->UpdatePlayer(frametime, input);
-  player->update(frametime, input);
-  if(player != NULL) {
-    player->setEyesPosition(mouse->getWorldPosition());
+  
+  _world->update();
+  _player->update(frametime, input);
+  if(_player != NULL) {
+    _player->setEyesPosition(_mouse->getWorldPosition());
     updateView();
   }
-  PlayerUpdate up;
-  up.setPosition(player->getPosition());
-  up.setEyePosition(mouse->getWorldPosition());
-  up.setId(id);
-  send(&up);  
 
+  PlayerUpdate up;
+  up.setPosition(_player->getPosition());
+  up.setEyePosition(_mouse->getWorldPosition());
+  up.setId(_id);
+  send(&up);  
+  
   while(_chat_box->getPendingCount() > 0) {
     TextMessage tm;
     tm.setMessage(_chat_box->popPendingMsg());
@@ -292,63 +286,63 @@ void Client::update(sf::Time frametime) {
 }
 
 void Client::draw() {
-    sf::Color clearC(GameConstant::BackgroundColor.x, GameConstant::BackgroundColor.y, GameConstant::BackgroundColor.z);
-  window->clear(clearC);
-
-  worldDisplay->clear(sf::Color(0,0,0,0));
-  renderer->renderWorld(world, worldDisplay);
-  worldDisplay->display();
-
-  window->draw(sf::Sprite(worldDisplay->getTexture()));
-  displayCube->Draw(window);
-  _chat_box->Draw(window);
-  layerDisplay->Draw(window);
-  mouse->draw(window);
-  window->display();
+  sf::Color clear_color(GameConstant::BackgroundColor.x, GameConstant::BackgroundColor.y, GameConstant::BackgroundColor.z);
+  _window->clear(clear_color);
+  
+  _world_display->clear(sf::Color(0,0,0,0));
+  _renderer->renderWorld(_world, _world_display);
+  _world_display->display();
+  
+  _window->draw(sf::Sprite(_world_display->getTexture()));
+  _display_cube->Draw(_window);
+  _chat_box->Draw(_window);
+  _layer_display->Draw(_window);
+  _mouse->draw(_window);
+  _window->display();
 }
 
 
 void Client::updateView() {
-  sf::View newView = worldDisplay->getView();
-  float left = newView.getCenter().x - newView.getSize().x / 2;
-  float right = newView.getCenter().x + newView.getSize().x / 2;
-  if (player->getBbox().left - 100 * zoom < left)
-    newView.move(sf::Vector2f(player->getBbox().left - 100 * zoom - left, 0));
-  else if (player->getBbox().left + player->getBbox().width +100 * zoom > right)
-    newView.move(sf::Vector2f(player->getBbox().left + player->getBbox().width + 100 * zoom - right, 0));
-
-  float top = newView.getCenter().y - newView.getSize().y / 2;
-  float bottom = newView.getCenter().y + newView.getSize().y / 2;
-  if (player->getBbox().top - 100 * zoom < top)
-    newView.move(sf::Vector2f(0, player->getBbox().top - 100 * zoom - top));
-  else if(player->getBbox().top + player->getBbox().height + 100 * zoom > bottom)
-    newView.move(sf::Vector2f(0, player->getBbox().top + player->getBbox().height + 100 * zoom - bottom));
+  sf::View new_view = _world_display->getView();
+  float left = new_view.getCenter().x - new_view.getSize().x / 2;
+  float right = new_view.getCenter().x + new_view.getSize().x / 2;
+  if (_player->getBbox().left - 100 * _zoom < left)
+    new_view.move(sf::Vector2f(_player->getBbox().left - 100 * _zoom - left, 0));
+  else if (_player->getBbox().left + _player->getBbox().width +100 * _zoom > right)
+    new_view.move(sf::Vector2f(_player->getBbox().left + _player->getBbox().width + 100 * _zoom - right, 0));
   
-  worldDisplay->setView(newView);
+  float top = new_view.getCenter().y - new_view.getSize().y / 2;
+  float bottom = new_view.getCenter().y + new_view.getSize().y / 2;
+  if (_player->getBbox().top - 100 * _zoom < top)
+    new_view.move(sf::Vector2f(0, _player->getBbox().top - 100 * _zoom - top));
+  else if(_player->getBbox().top + _player->getBbox().height + 100 * _zoom > bottom)
+    new_view.move(sf::Vector2f(0, _player->getBbox().top + _player->getBbox().height + 100 * _zoom - bottom));
+  
+  _world_display->setView(new_view);
 }
 
 void Client::sendReliable(Packet* p) {
   sf::Packet data = p->encode();
   ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
-  enet_peer_send(server, 0, packet);
+  enet_peer_send(_server, 0, packet);
 }
 
 void Client::send(Packet* p) {
   sf::Packet data = p->encode();
   ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), 0);
-  enet_peer_send(server, 1, packet);
+  enet_peer_send(_server, 1, packet);
 }
 
 void Client::connect() {
   
   //Connect to server
   ENetAddress address;
-  enet_address_set_host(&address, ip.c_str());
-  address.port = port;
-
+  enet_address_set_host(&address, _ip.c_str());
+  address.port = _port;
+  
   LOG(INFO) << "Connecting to server\n";
-  server = enet_host_connect(client, &address, 2, 0);
-  if(server == NULL) {
+  _server = enet_host_connect(_client, &address, 2, 0);
+  if(_server == NULL) {
     throw std::runtime_error("ENet connection creation failed");
   }
 }
@@ -357,8 +351,8 @@ void Client::disconnect() {
   
   LOG(INFO) << "Disconnecting";
   ENetEvent event;
-  enet_peer_disconnect(server, 0);
-  while(enet_host_service(client, &event, 3000) > 0) {
+  enet_peer_disconnect(_server, 0);
+  while(enet_host_service(_client, &event, 3000) > 0) {
     switch(event.type) {
     case ENET_EVENT_TYPE_RECEIVE:
       enet_packet_destroy(event.packet);
@@ -370,18 +364,17 @@ void Client::disconnect() {
       break;
     }
   }
-
-  //Force disconnect
-  enet_peer_reset(server);
   
+  //Force disconnect
+  enet_peer_reset(_server);
 }
 
 void Client::setPort(int port){
-  this->port = port;
+  _port = port;
 }
 
 void Client::setIp(std::string ip){
-  this->ip = ip;
+  _ip = ip;
 }
 
 void Client::handlePacket(sf::Packet p) {
@@ -392,9 +385,9 @@ void Client::handlePacket(sf::Packet p) {
     CubeUpdate cu;
     cu.decode(p);
     if(cu.GetAdded())
-      world->addCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer(), true);
+      _world->addCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer(), true);
     else
-      world->removeCube(cu.GetPosition(), cu.GetLayer());
+      _world->removeCube(cu.GetPosition(), cu.GetLayer());
     break;
   }
   case Packet::UserMessage:{
@@ -403,27 +396,27 @@ void Client::handlePacket(sf::Packet p) {
   case Packet::ClientConnect: {
     ClientToken cc;
     cc.decode(p);
-    this->id = cc.getId();
-    player->setId(id);
-    LOG(INFO) << "server assigned id:" << id;
+    _id = cc.getId();
+    _player->setId(_id);
+    LOG(INFO) << "server assigned id:" << _id;
     
     //Now we can send the client info
     PlayerAdd pa;
-    pa.setColor(player->getColor());
-    pa.setPseudo(player->getPseudo());
-    pa.setId(id);
+    pa.setColor(_player->getColor());
+    pa.setPseudo(_player->getPseudo());
+    pa.setId(_id);
     sendReliable(&pa);
     break;
   }
   case Packet::AddPlayer: {
     PlayerAdd ap;
     ap.decode(p);
-    if(id != ap.getId()) {
-      Player* p = new Player(world);
+    if(_id != ap.getId()) {
+      Player* p = new Player(_world);
       p->setColor(ap.getColor());
       p->setPseudo(ap.getPseudo());
       p->setId(ap.getId());
-      world->addPlayer(p);
+      _world->addPlayer(p);
     } else {
       setPseudo(ap.getPseudo());
     }
@@ -432,13 +425,13 @@ void Client::handlePacket(sf::Packet p) {
   case Packet::DeletePlayer: {
     PlayerDelete dp;
     dp.decode(p);
-    world->removePlayerById(dp.getId());
+    _world->removePlayerById(dp.getId());
   }
   case Packet::UpdatePlayer: {
     PlayerUpdate up;
     up.decode(p);
-    if(up.getId() != id) {
-     Player* p = world->getPlayerById(up.getId());
+    if(up.getId() != _id) {
+      Player* p = _world->getPlayerById(up.getId());
       if(p != NULL) {
 	p->setPosition(up.getPosition());
 	p->setEyesPosition(up.getEyePosition());
@@ -458,6 +451,6 @@ void Client::handlePacket(sf::Packet p) {
 }
 
 void Client::setPseudo(std::string p) {
-  pseudo = p;
-  player->setPseudo(p);
+  _pseudo = p;
+  _player->setPseudo(p);
 }

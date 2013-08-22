@@ -3,12 +3,12 @@
 
 ImageManager::~ImageManager() {
   std::map<std::string, sf::Texture*>:: iterator i;
-  for (i = imageSet.begin(); i != imageSet.end(); i++)
+  for (i = _image_set.begin(); i != _image_set.end(); i++)
     delete i->second;
 }
 
 const sf::Texture *ImageManager::get(std::string name) {
-  sf::Texture *value = imageSet[name];
+  sf::Texture *value = _image_set[name];
   if(value != NULL)
     return value;
 
@@ -18,6 +18,6 @@ const sf::Texture *ImageManager::get(std::string name) {
     return NULL;
   }
 
-  imageSet[name] = value;
+  _image_set[name] = value;
   return value;
 }

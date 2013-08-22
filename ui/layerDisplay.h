@@ -13,9 +13,9 @@ class LayerDisplay : public UiElement {
   sf::Vector2f GetSize();
   
  private:
-  sf::Sprite *layer;
-  int layerCount;
-  int currentLayer;
+  sf::Sprite* _layer;
+  int _layer_count;
+  int _current_layer;
 };
 
 #endif /* _LAYERDISPLAY_H_ */

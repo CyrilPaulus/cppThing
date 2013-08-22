@@ -2,22 +2,22 @@
 #include "ticker.h"
 
 Ticker::Ticker() {
-  tickTime = sf::milliseconds(25);
-  elapsedTime = sf::milliseconds(0);
+  _tick_time = sf::milliseconds(25);
+  _elapsed_time = sf::milliseconds(0);
 }
 
-Ticker::Ticker(sf::Time tickTime) {
-  this->tickTime = tickTime;    
+Ticker::Ticker(sf::Time _tick_time) {
+  _tick_time = _tick_time;    
 }
 
-void Ticker::setUpdateRate(int updateRate){
-  tickTime = sf::milliseconds(1000 / updateRate);
+void Ticker::setUpdateRate(int update_rate){
+  _tick_time = sf::milliseconds(1000 / update_rate);
 }
 
 bool Ticker::tick() {
-  elapsedTime = clock.getElapsedTime();
-  if(elapsedTime >= tickTime){
-    clock.restart();
+  _elapsed_time = _clock.getElapsedTime();
+  if(_elapsed_time >= _tick_time){
+    _clock.restart();
     return true;
   }
 
@@ -25,5 +25,5 @@ bool Ticker::tick() {
 }
 
 sf::Time Ticker::getElapsedTime(){
-  return elapsedTime;
+  return _elapsed_time;
 }

@@ -17,7 +17,7 @@ class Packet{
   virtual sf::Packet encode();
   
  protected:
-  sf::Uint8 type;
+  sf::Uint8 _type;
 };
 
 #endif /* _PACKET_H_ */

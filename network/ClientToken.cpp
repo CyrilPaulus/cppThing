@@ -1,25 +1,25 @@
 #include "ClientToken.h"
 
 ClientToken::ClientToken() {
-  type = Packet::ClientConnect;
-  id = 0;
+  _type = Packet::ClientConnect;
+  _id = 0;
 }
 
 sf::Packet ClientToken::encode() {
   sf::Packet rslt = Packet::encode();
-  rslt << id;
+  rslt << _id;
   return rslt;
 }
 
 void ClientToken::decode(sf::Packet p) {
-  p >> id;
+  p >> _id;
 }
 
 void ClientToken::setId(int id) {
-  this->id = (sf::Uint8)id;
+  _id = (sf::Uint8)id;
 }
 
 int ClientToken::getId() {
-  return id;
+  return _id;
 }
 

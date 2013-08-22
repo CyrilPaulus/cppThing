@@ -16,13 +16,13 @@ void ChatBox::Draw(sf::RenderTarget* rt) {
   
   for(int i = _msg.size() - 1; i >= 0 && i >(int) _msg.size() -1 - _nbr_lines; i--) { 
     sf::Text text = sf::Text(_msg[i], _textFont, 15);
-    text.setPosition(position -sf::Vector2f(0,((int)_msg.size() + 1 - i) * _textFont.getLineSpacing(15)));
+    text.setPosition(_position -sf::Vector2f(0,((int)_msg.size() + 1 - i) * _textFont.getLineSpacing(15)));
     rt->draw(text);
   }
 
   if(_active) {
     sf::Text text = sf::Text(_typing_msg + "_", _textFont, 15);
-    text.setPosition(position - sf::Vector2f(0, _textFont.getLineSpacing(15)));
+    text.setPosition(_position - sf::Vector2f(0, _textFont.getLineSpacing(15)));
     rt->draw(text);
   }
 

@@ -11,13 +11,13 @@ int main (int argc, char *argv[]) {
   FLAGS_v = 0;
   google::InitGoogleLogging(argv[0]);
   Game game;
-  int gameType = Game::LOCAL;
+  int game_type = Game::LOCAL;
 
   for(int i = 0; i < argc; i++){
     if(strcmp(argv[i], "--server") == 0)
-      gameType = Game::SERVER;
+      game_type = Game::SERVER;
     else if (strcmp(argv[i], "--connect") == 0) {
-      gameType = Game::CLIENT;
+      game_type = Game::CLIENT;
       game.setIp(argv[i+1]);
     } else if(strcmp(argv[i], "--port") == 0) {
       game.setPort(atoi(argv[i+1]));
@@ -32,7 +32,7 @@ int main (int argc, char *argv[]) {
     } 
   }
 
-  LOG(INFO) << "GAMETYPE :" << gameType;
-  game.run(gameType);
+  LOG(INFO) << "GAMETYPE :" << game_type;
+  game.run(game_type);
   return EXIT_SUCCESS;
 }

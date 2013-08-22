@@ -9,30 +9,31 @@ class QuadTreeNode {
  public:
   QuadTreeNode(sf::FloatRect, int, sf::Vector2f);
   ~QuadTreeNode();
-  void Add(Cube*);
-  void Explode();
-  void Remove(Cube*);
-  std::list<Cube*> GetList(sf::FloatRect);
+  void add(Cube*);
+  void explode();
+  void remove(Cube*);
+  std::list<Cube*> getList(sf::FloatRect);
 
  private:
-  std::list<QuadTreeNode*> children;
-  std::list<Cube*> cubeList;
-  int capacity;
-  sf::FloatRect range;
-  sf::Vector2f minSize;
+  std::list<QuadTreeNode*> _children;
+  std::list<Cube*> _cube_list;
+  int _capacity;
+  sf::FloatRect _range;
+  sf::Vector2f _min_size;
 };
 
 class QuadTree {
  public:
   QuadTree(int, sf::Vector2f);
   ~QuadTree();
-  void Add(Cube *);
-  void Remove(Cube *);
-  std::list<Cube*> GetList(sf::FloatRect bbox);
+  void add(Cube *);
+  void remove(Cube *);
+  std::list<Cube*> getList(sf::FloatRect bbox);
+
  private:
-  int capacity;
-  sf::Vector2f minSize;
-  QuadTreeNode *root;
+  int _capacity;
+  sf::Vector2f _min_size;
+  QuadTreeNode* _root;
 };
 
 #endif /* _QUADTREE_H_ */

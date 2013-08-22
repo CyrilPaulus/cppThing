@@ -12,7 +12,7 @@ class Cube : public Entity{
   void setType(int);
   int getType();
  private:
-  int type;
+  int _type;
 };
 
 #endif /* _CUBE_H_ */

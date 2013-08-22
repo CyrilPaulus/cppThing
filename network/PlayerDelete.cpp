@@ -1,25 +1,25 @@
 #include "PlayerDelete.h"
 
 PlayerDelete::PlayerDelete() {
-  type = Packet::DeletePlayer;
-  id = 0;
+  _type = Packet::DeletePlayer;
+  _id = 0;
 }
 
 sf::Packet PlayerDelete::encode() {
   sf::Packet rslt = Packet::encode();
-  rslt << id;
+  rslt << _id;
   return rslt;
 }
 
 void PlayerDelete::decode(sf::Packet p) {
-  p >> id;
+  p >> _id;
 }
 
 void PlayerDelete::setId(int id) {
-  this->id = (sf::Uint8)id;
+  _id = (sf::Uint8)id;
 }
 
 int PlayerDelete::getId() {
-  return id;
+  return _id;
 }
 

@@ -13,6 +13,6 @@ class PlayerDelete : public Packet{
   int getId();
 
  private:
-  sf::Uint8 id;
+  sf::Uint8 _id;
 };
 

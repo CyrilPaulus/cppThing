@@ -17,8 +17,8 @@ class PlayerUpdate : public Packet{
   sf::Vector2f getPosition();
   sf::Vector2f getEyePosition();
  private:
-  sf::Uint8 id;
-  sf::Vector2f position;
-  sf::Vector2f eyePosition;
+  sf::Uint8 _id;
+  sf::Vector2f _position;
+  sf::Vector2f _eye_position;
 };
 

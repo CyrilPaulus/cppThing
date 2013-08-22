@@ -2,10 +2,9 @@
 #include "entity.h"
 
 Entity::Entity() {
-
-  position = sf::Vector2f(0, 0);
-  bbox = sf::Vector2f(0,0);
-  remove = false;
+  _position = sf::Vector2f(0, 0);
+  _bbox = sf::Vector2f(0,0);
+  _remove = false;
 }
 
 Entity::~Entity() {
@@ -15,22 +14,22 @@ void Entity::update(float frametime){
 }
 
 sf::FloatRect Entity::getBbox() {
-  return sf::FloatRect(position.x, position.y, bbox.x, bbox.y);
+  return sf::FloatRect(_position.x, _position.y, _bbox.x, _bbox.y);
 }
 
 sf::Vector2f Entity::getPosition() {
-  return position;
+  return _position;
 }
 
 sf::Vector2f Entity::getCenter() {
-  sf::Vector2f hbbox = sf::Vector2f(bbox.x / 2, bbox.y / 2);
+  sf::Vector2f hbbox = sf::Vector2f(_bbox.x / 2, _bbox.y / 2);
   return getPosition() + hbbox;
 }
 
 void Entity::setPosition(sf::Vector2f position){
-  this->position = position;
+  _position = position;
 }
 
 bool Entity::canRemove(){
-  return remove;
+  return _remove;
 }

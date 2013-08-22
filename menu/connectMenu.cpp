@@ -18,7 +18,7 @@ ConnectMenu::ConnectMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : S
     selectedItem = 0;
 
     for (unsigned int i = 0; i < items.size(); i++)
-        items[i]->CenterX(window->getSize().x);
+        items[i]->CenterX(_window->getSize().x);
     running = true;
 }
 
@@ -30,10 +30,10 @@ ConnectMenu::~ConnectMenu() {
 }
 
 int ConnectMenu::run() {
-  resize(window->getSize().x, window->getSize().y);
+  resize(_window->getSize().x, _window->getSize().y);
   sf::Event event;
   while (running) {
-    while (window->pollEvent(event)) {
+    while (_window->pollEvent(event)) {
       int rtn = handleEvent(event);
       if (rtn != Screen::NONE)
 	return rtn;
@@ -41,13 +41,13 @@ int ConnectMenu::run() {
     
     mouse->update();
     
-    window->clear(sf::Color(100, 149, 237));
+    _window->clear(sf::Color(100, 149, 237));
     
     for (unsigned int i = 0; i < items.size(); i++) {
-      items[i]->Draw(window, i == selectedItem);
+      items[i]->Draw(_window, i == selectedItem);
     }
-    mouse->draw(window);
-    window->display();
+    mouse->draw(_window);
+    _window->display();
     sf::sleep(sf::seconds(0.01));
   }
   return -1;
@@ -101,7 +101,7 @@ int ConnectMenu::onKeyPressed(sf::Event event) {
 }
 
 void ConnectMenu::resize(int width, int height) {
-    window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
+    _window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
     for (unsigned int i = 0; i < items.size(); i++)
         items[i]->CenterX(width);
 }

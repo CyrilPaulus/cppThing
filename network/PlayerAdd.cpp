@@ -1,50 +1,50 @@
 #include "PlayerAdd.h"
 
 PlayerAdd::PlayerAdd() {
-  type = Packet::AddPlayer;
-  r = 0;
-  g = 0;
-  b = 0;
-  id = 0;
+  _type = Packet::AddPlayer;
+  _r = 0;
+  _g = 0;
+  _b = 0;
+  _id = 0;
 }
 
 sf::Packet PlayerAdd::encode() {
   sf::Packet rslt = Packet::encode();
-  rslt << r;
-  rslt << g;
-  rslt << b;
-  rslt << id;
-  rslt << pseudo;
+  rslt << _r;
+  rslt << _g;
+  rslt << _b;
+  rslt << _id;
+  rslt << _pseudo;
   return rslt;
 }
 
 
 void PlayerAdd::decode(sf::Packet p) {
-  p >> r >> g >> b >> id >> pseudo;
+  p >> _r >> _g >> _b >> _id >> _pseudo;
 }
 
 void PlayerAdd::setPseudo(std::string pseudo) {
-  this->pseudo = pseudo;
+  _pseudo = pseudo;
 }
 
 void PlayerAdd::setColor(sf::Vector3i color) {
-  this->r = color.x;
-  this->g = color.y;
-  this->b = color.z;
+  _r = color.x;
+  _g = color.y;
+  _b = color.z;
 }
 
 void PlayerAdd::setId(int id) {
-  this->id = (sf::Uint8)id;
+  _id = (sf::Uint8)id;
 }
 
 sf::Vector3i PlayerAdd::getColor() {
-  return sf::Vector3i(r, g ,b);
+  return sf::Vector3i(_r, _g ,_b);
 }
 
 int PlayerAdd::getId() {
-  return id;
+  return _id;
 }
 
 std::string PlayerAdd::getPseudo() {
-  return pseudo;
+  return _pseudo;
 }

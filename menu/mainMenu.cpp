@@ -2,7 +2,7 @@
 #include "../config.h"
 
 int LocalGame() {
-    return Screen::GAME;
+  return Screen::GAME;
 }
 
 int Connect() {
@@ -41,11 +41,11 @@ MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(
     selectedItem = 0;
 
     for (unsigned int i = 0; i < items.size(); i++)
-        items[i]->CenterX(window->getSize().x);
+        items[i]->CenterX(_window->getSize().x);
 
     p = new Player(NULL);
     pImage = new sf::RenderTexture();
-    pImage->create(window->getSize().x, window->getSize().y);
+    pImage->create(_window->getSize().x, _window->getSize().y);
     sf::View v = pImage->getDefaultView();
     v.zoom(0.08);
     v.setCenter(p->getCenter() + sf::Vector2f(0, -30));
@@ -67,10 +67,10 @@ MainMenu::~MainMenu() {
 
 int MainMenu::run() {
     p->setColor(sf::Vector3i(rand() % 255, rand() % 255, rand() % 255));
-    resize(window->getSize().x, window->getSize().y);
+    resize(_window->getSize().x, _window->getSize().y);
     sf::Event event;
     while (running) {
-        while (window->pollEvent(event)) {
+        while (_window->pollEvent(event)) {
             int rtn = handleEvent(event);
             if (rtn != Screen::NONE)
                 return rtn;
@@ -79,20 +79,20 @@ int MainMenu::run() {
         updateColor();
         mouse->update();
 
-        window->clear(background);
+        _window->clear(background);
         pImage->clear(background);
         r->renderPlayer(p, pImage);
         pImage->display();
 
         sf::Sprite pSprite(pImage->getTexture());
-        pSprite.setPosition(sf::Vector2f((window->getSize().x - pImage->getSize().x) / 2
-                , window->getSize().y - pImage->getSize().y));
-        window->draw(pSprite);
+        pSprite.setPosition(sf::Vector2f((_window->getSize().x - pImage->getSize().x) / 2
+                , _window->getSize().y - pImage->getSize().y));
+        _window->draw(pSprite);
         for (unsigned int i = 0; i < items.size(); i++) {
-            items[i]->Draw(window, i == selectedItem);
+            items[i]->Draw(_window, i == selectedItem);
         }
-        mouse->draw(window);
-        window->display();
+        mouse->draw(_window);
+        _window->display();
         sf::sleep(sf::seconds(0.01));
     }
 
@@ -147,7 +147,7 @@ int MainMenu::onKeyPressed(sf::Event event) {
 }
 
 void MainMenu::resize(int width, int height) {
-    window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
+    _window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
     for (unsigned int i = 0; i < items.size(); i++)
         items[i]->CenterX(width);
 }

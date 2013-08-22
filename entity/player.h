@@ -27,27 +27,27 @@ class Player : public Entity {
   sf::Vector2f getLeftPupilPosition();
   sf::Vector2f getRightPupilPosition();
  private:
-  World* world;
+  World* _world;
   
-  bool noclip;
-  bool isFlying;
+  bool _noclip;
+  bool _is_flying;
 
-  sf::Vector2f lpOrigin;
-  sf::Vector2f lpPosition;
-  sf::Vector2f rpOrigin;
-  sf::Vector2f rpPosition;
+  sf::Vector2f _lp_origin;
+  sf::Vector2f _lp_position;
+  sf::Vector2f _rp_origin;
+  sf::Vector2f _rp_position;
 
-  float maxWalkSpeed;
-  float maxFallSpeed;
-  float jumpForce;
-  sf::Time acc;
+  float _max_walk_speed;
+  float _max_fall_speed;
+  float _jump_force;
+  sf::Time _acc;
 
-  sf::Vector2f velocity;
-  sf::Vector2f acceleration;
-  sf::Vector3i color;
+  sf::Vector2f _velocity;
+  sf::Vector2f _acceleration;
+  sf::Vector3i _color;
   
-  int id;
-  std::string pseudo;
+  int _id;
+  std::string _pseudo;
 };
 
 #endif /* _PLAYER_H_ */

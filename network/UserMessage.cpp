@@ -1,46 +1,21 @@
 #include "../config.h"
 #include "UserMessage.h"
 
-UserMessage::UserMessage(unsigned int frametime, Input input, sf::Vector2f lookdir){
-  this->type = Packet::UserMessage;
-  this->input = input;
-  this->frametime = frametime;
-  this->lookdir = lookdir;
+UserMessage::UserMessage(unsigned int frametime, Input input, sf::Vector2f look_dir){
+  _type = Packet::UserMessage;
+  _input = input;
+  _frametime = frametime;
+  _look_dir = look_dir;
 }
-
-/*void UserMessage::Encode(ZCom_BitStream *message){
-  message->addInt(Packet::UserMessage, 8);
-  message->addBool(input.Up);
-  message->addBool(input.Down);
-  message->addBool(input.Left);
-  message->addBool(input.Right);
-  message->addInt(frametime, 32);
-  message->addFloat(lookdir.x, 23);
-  message->addFloat(lookdir.y, 23);
-}
-
-UserMessage* UserMessage::Decode(ZCom_BitStream &message){
-  if((int) message.getInt(8) != Packet::UserMessage)
-   return NULL;
-  Input input;
-  input.Up = message.getBool();
-  input.Down = message.getBool();
-  input.Left = message.getBool();
-  input.Right = message.getBool();
-  unsigned int frametime = message.getInt(32);
-  float x = message.getFloat(23);
-  float y = message.getFloat(23);
-  return new UserMessage(frametime, input, sf::Vector2f(x, y));
-  }*/
 
 unsigned int UserMessage::getFrametime(){
-  return frametime;
+  return _frametime;
 }
 
 Input UserMessage::getInput(){
-  return input;
+  return _input;
 }
 
 sf::Vector2f UserMessage::getLookDir(){
-  return lookdir;
+  return _look_dir;
 }

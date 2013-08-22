@@ -16,9 +16,9 @@ class CubeDisplay : public UiElement {
   sf::Vector2f GetSize();
   
  private:
-  Cube* cube;
+  Cube* _cube;
   //Todo remove
-  Renderer* r;
+  Renderer* _r;
 };
 
 #endif /* _CUBEDISPLAY_H_ */

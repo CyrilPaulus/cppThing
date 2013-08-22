@@ -34,14 +34,14 @@ class Server {
   void sendFullWorldUpdate(ENetPeer* peer);
   std::string getUniquePseudo(std::string p);
   
-  bool running;
-  Ticker *ticker;
-  World *world;
-  int port;
-  int maxClient;
-  int lastClientID;
-  std::list<NetworkClient*> clients;
-  ENetHost* server;
+  bool _running;
+  Ticker* _ticker;
+  World* _world;
+  int _port;
+  int _max_client;
+  int _last_client_id;
+  std::list<NetworkClient*> _clients;
+  ENetHost* _server;
   std::set<std::string> _client_names;
 };
 

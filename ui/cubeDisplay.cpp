@@ -2,33 +2,33 @@
 #include "../config.h"
 
 
-CubeDisplay::CubeDisplay(ImageManager* imageManager) : UiElement(imageManager) {
-  this->cube = new Cube(0);
-  this->r = new Renderer(imageManager);
+CubeDisplay::CubeDisplay(ImageManager* image_manager) : UiElement(image_manager) {
+  _cube = new Cube(0);
+  _r = new Renderer(image_manager);
 }
 
 CubeDisplay::~CubeDisplay() {
-	delete cube;
-        delete r;
+  delete _cube;
+  delete _r;
 }
 
 void CubeDisplay::SetType(int type) {
-	cube->setType(type);
+  _cube->setType(type);
 }
 
 void CubeDisplay::SetPosition(sf::Vector2f pos) {
-	UiElement::SetPosition(pos);
-	cube->setPosition(pos);
+  UiElement::SetPosition(pos);
+  _cube->setPosition(pos);
 }
 
 void CubeDisplay::Draw(sf::RenderTarget *rt) {
-        r->renderCube(cube, rt);
+  _r->renderCube(_cube, rt);
 }
 
 sf::Vector2f CubeDisplay::GetSize() {
-	return sf::Vector2f(Cube::WIDTH, Cube::HEIGHT);
+  return sf::Vector2f(Cube::WIDTH, Cube::HEIGHT);
 }
 
 sf::FloatRect CubeDisplay::GetBbox() {
-	return sf::FloatRect(position.x, position.y, Cube::WIDTH, Cube::HEIGHT);
+  return sf::FloatRect(_position.x, _position.y, Cube::WIDTH, Cube::HEIGHT);
 }

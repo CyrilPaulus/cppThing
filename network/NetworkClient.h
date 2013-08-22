@@ -15,7 +15,7 @@ class NetworkClient {
   void setPlayer(Player* p);
   
  private:
-  unsigned int id;
-  ENetPeer* peer;  
-  Player* player;
+  unsigned int _id;
+  ENetPeer* _peer;  
+  Player* _player;
 };

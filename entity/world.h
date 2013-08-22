@@ -37,10 +37,10 @@ class World {
   bool load(std::string filename);
 
  private:
-  bool server;
-  std::list<Cube*> layer[GameConstant::LAYERNBR];
-  std::list<Player*> playerList;
-  QuadTree* quadTrees[GameConstant::LAYERNBR];
+  bool _server;
+  std::list<Cube*> _layers[GameConstant::LAYERNBR];
+  std::list<Player*> _player_list;
+  QuadTree* _quad_trees[GameConstant::LAYERNBR];
 };
 
 #endif /* _WORLD_H_ */

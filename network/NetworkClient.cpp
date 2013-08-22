@@ -1,31 +1,31 @@
 #include "NetworkClient.h"
 
 NetworkClient::NetworkClient(unsigned int id, ENetPeer* peer) {
-  this->peer = peer;
-  this->id = id;
-  this->player = NULL;
+  _peer = peer;
+  _id = id;
+  _player = NULL;
 }
 
 unsigned int NetworkClient::getId() {
-  return this->id;
+  return _id;
 }
 
 unsigned int NetworkClient::getIp() {
-  return this->peer->address.host;
+  return _peer->address.host;
 }
 
 unsigned int NetworkClient::getPort() {
-  return this->peer->address.port;
+  return _peer->address.port;
 }
 
 ENetPeer* NetworkClient::getPeer() {
-  return this->peer;
+  return _peer;
 }
 
 void NetworkClient::setPlayer(Player* p) {
-  this->player = p;
+  _player = p;
 }
 
 Player* NetworkClient::getPlayer() {
-  return this->player;
+  return _player;
 }

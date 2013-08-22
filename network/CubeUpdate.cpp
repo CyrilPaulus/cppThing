@@ -2,47 +2,47 @@
 #include "CubeUpdate.h"
 
 CubeUpdate::CubeUpdate() {
-  this->type = Packet::CubeUpdate;
-  this->cubeType = 0;
-  this->position = sf::Vector2f(0,0); 
-  this->added = true;
-  this->layer = 0;
+  _type = Packet::CubeUpdate;
+  _cube_type = 0;
+  _position = sf::Vector2f(0,0); 
+  _added = true;
+  _layer = 0;
 }
 
-CubeUpdate::CubeUpdate(int cubeType, sf::Vector2f position, bool added, int layer){
-  this->type = Packet::CubeUpdate;
-  this->cubeType = cubeType;
-  this->position = position; 
-  this->added = added;
-  this->layer = layer;
+CubeUpdate::CubeUpdate(int cube_type, sf::Vector2f position, bool added, int layer){
+  _type = Packet::CubeUpdate;
+  _cube_type = cube_type;
+  _position = position; 
+  _added = added;
+  _layer = layer;
 }
 
 sf::Packet CubeUpdate::encode() {
   sf::Packet rslt = Packet::encode();
-  rslt << cubeType;
-  rslt << position.x;
-  rslt << position.y;
-  rslt << added;
-  rslt << layer;
+  rslt << _cube_type;
+  rslt << _position.x;
+  rslt << _position.y;
+  rslt << _added;
+  rslt << _layer;
   return rslt;
 }
 
 void CubeUpdate::decode(sf::Packet p) {
-  p  >> cubeType >> position.x >> position.y >> added >> layer; 
+  p  >> _cube_type >> _position.x >> _position.y >> _added >> _layer; 
 }
 
 int CubeUpdate::GetCubeType() {
-  return (int)cubeType;
+  return (int)_cube_type;
 }
 
 sf::Vector2f CubeUpdate::GetPosition() {
-  return position;
+  return _position;
 }
 
 bool CubeUpdate::GetAdded() {
-  return added;
+  return _added;
 }
 
 int CubeUpdate::GetLayer() {
-  return (int)layer;
+  return (int)_layer;
 }

@@ -15,29 +15,30 @@ class Game {
 
   Game();
   ~Game();
+  
   Client* getClient();
   Server* getServer();
+  int getType(); 
+  
   void run(int type);
   void setIp(std::string ip);
   void setPort(int port);
   void setPseudo(std::string pseudo);
+ 
 
-  int getType();
  private:
-  sf::Thread* serverThread;
-  Server* s;
-  Client* c;
+  sf::Thread* _server_thread;
+  Server* _s;
+  Client* _c;
 
-  bool isClient;
-  bool isServer;
-  bool serverRunning;
-  sf::RenderWindow *window;
-  ImageManager* imageManager;
-  ImageManager* serverImgManager;
-  std::string ip;
-  std::string pseudo;
-  int port;
+  bool _server_running;
+  sf::RenderWindow* _window;
+  ImageManager* _image_manager;
+  std::string _ip;
+  std::string _pseudo;
+  int _port;
   int _type;
+
   void runClient();
   void runServer();
   void startServer();

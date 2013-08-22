@@ -9,9 +9,9 @@ class ImageManager {
  public:
   ~ImageManager();
   const sf::Texture *get(std::string);
-
+  
  private:
-  std::map<std::string, sf::Texture*> imageSet;
+  std::map<std::string, sf::Texture*> _image_set;
 };
 
 #endif /* _IMAGEMANAGER_H_ */

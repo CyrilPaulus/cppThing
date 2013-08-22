@@ -17,7 +17,7 @@ class UiElement{
   sf::Vector2f GetSize();
 
  protected:
-  sf::Vector2f position;
+  sf::Vector2f _position;
   
 };
 

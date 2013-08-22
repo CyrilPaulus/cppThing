@@ -18,9 +18,9 @@ class Entity {
   bool canRemove();
 
  protected:
-  bool remove;
-  sf::Vector2f position;
-  sf::Vector2f bbox;
+  bool _remove;
+  sf::Vector2f _position;
+  sf::Vector2f _bbox;
 
 };
 

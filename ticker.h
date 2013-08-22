@@ -12,9 +12,9 @@ class Ticker{
   void setUpdateRate(int);
 
  private:
-  sf::Clock clock;
-  sf::Time tickTime;
-  sf::Time elapsedTime;
+  sf::Clock _clock;
+  sf::Time _tick_time;
+  sf::Time _elapsed_time;
 };
 
 #endif /* _TICKER_H_ */

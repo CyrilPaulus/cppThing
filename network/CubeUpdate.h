@@ -16,11 +16,12 @@ class CubeUpdate : public Packet{
   bool GetAdded();
   int GetCubeType();
   int GetLayer();
+
  private:
-  int layer;
-  int cubeType;
-  sf::Vector2f position;
-  bool added;
+  int _layer;
+  int _cube_type;
+  sf::Vector2f _position;
+  bool _added;
 };
 
 #endif /* _CUBEUPDATE_H_ */

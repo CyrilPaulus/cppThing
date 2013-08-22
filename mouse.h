@@ -14,10 +14,9 @@ class Mouse{
   sf::Vector2f getWorldPosition();
 
  private:
-  sf::RenderWindow *window;
-  sf::RenderTarget *world;
-  ImageManager *imageManager;
-  sf::Sprite *sprite;
+  sf::RenderWindow* _window;
+  sf::RenderTarget* _world;
+  sf::Sprite* _sprite;
   
   
 };

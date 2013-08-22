@@ -1,29 +1,28 @@
 #include "config.h"
 #include "mouse.h"
 
-Mouse::Mouse(sf::RenderWindow *window, sf::RenderTarget *world, ImageManager *imageManager) {
-  this->window = window;
-  this->world = world;
-  this->imageManager = imageManager;
-  this->sprite = new sf::Sprite(*(imageManager->get("mouse")));
+Mouse::Mouse(sf::RenderWindow *window, sf::RenderTarget *world, ImageManager *image_manager) {
+  _window = window;
+  _world = world;
+  _sprite = new sf::Sprite(*(image_manager->get("mouse")));
 }
 
 Mouse::~Mouse() {
-  delete sprite;
+  delete _sprite;
 }
 
 sf::Vector2f Mouse::getPosition() {
-  return sprite->getPosition();
+  return _sprite->getPosition();
 }
 
 sf::Vector2f Mouse::getWorldPosition() {
-  return world->mapPixelToCoords(sf::Vector2i(sprite->getPosition().x, sprite->getPosition().y));
+  return _world->mapPixelToCoords(sf::Vector2i(_sprite->getPosition().x, _sprite->getPosition().y));
 }
 
 void Mouse::update() {
-  sprite->setPosition((sf::Vector2f) sf::Mouse::getPosition(*window));
+  _sprite->setPosition((sf::Vector2f) sf::Mouse::getPosition(*_window));
 }
 
 void Mouse::draw(sf::RenderTarget *rt) {
-  rt->draw(*sprite);
+  rt->draw(*_sprite);
 }

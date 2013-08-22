@@ -18,8 +18,8 @@ class PlayerAdd : public Packet{
   std::string getPseudo();
 
  private:
-  sf::Uint8 id;
-  sf::Uint8 r,g,b;
-  std::string pseudo;
+  sf::Uint8 _id;
+  sf::Uint8 _r,_g,_b;
+  std::string _pseudo;
 };
 

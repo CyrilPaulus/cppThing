@@ -15,33 +15,33 @@
 void startServerThread(void* server);
 
 Game::Game(){
-  imageManager = new ImageManager();
-  ip = "localhost";
-  port = 50645;
-  serverRunning = false;
-  s = NULL;
-  c = NULL;
-  serverThread = NULL;
+  _image_manager = new ImageManager();
+  _ip = "localhost";
+  _port = 50645;
+  _server_running = false;
+  _s = NULL;
+  _c = NULL;
+  _server_thread = NULL;
   _type = Game::LOCAL;
 }
 
 Game::~Game(){
-  if(window)
-    delete window;
-  delete imageManager;  
+  if(_window)
+    delete _window;
+  delete _image_manager;  
 }
 
 void Game::run(int type){
   _type = type;
   srand(time(NULL));
   if(type == Game::LOCAL){
-    this->runLocal();       
+    runLocal();       
   }
   else if(type == Game::CLIENT) {
-    this->runClient();
+    runClient();
   }
   else if(type == Game::SERVER) {
-    this->runServer();
+    runServer();
   }
 
 }
@@ -51,61 +51,59 @@ int Game::getType() {
 }
 
 void Game::runClient() {
-  window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
-  window->setFramerateLimit(GameConstant::FRAMERATE_LIMIT);
-  window->setMouseCursorVisible(false);
-  c = new Client(window, imageManager);
-  c->setIp(ip);
-  c->setPort(port);
-  c->setPseudo(pseudo);
+  _window = new sf::RenderWindow(sf::VideoMode(800,600), "2dThing c++");
+  _window->setFramerateLimit(GameConstant::FRAMERATE_LIMIT);
+  _window->setMouseCursorVisible(false);
+  _c = new Client(_window, _image_manager);
+  _c->setIp(_ip);
+  _c->setPort(_port);
+  _c->setPseudo(_pseudo);
   
-  c->connect();
+  _c->connect();
 
-  MainMenu* main = new MainMenu(window, imageManager, this);
-  ConnectMenu* connect = new ConnectMenu(window, imageManager, this);
+  MainMenu* main = new MainMenu(_window, _image_manager, this);
+  ConnectMenu* connect = new ConnectMenu(_window, _image_manager, this);
   Screen* screens[6];
   int screen = 1;
-  screens[Screen::GAME] = c;
+  screens[Screen::GAME] = _c;
   screens[Screen::MAINMENU] = main;
   screens[Screen::CONNECT] = connect;
   while (screen != Screen::EXIT) {
     screen = screens[screen]->run();
   }
-  delete c;
+  delete _c;
   delete main;
 }
 
 void Game::runLocal() {
-  this->startServer();
-  this->runClient();
-  this->stopServer();
+  startServer();
+  runClient();
+  stopServer();
 }
 
 void Game::runServer() {
-  this->startServer();
+  startServer();
   scanf("\n");
-  this->stopServer();
+  stopServer();
 }
 
 void Game::startServer() {
-  serverImgManager = new ImageManager();
-  s = new Server();
+  _s = new Server();
  
-  serverThread = new sf::Thread(&startServerThread, s);
+  _server_thread = new sf::Thread(&startServerThread, _s);
   
-  s->init();
-  serverThread->launch();
-  serverRunning = true;
+  _s->init();
+  _server_thread->launch();
+  _server_running = true;
 }
 
 void Game::stopServer() {
-  if(serverRunning) {
-    s->stop();
-    serverThread->wait();    
-    delete serverThread;
-    delete s;
-    delete serverImgManager;
-    serverRunning = false;
+  if(_server_running) {
+    _s->stop();
+    _server_thread->wait();    
+    delete _server_thread;
+    delete _s;
+    _server_running = false;
   }
 }
 
@@ -114,21 +112,21 @@ void startServerThread(void* server){
 }
 
 void Game::setIp(std::string ip){
-  this->ip = ip;
+  _ip = ip;
 }
 
 void Game::setPort(int port){
-  this->port = port;
+  _port = port;
 }
 
 Client* Game::getClient() {
-  return c;
+  return _c;
 }
 
 Server* Game::getServer() {
-  return s;
+  return _s;
 }
 
 void Game::setPseudo(std::string p) {
-  pseudo = p;
+  _pseudo = p;
 }

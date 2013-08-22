@@ -27,21 +27,21 @@ class Client : public Screen{
   int run();
   void connect();
   void disconnect();
- 
+  
   void setPort(int);
   void setIp(std::string);
   void setPseudo(std::string pseudo);
   
  private:
-  int layer;
   void update(sf::Time frametime);
   void draw();
 
-  std::string pseudo;  
-  sf::RenderTexture *worldDisplay;
-  Mouse *mouse;  
-  Ticker *ticker;
-  bool running;
+  int _layer;
+  std::string _pseudo;  
+  sf::RenderTexture *_world_display;
+  Mouse *_mouse;  
+  Ticker *_ticker;
+  bool _running;
 
   void handleEvent(sf::Event event);
   void handlePacket(sf::Packet p);
@@ -56,25 +56,26 @@ class Client : public Screen{
   void send(Packet* p);
 
   void updateView();
-  float zoom;
-  int cubeType;
-  CubeDisplay* displayCube;
-  ChatBox* _chat_box;
-  Renderer* renderer;
-  
-  World *world;  
 
-  bool addCube;
-  bool removeCube;
-  bool mainMenu;
-  Player *player;
-  LayerDisplay * layerDisplay;
-  int port;
-  std::string ip;
-  ENetHost* client;
-  ENetPeer* server;
-  bool connected;
-  int id;
+  float _zoom;
+  int _cube_type;
+  CubeDisplay* _display_cube;
+  ChatBox* _chat_box;
+  Renderer* _renderer;
+  
+  World* _world;  
+
+  bool _add_cube;
+  bool _remove_cube;
+  bool _main_menu;
+  Player* _player;
+  LayerDisplay* _layer_display;
+  int _port;
+  std::string _ip;
+  ENetHost* _client;
+  ENetPeer* _server;
+  bool _connected;
+  int _id;
 
   bool _has_focus;
 };

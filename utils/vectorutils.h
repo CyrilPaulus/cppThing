@@ -5,8 +5,8 @@
 
 class VectorUtils{
  public:
-  static float Distance(sf::Vector2f, sf::Vector2f);
-  static sf::Vector2f Normalize(sf::Vector2f);
+  static float distance(sf::Vector2f, sf::Vector2f);
+  static sf::Vector2f normalize(sf::Vector2f);
 };
 
 
