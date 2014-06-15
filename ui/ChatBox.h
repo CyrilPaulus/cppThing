@@ -30,6 +30,8 @@ private:
   bool _active;
   bool _first;
   sf::Clock _clock;
+  sf::Clock _underClock;
+  bool _displayUnderscore;
   sf::Time _fade_time;
 };
 

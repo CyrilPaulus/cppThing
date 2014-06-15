@@ -9,6 +9,12 @@ ChatBox::ChatBox() : UiElement() {
 }
 
 void ChatBox::Draw(sf::RenderTarget* rt) {
+  sf::Time cur = _underClock.getElapsedTime();
+  if(cur.asSeconds() > 0.5) {
+    _underClock.restart();
+    _displayUnderscore = ! _displayUnderscore;
+  }
+    
   
   if(!_active && _clock.getElapsedTime() > _fade_time) {
     return;
@@ -21,7 +27,11 @@ void ChatBox::Draw(sf::RenderTarget* rt) {
   }
 
   if(_active) {
-    sf::Text text = sf::Text(_typing_msg + "_", _textFont, 15);
+    sf::Text text;
+    if(_displayUnderscore)
+      text = sf::Text(_typing_msg + "_", _textFont, 15);
+    else
+      text = sf::Text(_typing_msg, _textFont, 15);
     text.setPosition(_position - sf::Vector2f(0, _textFont.getLineSpacing(15)));
     rt->draw(text);
   }
