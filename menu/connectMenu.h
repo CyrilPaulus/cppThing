@@ -6,6 +6,7 @@
 #include "../screen.h"
 #include "../game.h"
 #include "../ui/menuItem.h"
+#include "../ui/menuTextInput.h"
 #include "../Renderer.h"
 
 class ConnectMenu : public Screen {
@@ -25,7 +26,8 @@ class ConnectMenu : public Screen {
   int onKeyPressed(sf::Event e);
   void onMouseMoved(sf::Event e);
   int onMouseButtonReleased(sf::Event e);
-  
+  MenuTextInput* ipInput;
+
   //TODO Remove
   Renderer* r;
 };

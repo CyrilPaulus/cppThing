@@ -89,7 +89,8 @@ int MainMenu::run() {
                 , _window->getSize().y - pImage->getSize().y));
         _window->draw(pSprite);
         for (unsigned int i = 0; i < items.size(); i++) {
-            items[i]->Draw(_window, i == selectedItem);
+	  items[i]->Draw(_window);
+	  items[i]->SetActive(i == selectedItem);
         }
         mouse->draw(_window);
         _window->display();
@@ -100,6 +101,11 @@ int MainMenu::run() {
 }
 
 int MainMenu::handleEvent(sf::Event event) {
+  for (unsigned int i = 0; i < items.size(); i++) {
+    if(items[i]->HandleEvent(event))
+      return Screen::NONE;
+  }
+
     switch (event.type) {
         case sf::Event::Closed:
             return Screen::EXIT;

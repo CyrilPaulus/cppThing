@@ -8,15 +8,17 @@ class MenuItem {
  public:
   MenuItem(sf::String item, sf::Vector2f position, int (*action)(void));
   int DoAction();
-  void Draw(sf::RenderTarget *rt, bool selected);
+  virtual void Draw(sf::RenderTarget *rt);
   sf::FloatRect GetBbox();
-  void CenterX(int width);
-    
- private:
+  virtual void CenterX(int width);
+  void SetActive(bool active);
+  virtual bool HandleEvent(sf::Event e);
+ protected:
   sf::Font textFont;
   sf::Vector2f position;
   sf::Text itemText;
   int (*action)(void);
+  bool active;  
 };
 
 #endif /* _MENUITEM_H_ */

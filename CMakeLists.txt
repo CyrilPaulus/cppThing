@@ -42,6 +42,7 @@ add_library(Core
   ui/cubeDisplay.cpp	
   ui/layerDisplay.cpp  
   ui/menuItem.cpp  
+  ui/menuTextInput.cpp
   ui/uiElement.cpp
   ui/ChatBox.cpp
   menu/mainMenu.cpp

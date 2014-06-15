@@ -63,7 +63,7 @@ void Game::runClient() {
 
   MainMenu* main = new MainMenu(_window, _image_manager, this);
   ConnectMenu* connect = new ConnectMenu(_window, _image_manager, this);
-  Screen* screens[6];
+ 
   int screen = 1;
   screens[Screen::GAME] = _c;
   screens[Screen::MAINMENU] = main;
@@ -92,7 +92,9 @@ void Game::startServer() {
  
   _server_thread = new sf::Thread(&startServerThread, _s);
   
+  _s->setPort(_port);
   _s->init();
+  
   _server_thread->launch();
   _server_running = true;
 }
@@ -117,6 +119,35 @@ void Game::setIp(std::string ip){
 
 void Game::setPort(int port){
   _port = port;
+}
+
+void Game::connect(std::string ip) {
+  //First try to split ip and port
+  size_t found = ip.find(":");
+  if(found != std::string::npos) {
+    setIp(ip.substr(0, found));
+    std::cout << _ip << std::endl;
+    int port = atoi(ip.substr(found+1, ip.size() - found).c_str());
+    setPort(port);    
+  } else {
+    setIp(ip);
+    setPort(50645);
+  }
+
+  if(_c != NULL) {
+    delete _c;
+    _c = NULL;
+  }
+
+  _c = new Client(_window, _image_manager);
+  _c->setIp(_ip);
+  _c->setPort(_port);
+  _c->setPseudo(_pseudo);
+
+  screens[Screen::GAME] = _c;  
+  _c->connect();
+
+
 }
 
 Client* Game::getClient() {

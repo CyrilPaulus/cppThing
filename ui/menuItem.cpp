@@ -1,4 +1,5 @@
 #include "menuItem.h"
+#include "../screen.h"
 #include "../config.h"
 
 MenuItem::MenuItem(sf::String item, sf::Vector2f position, int (*action)(void)) {
@@ -8,14 +9,17 @@ MenuItem::MenuItem(sf::String item, sf::Vector2f position, int (*action)(void)) 
   this->textFont.loadFromFile("res/arial.ttf");
   this->itemText = sf::Text(item, textFont);
   this->itemText.setPosition(position);
+  this->active = false;
 }
 
 int MenuItem::DoAction() {
-  return this->action();
+  if(action != NULL)
+    return this->action();
+  return Screen::NONE;
 }
 
-void MenuItem::Draw(sf::RenderTarget *rt, bool selected) {
-  if(selected)
+void MenuItem::Draw(sf::RenderTarget *rt) {
+  if(active)
     itemText.setColor(sf::Color(255, 201, 14));
   else
     itemText.setColor(sf::Color(255, 255, 255));
@@ -31,3 +35,10 @@ void MenuItem::CenterX(int width) {
   itemText.setPosition(position);
 }
 
+void MenuItem::SetActive(bool active) {
+  this->active = active;
+}
+
+bool MenuItem::HandleEvent(sf::Event e) {
+  return false;
+}

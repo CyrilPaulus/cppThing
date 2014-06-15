@@ -13,6 +13,7 @@ UiElement::~UiElement() {
 }
 
 void UiElement::Draw(sf::RenderTarget *rt) {
+
 }
 
 void UiElement::SetPosition(sf::Vector2f pos) {

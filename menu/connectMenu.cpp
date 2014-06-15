@@ -1,8 +1,11 @@
 #include "connectMenu.h"
 #include "../config.h"
 
+//TODO: UBER DIRTY
+#define ACTION_CONNECT 15
+
 int ConnectMenu_Connect() {
-  return Screen::GAME;
+  return ACTION_CONNECT;
 }
 
 int ConnectMenu_Cancel() {
@@ -10,16 +13,22 @@ int ConnectMenu_Cancel() {
 }
 
 ConnectMenu::ConnectMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(w, img) {
+ 
     r = new Renderer(img);
     mouse = new Mouse(w, w, img);
-    items.push_back(new MenuItem("Connect", sf::Vector2f(0, 130), &ConnectMenu_Connect));
-    items.push_back(new MenuItem("Cancel", sf::Vector2f(0, 160), &ConnectMenu_Cancel));
+    
+    
+    ipInput = new MenuTextInput("Ip", sf::Vector2f(0, 130), NULL);
+    items.push_back(ipInput);
+    items.push_back(new MenuItem("Connect", sf::Vector2f(0, 190), &ConnectMenu_Connect));
+    items.push_back(new MenuItem("Cancel", sf::Vector2f(0, 220), &ConnectMenu_Cancel));
 
     selectedItem = 0;
 
     for (unsigned int i = 0; i < items.size(); i++)
         items[i]->CenterX(_window->getSize().x);
     running = true;
+    this->game = game;
 }
 
 ConnectMenu::~ConnectMenu() {
@@ -44,7 +53,9 @@ int ConnectMenu::run() {
     _window->clear(sf::Color(100, 149, 237));
     
     for (unsigned int i = 0; i < items.size(); i++) {
-      items[i]->Draw(_window, i == selectedItem);
+      items[i]->Draw(_window);
+      items[i]->SetActive(i == selectedItem);
+      items[i]->CenterX(_window->getSize().x);
     }
     mouse->draw(_window);
     _window->display();
@@ -54,6 +65,11 @@ int ConnectMenu::run() {
 }
 
 int ConnectMenu::handleEvent(sf::Event event) {
+  for (unsigned int i = 0; i < items.size(); i++) {
+    if(items[i]->HandleEvent(event))
+      return Screen::NONE;
+  }
+
     switch (event.type) {
         case sf::Event::Closed:
             return Screen::EXIT;
@@ -61,7 +77,7 @@ int ConnectMenu::handleEvent(sf::Event event) {
         case sf::Event::KeyPressed:
             return onKeyPressed(event);
             break;
-        case sf::Event::Resized:
+        case sf::Event::Resized: 
             this->resize(event.size.width, event.size.height);
             return Screen::NONE;
             break;
@@ -88,9 +104,15 @@ int ConnectMenu::onKeyPressed(sf::Event event) {
     selectedItem = (selectedItem + 1) % items.size();
     return Screen::NONE;
     break;
-  case sf::Keyboard::Return:
-    return items[selectedItem]->DoAction();
+  case sf::Keyboard::Return:{
+    int rtn = items[selectedItem]->DoAction();    
+    if(rtn == ACTION_CONNECT) {
+      game->connect(ipInput->GetText());
+      rtn = Screen::GAME;
+    }
+    return rtn;
     break;
+  }
   case sf::Keyboard::Escape:
     return Screen::GAME;
     break;

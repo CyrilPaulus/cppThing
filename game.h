@@ -24,7 +24,7 @@ class Game {
   void setIp(std::string ip);
   void setPort(int port);
   void setPseudo(std::string pseudo);
- 
+  void connect(std::string ip);
 
  private:
   sf::Thread* _server_thread;
@@ -44,6 +44,8 @@ class Game {
   void startServer();
   void stopServer();
   void runLocal();
+
+  Screen* screens[6];
 };
 
 #endif /* _GAME_H_ */
