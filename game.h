@@ -25,6 +25,7 @@ class Game {
   void setPort(int port);
   void setPseudo(std::string pseudo);
   void connect(std::string ip);
+  std::string getIpStr();
 
  private:
   sf::Thread* _server_thread;

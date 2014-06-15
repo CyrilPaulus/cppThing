@@ -56,3 +56,7 @@ void MenuTextInput::CenterX(int width) {
 std::string MenuTextInput::GetText() {
   return _input.toAnsiString();
 }
+
+void MenuTextInput::SetText(std::string text) {
+  _input = sf::String(text);
+}

@@ -161,3 +161,9 @@ Server* Game::getServer() {
 void Game::setPseudo(std::string p) {
   _pseudo = p;
 }
+
+std::string Game::getIpStr() {
+  std::stringstream ss;
+  ss << _ip << ":" << _port;
+  return ss.str();
+}

@@ -40,6 +40,10 @@ ConnectMenu::~ConnectMenu() {
 
 int ConnectMenu::run() {
   resize(_window->getSize().x, _window->getSize().y);
+
+  //Set ip to cur ip
+  ipInput->SetText(game->getIpStr());
+
   sf::Event event;
   while (running) {
     while (_window->pollEvent(event)) {

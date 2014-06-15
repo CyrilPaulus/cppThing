@@ -10,6 +10,7 @@ class MenuTextInput : public MenuItem {
     void Draw(sf::RenderTarget *rt);
     void CenterX(int width);
     std::string GetText();
+    void SetText(std::string text);
 
  private:
     sf::String _input;
