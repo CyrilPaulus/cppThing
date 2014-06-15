@@ -31,7 +31,14 @@ class Client : public Screen{
   void setPort(int);
   void setIp(std::string);
   void setPseudo(std::string pseudo);
-  
+  void setColor(sf::Vector3i color);
+  void UpdatePlayer(std::string name, sf::Vector3i color);
+  void UpdateThread();
+  void StartThread();
+  void StopThread();
+
+  std::string getPseudo();
+  sf::Vector3i getColor();
  private:
   void update(sf::Time frametime);
   void draw();
@@ -78,6 +85,10 @@ class Client : public Screen{
   int _id;
 
   bool _has_focus;
+  bool _runningThread;
+  sf::Thread _thread;
+
+  Input input;
 };
 
 #endif /* _CLIENT_H_ */

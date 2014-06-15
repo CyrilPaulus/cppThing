@@ -35,6 +35,7 @@ add_library(Core
   network/NetworkClient.cpp  
   network/PlayerDelete.cpp	
   network/TextMessage.cpp
+  network/UpdatePlayerInfo.cpp
   entity/cube.cpp
   entity/entity.cpp 
   entity/player.cpp 
@@ -47,6 +48,7 @@ add_library(Core
   ui/ChatBox.cpp
   menu/mainMenu.cpp
   menu/connectMenu.cpp
+  menu/optionMenu.cpp
   mouse.cpp
   config.cpp
   screen.cpp

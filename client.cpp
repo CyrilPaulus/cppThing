@@ -10,10 +10,11 @@
 #include "network/PlayerDelete.h"
 #include "network/PlayerUpdate.h"
 #include "network/TextMessage.h"
+#include "network/UpdatePlayerInfo.h"
 
 #include <glog/logging.h>
 
-Client::Client(sf::RenderWindow *window, ImageManager *image_manager) : Screen(window, image_manager) {
+Client::Client(sf::RenderWindow *window, ImageManager *image_manager) : Screen(window, image_manager), _thread(&Client::UpdateThread, this) {
   
   _ticker = new Ticker();
   _ticker->setUpdateRate(GameConstant::UPDATE_RATE);
@@ -85,29 +86,58 @@ int Client::run(){
   _running = true;
   sf::Event event;
   while(_running) {
+
     while(_window->pollEvent(event)) {
       handleEvent(event);
-    }
-    
+    }    
+
     if(_main_menu){
       _main_menu = false;
+      _running = false;
       return Screen::MAINMENU;
     }
+
+
+    //Update input there, otherwise it crash...
+    input.Left = _running && sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && _has_focus;
+    input.Right =  _running && sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && _has_focus;
+    input.Up =  _running && sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && _has_focus;
+    input.Down =  _running && sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && _has_focus;
+
+
+    sf::sleep(sf::seconds(0.01));
     
+    _mouse->update();         
+    draw();
+  }
+  if(_connected)
+    disconnect();
+  return -1;
+}
+
+
+void Client::StartThread() {
+  _runningThread = true; 
+  _thread.launch();
+}
+
+void Client::StopThread() {
+  _runningThread = false;
+  _thread.wait();
+}
+
+void Client::UpdateThread() {
+       
+  while(_runningThread) {
+
     if(_ticker->tick()){
       update(_ticker->getElapsedTime());
     }else {
       sf::sleep(sf::seconds(0.01));
     }
-    
-    _mouse->update();
-    
-    draw();
-    
+ 
   }
-  if(_connected)
-    disconnect();
-  return -1;
+  
 }
 
 void Client::handleEvent(sf::Event event) {
@@ -259,12 +289,6 @@ void Client::update(sf::Time frametime) {
     sendReliable(&cu);
   }
   
-  Input input;
-  input.Left = sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && _has_focus;
-  input.Right = sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && _has_focus;
-  input.Up = sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && _has_focus;
-  input.Down = sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && _has_focus;
-  
   _world->update();
   _player->update(frametime, input);
   if(_player != NULL) {
@@ -282,7 +306,7 @@ void Client::update(sf::Time frametime) {
     TextMessage tm;
     tm.setMessage(_chat_box->popPendingMsg());
     sendReliable(&tm);
-  }
+    }
 }
 
 void Client::draw() {
@@ -444,6 +468,14 @@ void Client::handlePacket(sf::Packet p) {
     tm.decode(p);
     _chat_box->addMessage(tm.getMessage());
     break;
+  }
+  case Packet::UpdatePlayerInfo: {
+    UpdatePlayerInfo ap;
+    ap.decode(p);
+    Player* p = _world->getPlayerById(ap.getId());
+    p->setColor(ap.getColor());
+    p->setPseudo(ap.getPseudo());
+    break;
   }    
   default: 
     break;
@@ -453,4 +485,26 @@ void Client::handlePacket(sf::Packet p) {
 void Client::setPseudo(std::string p) {
   _pseudo = p;
   _player->setPseudo(p);
+}
+
+std::string Client::getPseudo() {
+  return _player->getPseudo();
+}
+
+sf::Vector3i Client::getColor() {
+  return _player->getColor();
+}
+
+void Client::setColor(sf::Vector3i color) {
+  _player->setColor(color);
+}
+
+
+void Client::UpdatePlayer(std::string name, sf::Vector3i color) {
+
+  UpdatePlayerInfo pa;
+  pa.setColor(color);
+  pa.setPseudo(name);
+  pa.setId(_id);
+  sendReliable(&pa);
 }

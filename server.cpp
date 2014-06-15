@@ -11,6 +11,7 @@
 #include "network/PlayerDelete.h"
 #include "network/PlayerUpdate.h"
 #include "network/TextMessage.h"
+#include "network/UpdatePlayerInfo.h"
 
 #include <glog/logging.h>
 
@@ -171,6 +172,20 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     broadcast(&tm);
     break;
   }
+
+  case Packet::UpdatePlayerInfo: {
+    UpdatePlayerInfo pa;
+    pa.decode(p);
+    NetworkClient *c = getClientByPeer(peer);
+    Player* p = c->getPlayer();
+    p->setColor(pa.getColor());
+    p->setPseudo(getUniquePseudo(pa.getPseudo()));
+    pa.setId(c->getId());
+    pa.setPseudo(p->getPseudo());
+    broadcastReliable(&pa);
+    break;
+  }
+
   default: 
     break;
   }

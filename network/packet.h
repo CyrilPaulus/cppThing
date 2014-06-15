@@ -13,6 +13,7 @@ class Packet{
   static const sf::Uint8 DeletePlayer = 5;
   static const sf::Uint8 UpdatePlayer = 6;
   static const sf::Uint8 TextMessage = 7;
+  static const sf::Uint8 UpdatePlayerInfo = 8;
 
   virtual sf::Packet encode();
   

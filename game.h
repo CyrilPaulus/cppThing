@@ -24,6 +24,9 @@ class Game {
   void setIp(std::string ip);
   void setPort(int port);
   void setPseudo(std::string pseudo);
+  void UpdatePlayerInfo(std::string name, sf::Vector3i color);
+  std::string getPseudo();
+  sf::Vector3i getColor();
   void connect(std::string ip);
   std::string getIpStr();
 

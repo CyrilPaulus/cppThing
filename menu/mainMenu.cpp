@@ -10,7 +10,7 @@ int Connect() {
 }
 
 int Option() {
-    return Screen::NONE;
+    return Screen::OPTION;
 }
 
 int LoadMap() {

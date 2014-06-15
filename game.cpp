@@ -9,6 +9,7 @@
 #include "entity/cube.h"
 #include "menu/mainMenu.h"
 #include "menu/connectMenu.h"
+#include "menu/optionMenu.h"
 
 #include <map>
 
@@ -58,19 +59,23 @@ void Game::runClient() {
   _c->setIp(_ip);
   _c->setPort(_port);
   _c->setPseudo(_pseudo);
-  
+
   _c->connect();
+  _c->StartThread();
 
   MainMenu* main = new MainMenu(_window, _image_manager, this);
   ConnectMenu* connect = new ConnectMenu(_window, _image_manager, this);
- 
+  OptionMenu* option = new OptionMenu(_window, _image_manager, this);
+
   int screen = 1;
   screens[Screen::GAME] = _c;
   screens[Screen::MAINMENU] = main;
   screens[Screen::CONNECT] = connect;
+  screens[Screen::OPTION] = option;
   while (screen != Screen::EXIT) {
     screen = screens[screen]->run();
   }
+  _c->StopThread();
   delete _c;
   delete main;
 }
@@ -135,6 +140,7 @@ void Game::connect(std::string ip) {
   }
 
   if(_c != NULL) {
+    _c->StopThread();
     delete _c;
     _c = NULL;
   }
@@ -146,6 +152,7 @@ void Game::connect(std::string ip) {
 
   screens[Screen::GAME] = _c;  
   _c->connect();
+  _c->StartThread();
 
 
 }
@@ -167,3 +174,16 @@ std::string Game::getIpStr() {
   ss << _ip << ":" << _port;
   return ss.str();
 }
+
+std::string Game::getPseudo() {
+  return _c->getPseudo();
+}
+
+sf::Vector3i Game::getColor() {
+  return _c->getColor();
+}
+
+void Game::UpdatePlayerInfo(std::string name, sf::Vector3i color) {
+  _c->UpdatePlayer(name, color);
+}
+
