@@ -179,7 +179,8 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     NetworkClient *c = getClientByPeer(peer);
     Player* p = c->getPlayer();
     p->setColor(pa.getColor());
-    p->setPseudo(getUniquePseudo(pa.getPseudo()));
+    if(pa.getPseudo() != p->getPseudo())
+      p->setPseudo(getUniquePseudo(pa.getPseudo()));
     pa.setId(c->getId());
     pa.setPseudo(p->getPseudo());
     broadcastReliable(&pa);

@@ -28,7 +28,7 @@ int Exit() {
 MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(w, img) {
     r = new Renderer(img);
     mouse = new Mouse(w, w, img);
-    items.push_back(new MenuItem("Local Game", sf::Vector2f(0, 100), &LocalGame));
+    
     items.push_back(new MenuItem("Connect", sf::Vector2f(0, 130), &Connect));
     items.push_back(new MenuItem("Options", sf::Vector2f(0, 160), &Option));
 
@@ -37,7 +37,8 @@ MainMenu::MainMenu(sf::RenderWindow* w, ImageManager* img, Game* game) : Screen(
       items.push_back(new MenuItem("Save Map", sf::Vector2f(0, 220), &SaveMap));
     }
 
-    items.push_back(new MenuItem("Exit", sf::Vector2f(0, 280), &Exit));
+    items.push_back(new MenuItem("Return to Game", sf::Vector2f(0,280), &LocalGame));
+    items.push_back(new MenuItem("Exit", sf::Vector2f(0, 320), &Exit));
     selectedItem = 0;
 
     for (unsigned int i = 0; i < items.size(); i++)
