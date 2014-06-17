@@ -12,8 +12,6 @@
 #include "network/TextMessage.h"
 #include "network/UpdatePlayerInfo.h"
 
-#include <glog/logging.h>
-
 Client::Client(sf::RenderWindow *window, ImageManager *image_manager) : Screen(window, image_manager), _thread(&Client::UpdateThread, this) {
   
   _ticker = new Ticker();

@@ -13,8 +13,6 @@
 #include "network/TextMessage.h"
 #include "network/UpdatePlayerInfo.h"
 
-#include <glog/logging.h>
-
 Server::Server() {
   _world = new World(true);
   _running = false;
