@@ -42,6 +42,8 @@ class Client : public Screen{
  private:
   void update(sf::Time frametime);
   void draw();
+  void drawConnecting();
+  void drawNotConnected();
 
   int _layer;
   std::string _pseudo;  
@@ -88,7 +90,15 @@ class Client : public Screen{
   bool _runningThread;
   sf::Thread _thread;
 
+  bool _connecting;
+  float _connectTime;
+
+  sf::Font _connectFont;
+  sf::Text _connectText;
+  sf::Text _notConnectText;
+
   Input input;
+  static const float CONNECT_TIME_OUT = 20;
 };
 
 #endif /* _CLIENT_H_ */

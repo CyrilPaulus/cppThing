@@ -65,6 +65,13 @@ Client::Client(sf::RenderWindow *window, ImageManager *image_manager) : Screen(w
   _server = NULL;
   _connected = false;
   _has_focus = true;
+
+  _connecting = false;
+  _connectTime = 0;
+
+  _connectFont.loadFromFile("res/arial.ttf");
+  _connectText= sf::Text("Connecting...", _connectFont);
+  _notConnectText = sf::Text("Not connected...\nPress ESC for main menu.", _connectFont);
 }
 
 Client::~Client(){
@@ -249,7 +256,15 @@ void Client::onMouseWheelMoved(sf::Event event) {
 
 
 void Client::update(sf::Time frametime) {
-  
+
+  if (_connecting) {
+    _connectTime += frametime.asSeconds();
+    if (_connectTime > CONNECT_TIME_OUT) {
+      _connecting = false;
+      _connected = false;
+    }    
+  }
+
   if(_server != NULL) {
     ENetEvent event;
     while(enet_host_service(_client, &event, 0) > 0) {
@@ -257,6 +272,7 @@ void Client::update(sf::Time frametime) {
       case ENET_EVENT_TYPE_CONNECT:{
 	LOG(INFO) << "Connection to server established";
 	_connected = true;
+	_connecting = false;
 	break;
       }
       case ENET_EVENT_TYPE_DISCONNECT:
@@ -307,7 +323,46 @@ void Client::update(sf::Time frametime) {
     }
 }
 
+void Client::drawConnecting() {
+  sf::Color clear_color(10, 10, 10);
+  _window->clear(clear_color);
+
+  
+  _connectText.setOrigin(_connectText.getLocalBounds().width /2, _connectText.getLocalBounds().height /2);
+  _connectText.setPosition(_window->getSize().x / 2, _window->getSize().y /2);
+  _connectText.setRotation(_connectTime / CONNECT_TIME_OUT * 360);
+  _window->draw(_connectText);
+
+  _mouse->draw(_window);
+  _window->display();
+}
+
+void Client::drawNotConnected() {
+  sf::Color clear_color(10, 10, 10);
+  _window->clear(clear_color);
+  
+
+  _notConnectText.setOrigin(_notConnectText.getLocalBounds().width /2, _notConnectText.getLocalBounds().height /2);
+  _notConnectText.setPosition(_window->getSize().x / 2, _window->getSize().y /2);
+  _window->draw(_notConnectText);
+
+  _mouse->draw(_window);
+  _window->display();
+}
+
 void Client::draw() {
+
+  if(_connecting) {
+    drawConnecting();
+    return;
+  }
+  
+  if(!_connected) {
+    drawNotConnected();
+    return;
+  }
+
+
   sf::Color clear_color(GameConstant::BackgroundColor.x, GameConstant::BackgroundColor.y, GameConstant::BackgroundColor.z);
   _window->clear(clear_color);
   
@@ -321,6 +376,7 @@ void Client::draw() {
   _layer_display->Draw(_window);
   _mouse->draw(_window);
   _window->display();
+
 }
 
 
@@ -356,7 +412,9 @@ void Client::send(Packet* p) {
 }
 
 void Client::connect() {
-  
+  _connected = false;
+  _connecting = true;
+  _connectTime = 0;
   //Connect to server
   ENetAddress address;
   enet_address_set_host(&address, _ip.c_str());
