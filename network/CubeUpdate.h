@@ -3,8 +3,9 @@
 
 #include "packet.h"
 
-class CubeUpdate : public Packet{
- public:
+class CubeUpdate : public Packet
+{
+public:
   CubeUpdate();
   CubeUpdate(int, sf::Vector2f, bool, int);
   //  void Encode(ZCom_BitStream *);
@@ -17,7 +18,7 @@ class CubeUpdate : public Packet{
   int GetCubeType();
   int GetLayer();
 
- private:
+private:
   int _layer;
   int _cube_type;
   sf::Vector2f _position;

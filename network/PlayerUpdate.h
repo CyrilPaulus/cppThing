@@ -2,10 +2,11 @@
 
 #include "packet.h"
 
-class PlayerUpdate : public Packet{
- public:
+class PlayerUpdate : public Packet
+{
+public:
   PlayerUpdate();
-  
+
   virtual sf::Packet encode();
   void decode(sf::Packet p);
 
@@ -16,9 +17,9 @@ class PlayerUpdate : public Packet{
 
   sf::Vector2f getPosition();
   sf::Vector2f getEyePosition();
- private:
+
+private:
   sf::Uint8 _id;
   sf::Vector2f _position;
   sf::Vector2f _eye_position;
 };
-

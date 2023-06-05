@@ -1,25 +1,30 @@
 #include "uiElement.h"
 #include "../config.h"
 
-UiElement::UiElement() {
+UiElement::UiElement()
+{
   _position = sf::Vector2f(0, 0);
 }
 
-UiElement::UiElement(ImageManager *imageManager) {
+UiElement::UiElement(ImageManager *imageManager)
+{
   _position = sf::Vector2f(0, 0);
 }
 
-UiElement::~UiElement() {
+UiElement::~UiElement()
+{
 }
 
-void UiElement::Draw(sf::RenderTarget *rt) {
-
+void UiElement::Draw(sf::RenderTarget *rt)
+{
 }
 
-void UiElement::SetPosition(sf::Vector2f pos) {
-  _position = pos;  
+void UiElement::SetPosition(sf::Vector2f pos)
+{
+  _position = pos;
 }
 
-sf::Vector2f UiElement::GetPosition() {
+sf::Vector2f UiElement::GetPosition()
+{
   return _position;
-} 
+}

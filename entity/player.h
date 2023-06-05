@@ -8,27 +8,29 @@
 
 class World;
 
-class Player : public Entity {
- public:
-  Player(World*);
+class Player : public Entity
+{
+public:
+  Player(World *);
   virtual ~Player();
- 
+
   void setEyesPosition(sf::Vector2f);
   void update(sf::Time frametime, Input);
   void setColor(sf::Vector3i);
   sf::Vector3i getColor();
-  
+
   void setId(int);
   int getId();
-  
+
   void setPseudo(std::string pseudo);
   std::string getPseudo();
-  
+
   sf::Vector2f getLeftPupilPosition();
   sf::Vector2f getRightPupilPosition();
- private:
-  World* _world;
-  
+
+private:
+  World *_world;
+
   bool _noclip;
   bool _is_flying;
 
@@ -45,7 +47,7 @@ class Player : public Entity {
   sf::Vector2f _velocity;
   sf::Vector2f _acceleration;
   sf::Vector3i _color;
-  
+
   int _id;
   std::string _pseudo;
 };

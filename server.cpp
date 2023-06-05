@@ -13,7 +13,8 @@
 #include "network/TextMessage.h"
 #include "network/UpdatePlayerInfo.h"
 
-Server::Server() {
+Server::Server()
+{
   _world = new World(true);
   _running = false;
   _ticker = new Ticker();
@@ -24,58 +25,66 @@ Server::Server() {
   _server = NULL;
 }
 
-Server::~Server() {
+Server::~Server()
+{
   delete _world;
   delete _ticker;
 }
 
-void Server::run() {
+void Server::run()
+{
   _running = true;
-  
-  if(enet_initialize() != 0) {
+
+  if (enet_initialize() != 0)
+  {
     throw std::runtime_error("ENet initialization failed");
   }
-  
+
   ENetAddress address;
   address.host = ENET_HOST_ANY;
   address.port = _port;
   _server = enet_host_create(&address, _max_client, 2, 0, 0);
-  
-  if(_server == NULL) {
+
+  if (_server == NULL)
+  {
     throw std::runtime_error("ENet server initialization failed");
   }
-  
+
   LOG(INFO) << "Server started";
-  
-  if(!_world->load("world.map"))
-    _world->addCube(sf::Vector2f(0,90), 1, 1);
-  
-  while(_running) {
-    //Manage network events
+
+  if (!_world->load("world.map"))
+    _world->addCube(sf::Vector2f(0, 90), 1, 1);
+
+  while (_running)
+  {
+    // Manage network events
     ENetEvent event;
-    while(enet_host_service(_server, &event, 0) > 0) {
-      switch(event.type) {
+    while (enet_host_service(_server, &event, 0) > 0)
+    {
+      switch (event.type)
+      {
       case ENET_EVENT_TYPE_CONNECT:
-	addClient(event.peer);
-	break;
-      case ENET_EVENT_TYPE_RECEIVE:{
-	sf::Packet p;
-	p.append(event.packet->data, event.packet->dataLength);
-	handlePacket(p, event.peer);
-	enet_packet_destroy(event.packet);
-	break;
+        addClient(event.peer);
+        break;
+      case ENET_EVENT_TYPE_RECEIVE:
+      {
+        sf::Packet p;
+        p.append(event.packet->data, event.packet->dataLength);
+        handlePacket(p, event.peer);
+        enet_packet_destroy(event.packet);
+        break;
       }
       case ENET_EVENT_TYPE_DISCONNECT:
-	removeClient(event.peer->address.host, event.peer->address.port);
-	break;
+        removeClient(event.peer->address.host, event.peer->address.port);
+        break;
       default:
-	break;
+        break;
       }
     }
-    
-    if(_ticker->tick())
+
+    if (_ticker->tick())
       update(_ticker->getElapsedTime());
-   
+
     sf::sleep(sf::seconds(0.01f));
   }
   _world->save("world.map");
@@ -84,8 +93,9 @@ void Server::run() {
   LOG(INFO) << "Server finished";
 }
 
-void Server::addClient(ENetPeer* peer) {
-  NetworkClient* c = new NetworkClient(_last_client_id, peer);
+void Server::addClient(ENetPeer *peer)
+{
+  NetworkClient *c = new NetworkClient(_last_client_id, peer);
   _clients.push_back(c);
   LOG(INFO) << "Client connected to server: " << c->getId();
   _last_client_id++;
@@ -94,58 +104,70 @@ void Server::addClient(ENetPeer* peer) {
   sendReliable(peer, &ct);
 }
 
-void Server::removeClient(unsigned int ip, unsigned int port) {
-  std::list<NetworkClient*>::iterator it;
-  for(it = _clients.begin(); it != _clients.end(); it++) {
-    if((*it)->getIp() == ip && (*it)->getPort() == port) {
+void Server::removeClient(unsigned int ip, unsigned int port)
+{
+  std::list<NetworkClient *>::iterator it;
+  for (it = _clients.begin(); it != _clients.end(); it++)
+  {
+    if ((*it)->getIp() == ip && (*it)->getPort() == port)
+    {
       LOG(INFO) << "Client disconnected from server: " << (*it)->getId();
       _client_names.erase((*it)->getPlayer()->getPseudo());
       PlayerDelete dp;
       dp.setId((*it)->getId());
       broadcastReliable(&dp);
-      delete(*it);
+      delete (*it);
       _clients.erase(it);
       break;
     }
   }
 }
 
-void Server::stop() {
+void Server::stop()
+{
   LOG(INFO) << "Closing server...";
   _running = false;
 }
 
-void Server::update(sf::Time frametime) {
-  
+void Server::update(sf::Time frametime)
+{
+
   _world->updatePlayer(frametime, Input());
 }
 
-void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
+void Server::handlePacket(sf::Packet p, ENetPeer *peer)
+{
   sf::Uint8 type;
   p >> type;
-  switch(type) {
-  case Packet::CubeUpdate:{
+  switch (type)
+  {
+  case Packet::CubeUpdate:
+  {
     CubeUpdate cu;
     cu.decode(p);
-    if(cu.GetAdded() && _world->canAddCube(cu.GetPosition(), cu.GetLayer())) {
+    if (cu.GetAdded() && _world->canAddCube(cu.GetPosition(), cu.GetLayer()))
+    {
       _world->addCube(cu.GetPosition(), cu.GetCubeType(), cu.GetLayer());
       broadcastReliable(&cu);
     }
-    else if(!cu.GetAdded() && _world->canRemoveCube(cu.GetPosition(), cu.GetLayer())) {
+    else if (!cu.GetAdded() && _world->canRemoveCube(cu.GetPosition(), cu.GetLayer()))
+    {
       _world->removeCube(cu.GetPosition(), cu.GetLayer());
       broadcastReliable(&cu);
     }
     break;
   }
-  case Packet::UserMessage:{
+  case Packet::UserMessage:
+  {
     break;
   }
-    //Used to validate client connection
-  case Packet::AddPlayer: {
+    // Used to validate client connection
+  case Packet::AddPlayer:
+  {
     PlayerAdd pa;
     pa.decode(p);
     NetworkClient *c = getClientByPeer(peer);
-    Player* p = new Player(_world);
+    Player *p = new Player(_world);
     p->setColor(pa.getColor());
     p->setPseudo(getUniquePseudo(pa.getPseudo()));
     p->setId(pa.getId());
@@ -155,13 +177,15 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     broadcastReliable(&pa);
     break;
   }
-  case Packet::UpdatePlayer:{
+  case Packet::UpdatePlayer:
+  {
     PlayerUpdate up;
     up.decode(p);
     broadcast(&up);
     break;
   }
-  case Packet::TextMessage:{
+  case Packet::TextMessage:
+  {
     NetworkClient *c = getClientByPeer(peer);
     TextMessage tm;
     tm.decode(p);
@@ -171,14 +195,15 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     break;
   }
 
-  case Packet::UpdatePlayerInfo: {
+  case Packet::UpdatePlayerInfo:
+  {
     UpdatePlayerInfo pa;
     pa.decode(p);
     NetworkClient *c = getClientByPeer(peer);
-    Player* p = c->getPlayer();
+    Player *p = c->getPlayer();
     p->setColor(pa.getColor());
     _client_names.erase(p->getPseudo());
-    if(pa.getPseudo() != p->getPseudo()) 
+    if (pa.getPseudo() != p->getPseudo())
       p->setPseudo(getUniquePseudo(pa.getPseudo()));
     _client_names.insert(p->getPseudo());
     pa.setId(c->getId());
@@ -187,50 +212,60 @@ void Server::handlePacket(sf::Packet p, ENetPeer* peer) {
     break;
   }
 
-  default: 
+  default:
     break;
   }
 }
 
-void Server::init(){
+void Server::init()
+{
 }
 
-void Server::setPort(int port){
+void Server::setPort(int port)
+{
   _port = port;
 }
 
-void Server::broadcastReliable(Packet *p) {
+void Server::broadcastReliable(Packet *p)
+{
   sf::Packet data = p->encode();
-  ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
+  ENetPacket *packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
   enet_host_broadcast(_server, 0, packet);
 }
 
-void Server::broadcast(Packet *p) {
+void Server::broadcast(Packet *p)
+{
   sf::Packet data = p->encode();
-  ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), 0);
+  ENetPacket *packet = enet_packet_create(data.getData(), data.getDataSize(), 0);
   enet_host_broadcast(_server, 1, packet);
 }
 
-void Server::sendReliable(ENetPeer* peer, Packet *p) {
+void Server::sendReliable(ENetPeer *peer, Packet *p)
+{
   sf::Packet data = p->encode();
-  ENetPacket* packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
+  ENetPacket *packet = enet_packet_create(data.getData(), data.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
   enet_peer_send(peer, 0, packet);
 }
 
-void Server::sendFullWorldUpdate(ENetPeer* peer) {
-  for(int i = 0; i < GameConstant::LAYERNBR; i++) {
-    std::list<Cube*> layer = _world->getList(i);
-    std::list<Cube*>::iterator it;
-    for(it = layer.begin(); it != layer.end(); it++) {
+void Server::sendFullWorldUpdate(ENetPeer *peer)
+{
+  for (int i = 0; i < GameConstant::LAYERNBR; i++)
+  {
+    std::list<Cube *> layer = _world->getList(i);
+    std::list<Cube *>::iterator it;
+    for (it = layer.begin(); it != layer.end(); it++)
+    {
       CubeUpdate cu((*it)->getType(), (*it)->getPosition(), true, i);
       sendReliable(peer, &cu);
     }
   }
-  
+
   NetworkClient *c = getClientByPeer(peer);
-  std::list<NetworkClient*>::iterator it;
-  for(it = _clients.begin(); it != _clients.end(); it++) {
-    if((*it)->getPlayer() != NULL && (*it) != c) {
+  std::list<NetworkClient *>::iterator it;
+  for (it = _clients.begin(); it != _clients.end(); it++)
+  {
+    if ((*it)->getPlayer() != NULL && (*it) != c)
+    {
       PlayerAdd ap;
       ap.setColor((*it)->getPlayer()->getColor());
       ap.setId((*it)->getId());
@@ -240,12 +275,15 @@ void Server::sendFullWorldUpdate(ENetPeer* peer) {
   }
 }
 
-NetworkClient* Server::getClientByPeer(ENetPeer* peer) {
+NetworkClient *Server::getClientByPeer(ENetPeer *peer)
+{
   unsigned int ip = peer->address.host;
   unsigned int port = peer->address.port;
-  std::list<NetworkClient*>::iterator it;
-  for(it = _clients.begin(); it != _clients.end(); it++) {
-    if((*it)->getIp() == ip && (*it)->getPort() == port) {
+  std::list<NetworkClient *>::iterator it;
+  for (it = _clients.begin(); it != _clients.end(); it++)
+  {
+    if ((*it)->getIp() == ip && (*it)->getPort() == port)
+    {
       return (*it);
       break;
     }
@@ -253,13 +291,16 @@ NetworkClient* Server::getClientByPeer(ENetPeer* peer) {
   return NULL;
 }
 
-std::string Server::getUniquePseudo(std::string pseudo) {
-  if(pseudo.compare("") == 0)
+std::string Server::getUniquePseudo(std::string pseudo)
+{
+  if (pseudo.compare("") == 0)
     pseudo = "Anon";
-  
+
   int i = 0;
   std::string candidate = pseudo;
-  while(_client_names.find(candidate) != _client_names.end()) {;
+  while (_client_names.find(candidate) != _client_names.end())
+  {
+    ;
     std::stringstream ss;
     ss << pseudo << " (" << i << ")";
     candidate = ss.str();

@@ -20,14 +20,15 @@
 #include "network/packet.h"
 #include "Renderer.h"
 
-class Client : public Screen{
- public:
+class Client : public Screen
+{
+public:
   Client(sf::RenderWindow *window, ImageManager *imageManager);
   ~Client();
   int run();
   void connect();
   void disconnect();
-  
+
   void setPort(int);
   void setIp(std::string);
   void setPseudo(std::string pseudo);
@@ -39,16 +40,17 @@ class Client : public Screen{
 
   std::string getPseudo();
   sf::Vector3i getColor();
- private:
+
+private:
   void update(sf::Time frametime);
   void draw();
   void drawConnecting();
   void drawNotConnected();
 
   int _layer;
-  std::string _pseudo;  
+  std::string _pseudo;
   sf::RenderTexture *_world_display;
-  Mouse *_mouse;  
+  Mouse *_mouse;
   Ticker *_ticker;
   bool _running;
 
@@ -61,28 +63,28 @@ class Client : public Screen{
   void onResized(sf::Event event);
   void onKeyPressed(sf::Event event);
 
-  void sendReliable(Packet* p);
-  void send(Packet* p);
+  void sendReliable(Packet *p);
+  void send(Packet *p);
 
   void updateView();
 
   float _zoom;
   int _cube_type;
-  CubeDisplay* _display_cube;
-  ChatBox* _chat_box;
-  Renderer* _renderer;
-  
-  World* _world;  
+  CubeDisplay *_display_cube;
+  ChatBox *_chat_box;
+  Renderer *_renderer;
+
+  World *_world;
 
   bool _add_cube;
   bool _remove_cube;
   bool _main_menu;
-  Player* _player;
-  LayerDisplay* _layer_display;
+  Player *_player;
+  LayerDisplay *_layer_display;
   int _port;
   std::string _ip;
-  ENetHost* _client;
-  ENetPeer* _server;
+  ENetHost *_client;
+  ENetPeer *_server;
   bool _connected;
   int _id;
 

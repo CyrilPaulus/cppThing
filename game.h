@@ -7,19 +7,20 @@
 #include "client.h"
 #include "server.h"
 
-class Game {
- public:
+class Game
+{
+public:
   static const int LOCAL = 0;
   static const int CLIENT = 1;
   static const int SERVER = 2;
 
   Game();
   ~Game();
-  
-  Client* getClient();
-  Server* getServer();
-  int getType(); 
-  
+
+  Client *getClient();
+  Server *getServer();
+  int getType();
+
   void run(int type);
   void setIp(std::string ip);
   void setPort(int port);
@@ -30,14 +31,14 @@ class Game {
   void connect(std::string ip);
   std::string getIpStr();
 
- private:
-  sf::Thread* _server_thread;
-  Server* _s;
-  Client* _c;
+private:
+  sf::Thread *_server_thread;
+  Server *_s;
+  Client *_c;
 
   bool _server_running;
-  sf::RenderWindow* _window;
-  ImageManager* _image_manager;
+  sf::RenderWindow *_window;
+  ImageManager *_image_manager;
   std::string _ip;
   std::string _pseudo;
   int _port;
@@ -49,7 +50,7 @@ class Game {
   void stopServer();
   void runLocal();
 
-  Screen* screens[6];
+  Screen *screens[6];
 };
 
 #endif /* _GAME_H_ */

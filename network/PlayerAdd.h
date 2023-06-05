@@ -2,11 +2,11 @@
 
 #include "packet.h"
 
-
-class PlayerAdd : public Packet{
- public:
+class PlayerAdd : public Packet
+{
+public:
   PlayerAdd();
-  
+
   virtual sf::Packet encode();
   void decode(sf::Packet p);
 
@@ -17,9 +17,8 @@ class PlayerAdd : public Packet{
   int getId();
   std::string getPseudo();
 
- private:
+private:
   sf::Uint8 _id;
-  sf::Uint8 _r,_g,_b;
+  sf::Uint8 _r, _g, _b;
   std::string _pseudo;
 };
-

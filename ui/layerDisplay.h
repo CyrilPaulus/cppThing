@@ -3,17 +3,18 @@
 
 #include "uiElement.h"
 
-class LayerDisplay : public UiElement {
- public:
-  LayerDisplay(ImageManager*, int);
+class LayerDisplay : public UiElement
+{
+public:
+  LayerDisplay(ImageManager *, int);
   ~LayerDisplay();
   void SetLayer(int);
-  void Draw(sf::RenderTarget*);
+  void Draw(sf::RenderTarget *);
   sf::FloatRect GetBbox();
   sf::Vector2f GetSize();
-  
- private:
-  sf::Sprite* _layer;
+
+private:
+  sf::Sprite *_layer;
   int _layer_count;
   int _current_layer;
 };

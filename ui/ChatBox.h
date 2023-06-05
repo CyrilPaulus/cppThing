@@ -11,16 +11,17 @@
 #include "uiElement.h"
 #include "../Renderer.h"
 
-class ChatBox : public UiElement {
- public:
+class ChatBox : public UiElement
+{
+public:
   ChatBox();
-  void Draw(sf::RenderTarget*);
+  void Draw(sf::RenderTarget *);
   void handleEvent(sf::Event event);
   std::string popPendingMsg();
   int getPendingCount();
   void addMessage(std::string msg);
   bool isActive();
-  
+
 private:
   sf::Font _textFont;
   std::vector<std::string> _msg;

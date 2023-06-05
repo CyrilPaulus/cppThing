@@ -1,6 +1,7 @@
 #include "UpdatePlayerInfo.h"
 
-UpdatePlayerInfo::UpdatePlayerInfo() {
+UpdatePlayerInfo::UpdatePlayerInfo()
+{
   _type = Packet::UpdatePlayerInfo;
   _r = 0;
   _g = 0;
@@ -8,7 +9,8 @@ UpdatePlayerInfo::UpdatePlayerInfo() {
   _id = 0;
 }
 
-sf::Packet UpdatePlayerInfo::encode() {
+sf::Packet UpdatePlayerInfo::encode()
+{
   sf::Packet rslt = Packet::encode();
   rslt << _r;
   rslt << _g;
@@ -18,33 +20,39 @@ sf::Packet UpdatePlayerInfo::encode() {
   return rslt;
 }
 
-
-void UpdatePlayerInfo::decode(sf::Packet p) {
+void UpdatePlayerInfo::decode(sf::Packet p)
+{
   p >> _r >> _g >> _b >> _id >> _pseudo;
 }
 
-void UpdatePlayerInfo::setPseudo(std::string pseudo) {
+void UpdatePlayerInfo::setPseudo(std::string pseudo)
+{
   _pseudo = pseudo;
 }
 
-void UpdatePlayerInfo::setColor(sf::Vector3i color) {
+void UpdatePlayerInfo::setColor(sf::Vector3i color)
+{
   _r = color.x;
   _g = color.y;
   _b = color.z;
 }
 
-void UpdatePlayerInfo::setId(int id) {
+void UpdatePlayerInfo::setId(int id)
+{
   _id = (sf::Uint8)id;
 }
 
-sf::Vector3i UpdatePlayerInfo::getColor() {
-  return sf::Vector3i(_r, _g ,_b);
+sf::Vector3i UpdatePlayerInfo::getColor()
+{
+  return sf::Vector3i(_r, _g, _b);
 }
 
-int UpdatePlayerInfo::getId() {
+int UpdatePlayerInfo::getId()
+{
   return _id;
 }
 
-std::string UpdatePlayerInfo::getPseudo() {
+std::string UpdatePlayerInfo::getPseudo()
+{
   return _pseudo;
 }

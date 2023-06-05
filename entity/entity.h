@@ -4,8 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include "../imageManager.h"
 
-class Entity {
- public:
+class Entity
+{
+public:
   Entity();
   virtual ~Entity();
 
@@ -17,11 +18,10 @@ class Entity {
 
   bool canRemove();
 
- protected:
+protected:
   bool _remove;
   sf::Vector2f _position;
   sf::Vector2f _bbox;
-
 };
 
 #endif /* _ENTITY_H_ */

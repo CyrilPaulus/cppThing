@@ -3,15 +3,16 @@
 
 #include <SFML/System/Clock.hpp>
 
-class Ticker{
- public:
+class Ticker
+{
+public:
   Ticker();
   Ticker(sf::Time tickTime);
   bool tick();
   sf::Time getElapsedTime();
   void setUpdateRate(int);
 
- private:
+private:
   sf::Clock _clock;
   sf::Time _tick_time;
   sf::Time _elapsed_time;
