@@ -98,7 +98,7 @@ class Client : public Screen{
   sf::Text _notConnectText;
 
   Input input;
-  static const float CONNECT_TIME_OUT = 20;
+  static constexpr float CONNECT_TIME_OUT = 20;
 };
 
 #endif /* _CLIENT_H_ */
